@@ -1,0 +1,56 @@
+<!-- 
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+ -->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<wicket:head></wicket:head>
+<form wicket:id="form">
+              Repository: <select wicket:id="repositorySelection">
+              </select>
+<input wicket:id="selectButton" type="submit" value="Select" />
+</form>
+ <table width="95%" border="0" wicket:id="tableGroup">
+ 	<thead>
+<th class="portlet-section-header" colspan="6">Remote Portlet Applications</th> 
+  		<tr>
+    		<th class="portlet-section-subheader" scope="col" align="left" width="20%">Group ID</th>
+    		<th class="portlet-section-subheader" scope="col" align="left">Artifact ID</th>
+    		<th class="portlet-section-subheader" scope="col" align="left">Name</th>
+    		<th class="portlet-section-subheader" scope="col" align="left">Version</th>
+    		<th class="portlet-section-subheader" scope="col" align="left">Type</th>
+    		<th class="portlet-section-subheader" scope="col" align="left">Action</th>
+  		</tr>
+  </thead>
+  <tbody>
+  	<tr wicket:id="repositories">
+    	<td class="portlet-section-body" align="left"><span wicket:id="groupId">[groupId]</span></td>
+    	<td class="portlet-section-body" align="left"><span wicket:id="artifactId">[artifactId]</span></td>
+    	<td class="portlet-section-body" align="left"><span wicket:id="name">[name]</span></td>
+    	<td class="portlet-section-body" align="left"><span wicket:id="version">[version]</span></td>
+    	<td class="portlet-section-body" align="left"><span wicket:id="type">[type]</span></td>
+    	<td class="portlet-section-body" align="left"><a wicket:id="action">Deploy</a></td>
+  	</tr>
+  </tbody>
+  <tfoot>
+  	<tr>
+    	<td wicket:id="navigator"></td>
+    </tr>
+  </tfoot>
+</table> 
+<div wicket:id="status"></div>
+<div wicket:id="ticker"></div>
+</html>

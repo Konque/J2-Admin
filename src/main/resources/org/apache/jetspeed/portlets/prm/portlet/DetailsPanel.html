@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:wicket="http://wicket.sourceforge.net/" xml:lang="en" lang="en">
+<head></head>
+<body>
+	<wicket:panel>
+	<form action="post" wicket:id="form">
+	<table style="border-collapse: collapse; width: 100%; margin-top: 8px; float: left;">
+		<thead>
+			<tr>
+				<th class="portlet-section-subheader"><wicket:message key="pam.details.name"/></th>
+				<th class="portlet-section-subheader"><wicket:message key="pam.details.value"/></th>
+			</tr>
+		</thead>
+		<tr>
+			<td class="portlet-section-body"><wicket:message key="pam.details.expiration_cache"/></td>
+			<td class="portlet-section-body"><input type="text" wicket:id="expirationCache" /></td>
+		</tr>
+		<tr>
+			<td class="portlet-section-body"><wicket:message key="pam.details.unique_name"/></td>
+			<td class="portlet-section-body"><span wicket:id="uniqueName"></span></td>
+		</tr>
+        <tr>
+            <td class="portlet-section-body"><wicket:message key="pam.details.preference_validator"/></td>
+            <td class="portlet-section-body"><span wicket:id="preferenceValidator"></span></td>
+        </tr>
+		<tr>
+			<td class="portlet-section-body"><wicket:message key="pam.details.class_name"/></td>
+			<td class="portlet-section-body"><span wicket:id="className"></span></td>
+		</tr>
+		<tr>
+		    <td class="portlet-section-body"><wicket:message key="pam.details.resource.bundle"/></td>
+		    <td class="portlet-section-body">
+		        <span wicket:id="resourceBundle"></span>
+		        <input type="submit" wicket:id="reloadResourceBundle" />
+		    </td>
+		</tr>
+		<tr>
+		    <td class="portlet-section-body" colspan="2">
+                <span wicket:id="localizationEditor"/>
+            </td>
+        </tr>
+		<tr>
+            <td class="portlet-section-footer" colspan="2">
+                <input wicket:id="save" type="submit"/> 
+            </td>
+        </tr>
+	</table>
+	</form>
+    <div>
+<form action="post" wicket:id="cloneForm">    
+	<table style="border-collapse: collapse; width: 100%; margin-top: 8px; float: left;">
+		<thead>
+			<tr>
+				<th class="portlet-section-subheader"><wicket:message key="pam.details.action.clone.title"/></th>
+			</tr>
+		</thead> 
+     </table>
+       <wicket:message key="pam.details.message.clone.portlet.name"/>
+  	   <input type='text' wicket:id="cloneName" />
+       <input type="submit" wicket:id="cloneButton" />         
+    </form>
+    </div>    		
+	</wicket:panel>
+</body>
+</html>

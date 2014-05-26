@@ -1,0 +1,181 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+.permsRootLContainer { 
+    width: 100%;
+    height: 600px;
+}
+
+.permsTabLContainer { 
+    width: 100%;
+    height: 304px;
+}
+
+.editorLContainer {
+    width: 100%;
+    border: 1px solid grey;
+    height: 200px;
+}
+
+.editorLTop {
+    padding: 4px;
+    border-bottom: thin inset grey;
+    width: 100%;
+    height: 55px;
+}
+
+.editorLBottom  {
+    padding: 4px;
+    width: 100%;
+    height: 140px;
+}
+
+.resourceNameLContainer {
+    padding: 4px;
+    border-right: thin inset grey;
+    width: 370px
+    height: 55px
+}
+
+.editorControlsLContainer {
+    height: 55px
+    padding: 4px;
+}
+
+.rolesLContainer {
+    padding: 4px;
+    border-right: thin inset grey;
+    overflow-y: auto;
+    overflow-x: hidden
+}
+
+.actionsLContainer {
+    padding: 6px;
+    width: 210px;
+    overflow-y: auto;
+    overflow-x: hidden
+
+}
+
+.dojoDialog {
+    background : #eee;
+    border : 1px solid #999;
+    -moz-border-radius : 5px;
+    padding : 4px;
+    width: 320px;
+}
+
+.buttonbox {
+}
+
+.buttonbox .dojoButton {
+    float: right;
+    margin-right: 10px;
+    margin-bottom: 6px;
+}
+
+.buttonboxright {
+    display: block;
+    text-align: center;
+}
+.buttonboxright .dojoButton {
+    float: right;
+    margin-left: 10px;
+    margin-bottom: 6px;
+}
+
+.permissions {
+    font-family:Lucida Grande, Verdana;
+    font-size:0.8em;
+    width:100%;
+    border:1px solid #ccc;
+    cursor:default;
+}
+
+#permsTabContainer {
+    width: 100%;
+    top: 2px;  /* without this, the tabs are cut off at the top */
+    height: 304px;
+}
+
+* html div.tableContainer { /* IE only hack */
+    width: 95%;
+    border: 1px solid #ccc;
+    height: 285px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.permissions td,
+.permissions th{
+    border-right: 1px solid #999;
+    padding: 2px;
+    font-weight: normal;
+    font-size: small;
+}
+
+.permissions thead td, .permissions thead th {
+    background-image:url(/j2-admin/images/st-head.gif);
+    background-repeat:no-repeat;
+    background-position:top right;
+    font-size: small;
+    font-weight: bold;
+    text-align: left;
+}
+.permissions thead td.selectedUp, .permissions thead th.selectedUp {
+    background-image:url(/j2-admin/images/st-headup.gif);
+}
+.permissions thead td.selectedDown, .permissions thead th.selectedDown {
+    background-image:url(/j2-admin/images/st-headdown.gif);
+}
+
+* html div.tableContainer table thead tr td,
+* html div.tableContainer table thead tr th{
+    /* IE Only hacks */
+    position:relative;
+    top:expression(dojo.html.getFirstAncestorByTag(this,'table').parentNode.scrollTop-2);
+}
+
+
+html>body tbody.scrollContent {
+    height: 262px;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+tbody.scrollContent td, tbody.scrollContent tr td {
+    background: #FFF;
+    padding: 2px;
+}
+
+tbody.scrollContent tr.alternateRow td {
+    background: #e3edfa;
+    padding: 2px;
+}
+
+tbody.scrollContent tr.selected td {
+    background: yellow;
+    padding: 2px;
+}
+tbody.scrollContent tr:hover td {
+    background: #a6c2e7;
+    padding: 2px;
+}
+tbody.scrollContent tr.selected:hover td {
+    background: #ff3;
+    padding: 2px;
+}

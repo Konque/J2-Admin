@@ -1,0 +1,66 @@
+<!-- 
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+  Author <a href="mailto:vkumar@apache.org">Vivek Kumar</a>
+ -->
+<?xml version="1.0" encoding="UTF-8"?>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<wicket:head>
+</wicket:head>
+<table cellpadding="0" cellspacing="1" border="1">
+	<tr>
+		<td>
+		<form wicket:id="searchForm">
+		<table cellpadding="0" cellspacing="1" border="1">
+			<tr>
+				<td><input type="text" wicket:id="searchString" size="25"
+					class="portlet-form-field-label" /></td>
+				<td><input class="portlet-form-button" wicket:id="searchButton"
+					type="submit" /></td>
+				<td>&nbsp;&nbsp;</td>
+				<td><input class="portlet-form-button" wicket:id="newPrincipal"
+					type="submit" /></td>
+			</tr>
+		</table>
+		</form>
+		</td>
+		<td rowspan="2"><span wicket:id="userLabel"></span> <input
+			type="text" wicket:id="userName" readonly="true" />
+		<div wicket:id="tabs" class="tabpanel">TABS</div>
+		</td>
+	</tr>
+	<tr>
+		<td width="350px">
+		<span wicket:id="group">
+
+		<table cellpadding="0" cellspacing="1" border="1" width="100%">
+			<th class="portlet-section-header"><span wicket:id="principal" /></th>
+			<tr>
+				<td class="portlet-section-subheader"><a class
+					wicket:id="nameOrderLink"><span wicket:id="nameSort" /></a></td>
+			</tr>
+			<tr wicket:id="entries">
+				<td class="portlet-section-body"><a wicket:id="link"><span
+					wicket:id="name"></span></a></td>
+			</tr>
+		</table>
+		<div wicket:id="navigator"></div>
+		</span>
+		</td>
+	</tr>
+</table>
+</html>

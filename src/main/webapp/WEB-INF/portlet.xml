@@ -1,0 +1,2749 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version
+    2.0 (the "License"); you may not use this file except in compliance
+    with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+    applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+    OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<portlet-app id='j2-admin'
+  xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd"
+  version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd">
+
+  <portlet id="LoginPortlet">
+    <description>Logs a user on to the Jetspeed portal by entering a
+      username and password. Authenticates using full Jetspeed Active
+      Authentication.</description>
+    <description xml:lang="ja">
+      ユーザー名とパスワードを入力して、ユーザーがポータルにログインできます。アクティブ認証を利用して認証します。</description>
+    <portlet-name>LoginPortlet</portlet-name>
+    <display-name>Login with Active Authentication</display-name>
+    <display-name xml:lang="ja">アクティブ認証を用いたログイン</display-name>
+    <display-name xml:lang="zh">登陆</display-name>
+    <display-name xml:lang="zh-TW">登陸</display-name>
+    <portlet-class>
+      org.apache.portals.bridges.common.GenericServletPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/login/login.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-lock-screen.png</value>
+    </init-param>
+    <!--
+      expiration cache must be zero (disabled) since we bypass normal
+      portlet api
+    -->
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.LoginResources</resource-bundle>
+    <portlet-info>
+      <title>Login</title>
+      <short-title>Login</short-title>
+      <keywords>login,security,management,admin</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="LoginPortletForXHTMLBasic">
+    <description>Logs a user on to the Jetspeed portal by entering a
+      username and password in an XHTML form. Authenticates using full
+      Jetspeed Active Authentication.</description>
+    <description xml:lang="ja">
+      XHTMLフォームでユーザー名とパスワードを入力して、ユーザーがポータルにログインできます。アクティブ認証を利用して認証します。</description>
+    <portlet-name>LoginPortletForXHTMLBasic</portlet-name>
+    <display-name>Login with Active Authentication (XHTML Basic)</display-name>
+    <display-name xml:lang="ja">アクティブ認証を用いたログイン(XHTML
+      Basic用)</display-name>
+    <display-name xml:lang="zh">基于XHTML的登陆Portlet</display-name>
+    <display-name xml:lang="zh-TW">基於XHTML的登陸Portlet</display-name>
+    <portlet-class>
+      org.apache.portals.bridges.common.GenericServletPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/login/login-xhtmlbasic.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-lock-screen.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.LoginResources</resource-bundle>
+    <portlet-info>
+      <title>Login</title>
+      <short-title>Login</short-title>
+      <keywords>login,security,management,admin</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="OpenIDLoginPortlet">
+    <description>
+      Logs a user on to the Jetspeed portal using an OpenID Provider
+      and a built in Relaying Party servlet implmentation. Copies 
+      and maintains user information in Jetspeed user data on login.
+    </description>
+    <portlet-name>OpenIDLoginPortlet</portlet-name>
+    <display-name>OpenID Login Portlet</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.openid.OpenIDLoginPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/login/openid-login.jsp</value>
+    </init-param>
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/security/login/openid-login-prefs.jsp</value>
+    </init-param>
+    <init-param>
+      <description>Display names for OpenID provider buttons.</description>
+      <name>providerLabels</name>
+      <value>Gmail, Yahoo!, myOpenID</value>
+    </init-param>
+    <init-param>
+      <description>Domain names for OpenID provider buttons.</description>
+      <name>providerDomains</name>
+      <value>gmail.com, yahoo.com, myopenid.com</value>
+    </init-param>
+    <init-param>
+      <description>Enable OpenID provider or URL entry.</description>
+      <name>enableOpenIDEntry</name>
+      <value>true</value>
+    </init-param>
+    <init-param>
+      <description>Enable portlet init parameter registration configuration.</description>
+      <name>enableRegistrationConfig</name>
+      <value>false</value>
+    </init-param>
+    <init-param>
+      <description>Global enable new user registration.</description>
+      <name>enableRegistration</name>
+      <value>true</value>
+    </init-param>
+    <init-param>
+      <description>Global new user template directory to be used for registration.</description>
+      <name>newUserTemplateDirectory</name>
+      <value>/_template/new-user/</value>
+    </init-param>
+    <init-param>
+      <description>Global subsite root folder to be used for registration.</description>
+      <name>subsiteRootFolder</name>
+      <value></value>
+    </init-param>
+    <init-param>
+      <description>Global roles to be assigned at registration.</description>
+      <name>roles</name>
+      <value>user</value>
+    </init-param>
+    <init-param>
+      <description>Global groups to be assigned at registration.</description>
+      <name>groups</name>
+      <value></value>
+    </init-param>
+    <init-param>
+      <description>Global profiling rule names to be assigned at registration.</description>
+      <name>rulesNames</name>
+      <value>page</value>
+    </init-param>
+    <init-param>
+      <description>Global profiling rule values to be assigned at registration.</description>
+      <name>rulesValues</name>
+      <value>j2</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-lock-screen.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>edit_defaults</portlet-mode>
+    </supports>
+    <resource-bundle>org.apache.jetspeed.portlets.security.resources.OpenIDLoginResources</resource-bundle>
+    <portlet-info>
+      <title>OpenID Login</title>
+      <short-title>OpenID Login</short-title>
+      <keywords>openid,login,security,management,admin</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <!-- Display names for OpenID provider buttons. -->
+      <preference>
+        <name>providerLabels</name>
+        <value>Gmail, Yahoo!, myOpenID</value>
+      </preference>
+      <!-- Domain names for OpenID provider buttons. -->
+      <preference>
+        <name>providerDomains</name>
+        <value>gmail.com, yahoo.com, myopenid.com</value>
+      </preference>
+      <!-- Enable OpenID provider or URL entry. -->
+      <preference>
+        <name>enableOpenIDEntry</name>
+        <value>true</value>
+      </preference>
+      <!-- Enable portlet preferences registration configuration. -->
+      <preference>
+        <name>enableRegistrationConfig</name>
+        <value>false</value>
+      </preference>
+      <!-- New user registration. -->
+      <preference>
+        <name>enableRegistration</name>
+        <value>true</value>
+      </preference>
+      <!-- New user template directory to be used for registration. -->
+      <preference>
+        <name>newUserTemplateDirectory</name>
+        <value>/_template/new-user/</value>
+      </preference>
+      <!-- Subsite root folder to be used for registration. -->
+      <preference>
+        <name>subsiteRootFolder</name>
+        <value></value>
+      </preference>
+      <!-- Roles to be assigned at registration. -->
+      <preference>
+        <name>roles</name>
+        <value>user</value>
+      </preference>
+      <!-- Groups to be assigned at registration. -->
+      <preference>
+        <name>groups</name>
+        <value></value>
+      </preference>
+      <!-- Profiling rule names to be assigned at registration. -->
+      <preference>
+        <name>rulesNames</name>
+        <value>page</value>
+      </preference>
+      <!-- Profiling rule values to be assigned at registration. -->
+      <preference>
+        <name>rulesValues</name>
+        <value>j2</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="ChangePasswordPortlet">
+    <description>Portlet for changing the password of the
+      current, logged on user.</description>
+    <description xml:lang="ja">現在ログイン中のユーザーパスワードを変更します。</description>
+    <description xml:lang="zh">更改当前登陆用户的密码。</description>
+    <description xml:lang="zh-TW">更改當前登陸用戶的密碼。</description>
+    <portlet-name>ChangePasswordPortlet</portlet-name>
+    <display-name>Change Password</display-name>
+    <display-name xml:lang="ja">パスワード変更</display-name>
+    <display-name xml:lang="zh">更改密码</display-name>
+    <display-name xml:lang="zh-TW">更改密碼</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.security.ChangePasswordPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/chgpwd/change-password.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>application-certificate.png</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>nl</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.ChgPwdResources</resource-bundle>
+    <portlet-info>
+      <title>Change Password</title>
+      <short-title>Change Password</short-title>
+      <keywords>security,user,password,admin,login</keywords>
+    </portlet-info>
+  </portlet>
+  
+  <portlet id="SSOChangePasswordPortlet">
+    <description>You can edit SSO Site Credentials.</description>
+    <description xml:lang="ja">SSO 現在ログイン中のユーザーパスワードを変更します。</description>
+    <description xml:lang="zh">SSO 更改当前登陆用户的密码。</description>
+    <description xml:lang="zh-TW">SSO 更改當前登陸用戶的密碼。</description>
+    <portlet-name>SSOChangePasswordPortlet</portlet-name>
+    <display-name>SSO Change Password</display-name>
+    <display-name xml:lang="ja">SSO パスワード変更</display-name>
+    <display-name xml:lang="zh">SSO 更改密码</display-name>
+    <display-name xml:lang="zh-TW">SSO 更改密碼</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.security.sso.SSOChangePasswordPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/sso/sso-changepwd-view.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>application-certificate.png</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.SSOChangePasswordResources</resource-bundle>
+    <portlet-info>
+      <title>SSO Change Password</title>
+      <short-title>SSO Change Password</short-title>
+      <keywords>security,user,password,sso,admin,login</keywords>
+    </portlet-info>
+  </portlet>
+  
+  <portlet id="SSOBrowserPortlet">
+    <description>SSO Sites Browser displays a list of all configured
+      SSO sites in the portal. From here you can select SSO Sites for
+      editing. Place this portlet on the same page as the SSO Details
+      portlet.</description>
+    <description xml:lang="ja">SSO
+      サイトブラウザポートレットは、ポータル内の構成された、すべての SSO サイトの一覧を表示します。ここから、編集したい SSO
+      サイトを選択できます。</description>
+    <description xml:lang="zh">SSO 站点浏览 Portlet</description>
+    <description xml:lang="zh-TW">SSO 站點流覽 Portlet</description>
+    <portlet-name>SSOBrowserPortlet</portlet-name>
+    <display-name>SSO Sites Browser</display-name>
+    <display-name xml:lang="ja">SSO サイトブラウザ</display-name>
+    <display-name xml:lang="zh">浏览SSO站点</display-name>
+    <display-name xml:lang="zh-TW">流覽SSO站點</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.security.sso.SSOBrowser</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/sso/sites-view.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>preferences-system-network-proxy.png</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <!--
+        not implemented yet <portlet-mode>EDIT</portlet-mode>
+        <portlet-mode>HELP</portlet-mode>
+      -->
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.SSOResources</resource-bundle>
+    <portlet-info>
+      <title>SSO Sites</title>
+      <short-title>Sites</short-title>
+      <keywords>admin,security,site,SSO</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="SSODetailsPortlet">
+    <description>The SSO Site Details portlet edits the credentials
+      and site location for a single SSO Site. Place this portlet on the
+      same page as the SSO Browser portlet.</description>
+    <description xml:lang="ja">SSO サイト詳細ポートレットは、SSO
+      サイト用の資格およびサイトの場所を編集できます。このポートレットは、SSOブラウザポートレットと同じページに置いてください。</description>
+    <description xml:lang="zh">SSO 详情 Portlet</description>
+    <description xml:lang="zh-TW">SSO 詳情 Portlet</description>
+    <portlet-name>SSODetailsPortlet</portlet-name>
+    <display-name>SSO Details</display-name>
+    <display-name xml:lang="ja">SSO 情報詳細</display-name>
+    <display-name xml:lang="zh">SSO 详情</display-name>
+    <display-name xml:lang="zh-TW">SSO 詳情</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.security.sso.SSODetails</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/sso/sites-details.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>preferences-system-network-proxy.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <!--
+        not implemented yet <portlet-mode>EDIT</portlet-mode>
+        <portlet-mode>HELP</portlet-mode>
+      -->
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.SSODetailsResources</resource-bundle>
+    <portlet-info>
+      <title>SSO Details</title>
+      <short-title>SSO Details</short-title>
+      <keywords>admin,security,site,SSO</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="LocaleSelector">
+    <description>Locale Selector is a portlet to select your
+      preferred locale (language).</description>
+    <description xml:lang="ja">言語選択はユーザーのロケールを選択するためのポートレットです。</description>
+    <description xml:lang="zh">选择你使用的语言</description>
+    <description xml:lang="zh-TW">選擇你使用的語言</description>
+    <portlet-name>LocaleSelector</portlet-name>
+    <display-name>Locale Selector</display-name>
+    <display-name xml:lang="ja">言語選択</display-name>
+    <display-name xml:lang="zh">语言选择</display-name>
+    <display-name xml:lang="zh-TW">語言選擇</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.localeselector.LocaleSelectorPortlet</portlet-class>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>preferences-desktop-locale.png</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.localeselector.resources.LocaleSelectorResources</resource-bundle>
+    <portlet-info>
+      <title>Locale Selector</title>
+      <short-title>This is a portlet to select your preferred locale</short-title>
+      <keywords>locale,language,tools</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="StatisticsPortlet">
+    <description>Provides statistics about portal access hits by
+      page, portlet, and by user. Statistical results are sorted by
+      highest hit rate.</description>
+    <description xml:lang="ja">
+      ページ、ポートレット、ユーザーごとのポータルアクセスについての統計機能を提供します。統計結果は、ヒット割合が高い順にソートされます。</description>
+    <description xml:lang="zh">提供关于门户页面、Portlet、用户的状态信息。</description>
+    <description xml:lang="zh-TW">提供關於門戶頁面、Portlet、用戶的狀態資訊。</description>
+    <portlet-name>StatisticsPortlet</portlet-name>
+    <display-name>Portal Statistics</display-name>
+    <display-name xml:lang="ja">ポータル統計</display-name>
+    <display-name xml:lang="zh">门户状态信息</display-name>
+    <display-name xml:lang="zh-TW">門戶狀態資訊</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.statistics.StatisticsPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/statistics/statistics.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>x-office-spreadsheet.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Portal Statistics</title>
+      <short-title>Statistics</short-title>
+      <keywords>admin,statistics,portlets,pages,access</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="ForgottenPasswordPortlet">
+    <description>Provides users with the ability to request a
+      new password to be sent to their email address.</description>
+    <description xml:lang="ja">
+      ユーザーに新規パスワードをメールアドレスに送信要求をする機能を提供します。</description>
+    <description xml:lang="zh">忘记密码，使用邮件发送新的密码给用户。</description>
+    <description xml:lang="zh-TW">忘記密碼，使用郵件發送新的密碼給用戶。</description>
+    <portlet-name>ForgottenPasswordPortlet</portlet-name>
+    <display-name>Forgotten Password Portlet</display-name>
+    <display-name xml:lang="ja">パスワード再発行ポートレット</display-name>
+    <display-name xml:lang="zh">忘记密码</display-name>
+    <display-name xml:lang="zh-TW">忘記密碼</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.registration.ForgottenPasswordPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/userreg/forgottenPasswd.vm</value>
+    </init-param>
+    <init-param>
+      <description>This parameter sets the template used to send the
+        Email for Forgotten password</description>
+      <name>emailTemplateLocation</name>
+      <value>/WEB-INF/view/userreg/</value>
+    </init-param>
+    <init-param>
+      <description>This parameter sets the template used to send the
+        Email for Forgotten password</description>
+      <name>emailTemplateName</name>
+      <value>forgottenPasswdEmail.vm</value>
+    </init-param>
+    <init-param>
+      <description>This parameter sets the url to which folks will
+        return after they receive an email</description>
+      <name>returnURL</name>
+      <!--
+        the current system simply return the user to the default page
+        where this portlet provides feedback
+      -->
+      <value>/</value>
+    </init-param>
+    <init-param>
+      <description>This parameter sets the URL to which people will
+        go after they successfully complete their form for forgotten
+        password</description>
+      <name>redirectPath</name>
+      <!--
+        the current system simply return the user to the default page
+        where this portlet provides feedback
+      -->
+      <value>/</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>application-certificate.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.registration.resources.ForgottenPasswordResources</resource-bundle>
+    <portlet-info>
+      <title>Forgotten Password</title>
+      <short-title>Forgotten Password</short-title>
+      <keywords>tools,users,password,forgotten,lost,passwd</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="ForgottenPasswordReturnPortlet">
+    <description>Provides users with the ability to click and
+      update their password automatically after completing the user
+      registration process.</description>
+    <description xml:lang="ja">ユーザー登録完了後にパスワードを更新する機能を提供します。</description>
+    <description xml:lang="zh">忘记密码，使用email发送更新密码的连接。</description>
+    <description xml:lang="zh-TW">忘記密碼，使用email發送更新密碼的連接。</description>
+    <portlet-name>ForgottenPasswordReturnPortlet</portlet-name>
+    <display-name>Forgotten Password Return Portlet</display-name>
+    <display-name xml:lang="ja">パスワード再発行受付ポートレット</display-name>
+    <display-name xml:lang="zh">忘记密码</display-name>
+    <display-name xml:lang="zh-TW">忘記密碼</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.registration.ForgottenPasswordPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/userreg/forgottenPasswdReturn.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>application-certificate.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <portlet-info>
+      <title>Forgotten Password Return</title>
+      <short-title>forgot PS return</short-title>
+      <keywords>password</keywords>
+    </portlet-info>
+  </portlet>
+
+
+  <portlet id="UserRegistrationPortlet">
+    <description>Provides users with the ability register as a
+      new user with the portal.</description>
+    <description xml:lang="ja">ユーザーにポータルの新規登録する機能を提供します。</description>
+    <description xml:lang="zh">注册一个新的门户用户</description>
+    <description xml:lang="zh-TW">註冊一個新的門戶用戶</description>
+    <portlet-name>UserRegistrationPortlet</portlet-name>
+    <display-name>User Registration Portlet</display-name>
+    <display-name xml:lang="ja">ユーザー登録ポートレット</display-name>
+    <display-name xml:lang="zh">用户注册</display-name>
+    <display-name xml:lang="zh-TW">用戶註冊</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.registration.UserRegistrationPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/userreg/userRegistration.vm</value>
+    </init-param>
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/view/edit-prefs.vm</value>
+    </init-param>
+    <init-param>
+      <description>This option will generate a new password for each
+        user registration</description>
+      <name>Option_Generate_Passwords</name>
+      <value>false</value>
+    </init-param>
+    <init-param>
+      <description>This option will force email address to be system
+        wide unique</description>
+      <name>Option_Emails_System_Unique</name>
+      <value>true</value>
+    </init-param>
+    <init-param>
+      <description>This option will use the email address as the
+        username</description>
+      <name>Option_Use_Email_As_Username</name>
+      <value>false</value>
+    </init-param>
+    <init-param>
+      <description>This parameter sets the url to which folks will
+        return after they receive an email</description>
+      <name>returnURL</name>
+      <!--
+        the current system simply return the user to the default page
+        where this portlet provides feedback
+      -->
+      <value>/</value>
+    </init-param>
+    <init-param>
+      <description>This parameter sets the URL to which people will
+        go after they
+        successfully complete their form for forgotten
+        password</description>
+      <name>redirectPath</name>
+      <!--
+        the current system simply return the user to the default page
+        where this portlet provides feedback
+      -->
+      <value>/</value>
+    </init-param>
+    <init-param>
+      <description>This is the template in which you setup an email
+        to be sent after user exists</description>
+      <name>emailTemplateLocation</name>
+      <value>/WEB-INF/view/userreg/</value>
+    </init-param>
+    <init-param>
+      <description>This is the template in which you setup an email
+        to be sent after user exists</description>
+      <name>emailTemplateName</name>
+      <value>userRegistrationEmail.vm</value>
+    </init-param>
+    <init-param>
+      <description>Profiling rules to be assigned at
+        registration.</description>
+      <name>rulesNames</name>
+      <value>page</value>
+    </init-param>
+    <init-param>
+      <description>Profiling rules to be assigned at
+        registration.</description>
+      <name>rulesValues</name>
+      <value>j2</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>start-here.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>
+      <!--  support custom edit_defaults mode -->
+      <portlet-mode>edit_defaults</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.registration.resources.UserRegistrationResources</resource-bundle>
+    <portlet-info>
+      <title>User Registration</title>
+      <short-title>User Registration</short-title>
+      <keywords>admin,password,register,signup,user</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>SendEmail</name>
+        <value>false</value>
+      </preference>
+      <preference>
+        <name>newUserTemplateDirectory</name>
+        <value>/_template/new-user/</value>
+      </preference>
+      <preference>
+        <name>subsiteRootFolder</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>roles</name>
+        <value>user</value>
+      </preference>
+      <preference>
+        <name>groups</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>rulesNames</name>
+        <value>page</value>
+      </preference>
+      <preference>
+        <name>rulesValues</name>
+        <value>j2</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="PortalLoginPortlet">
+    <description>Logs a user on to the Jetspeed portal by entering a
+      username and password. Authentication bypasses JAAS and active
+      authentication.</description>
+    <description xml:lang="ja">
+      ユーザー名とパスワードを入力して、ユーザーがポータルにログインできます。JAAS およびアクティブ認証を回避した認証です。</description>
+    <portlet-name>PortalLoginPortlet</portlet-name>
+    <display-name>Portal Login (Basic)</display-name>
+    <display-name xml:lang="ja">ポータルログイン</display-name>
+    <display-name xml:lang="zh">门户登陆</display-name>
+    <display-name xml:lang="zh-TW">門戶登陸</display-name>
+    <portlet-class>
+      org.apache.portals.bridges.common.GenericServletPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/login/portal-login.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-lock-screen.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supports>
+      <mime-type>text/vnd.wap.wml</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.LoginResources</resource-bundle>
+    <portlet-info>
+      <title>Portal Login</title>
+      <short-title>Login</short-title>
+      <keywords>admin,security,users,login</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="SecurityPermissionsPortlet">
+    <description>Policy Editor for managing the Jetspeed JAAS
+      Security Policy. The policy is a standard Java security policy
+      (JAAS), stored in a database. Portlet, page, and folder
+      permissions are managed here.</description>
+    <description xml:lang="ja">JAAS
+      セキュリティポリシーを管理するポリシーエディタです。ポリシーはJava
+      セキュリティポリシー(JAAS)標準で、データベースに格納されます。ポートレット、ページおよびフォルダのパーミッションはここで管理できます。</description>
+    <portlet-name>SecurityPermissionsPortlet</portlet-name>
+    <display-name>Security Permission Policy</display-name>
+    <display-name xml:lang="ja">セキュリティパーミッションポリシー</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.security.permissions.SecurityPermissionsPortlet</portlet-class>
+    <init-param>
+      <name>dojo.requires.core</name>
+      <value>
+        dojo.lang.*;dojo.event.*;dojo.io.*;dojo.widget.*;dojo.widget.LayoutContainer;dojo.widget.ContentPane;dojo.widget.SplitContainer;dojo.widget.TabContainer;dojo.widget.Checkbox;dojo.widget.Dialog;dojo.widget.Button;dojo.widget.Menu2;jetspeed.widget.EditorTable</value>
+    </init-param>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/permissions/view.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>lock.png</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Security Permissions</title>
+      <short-title>Permissions</short-title>
+      <keywords>admin,security,permission,policy,JAAS</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="SecurityConstraintsPortlet">
+    <description>Declartive Security Constraint editor.
+      Manages PSML global security constraints to grant or deny access
+      to pages and folders.</description>
+    <description xml:lang="ja">
+      宣言的セキュリティ制限エディタです。ページとフォルダへのアクセスを許可または拒否するためのPSMLグローバルセキュリティ制限を管理します。</description>
+    <portlet-name>SecurityConstraintsPortlet</portlet-name>
+    <display-name>PSML Security Constraints</display-name>
+    <display-name xml:lang="ja">PSMLセキュリティ制限</display-name>
+    <portlet-class>org.apache.portals.gems.dojo.DojoSpringMVCPortlet</portlet-class>
+    <init-param>
+      <name>contextConfigLocation</name>
+      <value>/WEB-INF/springmvc/context/portlet/constraints.xml</value>
+    </init-param>
+    <init-param>
+      <name>dojo.requires.core</name>
+      <value>
+        dojo.lang.*;dojo.event.*;dojo.io.*;dojo.widget.*;dojo.widget.Tree;dojo.widget.Button;dojo.widget.Checkbox;dojo.widget.Dialog;dojo.widget.TabContainer;dojo.widget.ContentPane;dojo.widget.LayoutContainer</value>
+    </init-param>
+    <init-param>
+      <name>dojo.requires.modules</name>
+      <value>jetspeed.widget.EditorTable;jetspeed.common</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>lock.png</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>view</portlet-mode>
+    </supports>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.security.resources.Constraints</resource-bundle>
+    <portlet-info>
+      <title>Security Constraints</title>
+      <short-title>Constraints</short-title>
+      <keywords>admin,security,constraint,policy,page</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="DateTimePortlet">
+    <description>Display the date and time in a simple string
+      format.</description>
+    <description xml:lang="ja">簡単な文字列フォーマットで日付と時間を表示します。</description>
+    <portlet-name>DateTimePortlet</portlet-name>
+    <display-name>Date Time Portlet</display-name>
+    <display-name xml:lang="ja">日付ポートレット</display-name>
+    <portlet-class>
+      org.apache.portals.bridges.common.GenericServletPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/datetime.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>appointment-new.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Date Time</title>
+      <short-title>Time</short-title>
+      <keywords>tools,date,time</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="CategoryPortletSelector">
+    <description>Portlet Selector for adding portlets to your
+      page. Categories classify portlets by indexed keywords to help
+      users find portlets.</description>
+    <description xml:lang="ja">
+      ページにポートレットを塚するポートレット選択です。カテゴリは、ポートレットを検索するために役立つ索引されたキーワードでポートレットを分類しています。</description>
+    <portlet-name>CategoryPortletSelector</portlet-name>
+    <display-name>Portlet Selector</display-name>
+    <display-name xml:lang="ja">ポートレット選択</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.selector.CategoryPortletSelector</portlet-class>
+    <init-param>
+      <name>dojo.js.relative.url</name>
+      <value>/javascript/dojo/dojo.js</value>
+    </init-param>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/selectors/category-portlet-selector.vm</value>
+    </init-param>
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/view/selectors/category-edit-selector.vm</value>
+    </init-param>
+    <init-param>
+      <name>HeaderPage</name>
+      <value>/WEB-INF/view/selectors/category-portlet-header.vm</value>
+    </init-param>
+    <init-param>
+      <name>dojo.requires.core</name>
+      <value>
+        dojo.lang.*;dojo.event.*;dojo.io.*;dojo.widget.*;dojo.widget.Tree;dojo.widget.Button;dojo.widget.Checkbox;dojo.widget.Dialog;dojo.widget.TabContainer;dojo.widget.ContentPane;dojo.widget.LayoutContainer</value>
+    </init-param>
+    <init-param>
+      <name>dojo.requires.modules</name>
+      <value>jetspeed.common;jetspeed.selector</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>portlet-add.png</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>view</portlet-mode>
+      <portlet-mode>edit</portlet-mode>
+    </supports>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.selector.resources.PortletSelector</resource-bundle>
+    <portlet-info>
+      <title>Portlet Selector</title>
+      <short-title>Select</short-title>
+      <keywords>admin,registry,selector,choose,portlets,add,customize</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>Categories</name>
+        <value>
+          Administration,Finance,Fun,News,Security,Sports,Technology,Tools,Tutorial</value>
+      </preference>
+      <preference>
+        <name>Keywords:Administration</name>
+        <value>admin,management</value>
+      </preference>
+      <preference>
+        <name>Keywords:Finance</name>
+        <value>finance,stock,market,money,quote</value>
+      </preference>
+      <preference>
+        <name>Keywords:Fun</name>
+        <value>fun,game,cool</value>
+      </preference>
+      <preference>
+        <name>Keywords:News</name>
+        <value>news,RSS,feed,headline</value>
+      </preference>
+      <preference>
+        <name>Keywords:Security</name>
+        <value>security</value>
+      </preference>
+      <preference>
+        <name>Keywords:Sports</name>
+        <value>sport,football,baseball,hockey,soccer,golf,tennis</value>
+      </preference>
+      <preference>
+        <name>Keywords:Technology</name>
+        <value>technology,computer,web</value>
+      </preference>
+      <preference>
+        <name>Keywords:Tools</name>
+        <value>tools,desktop,weather</value>
+      </preference>
+      <preference>
+        <name>Keywords:Tutorial</name>
+        <value>demo,learn,tutorial,programming</value>
+      </preference>
+      <preference>
+        <name>Columns</name>
+        <value>4</value>
+      </preference>
+      <preference>
+        <name>Rows</name>
+        <value>5</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="SitemapView">
+    <description>A read only view of the site map available to the
+      current user</description>
+    <description xml:lang="ja">
+      現在のユーザーで利用可能なサイトマップをリードオンリーで表示します。</description>
+    <portlet-name>SitemapView</portlet-name>
+    <display-name>Sitemap View</display-name>
+    <display-name xml:lang="ja">サイトマップ表示</display-name>
+    <portlet-class>
+      org.apache.portals.bridges.velocity.GenericVelocityPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view
+        mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/site/sitemap.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-file-manager.png</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>pt</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.site.resources.Sitemap</resource-bundle>
+    <portlet-info>
+      <title>Site Map View</title>
+      <short-title>Site</short-title>
+      <keywords>site,sitemap,map,portal,view</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="portalSiteManager">
+    <description>The Portal Site Manager displays a hierarchical view
+      of the entire portal site. From here you can add, edit, and delete
+      folders, links, and pages.</description>
+    <description xml:lang="ja">
+      ポータルサイトマネージャは、ポータルサイト全体の階層的な表示を提供します。ここから、フォルダ、リンクおよびページを追加・偏執・削除することができます。</description>
+    <portlet-name>PortalSiteManager</portlet-name>
+    <display-name>Portal Site Manager</display-name>
+    <display-name xml:lang="ja">ポータルサイトマネージャ</display-name>
+    <portlet-class>
+      org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>user-home.png</value>
+    </init-param>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/portalSiteManager</value>
+    </init-param>
+    <init-param>
+      <name>editPage</name>
+      <value>/portalSiteManager/builder</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>view</portlet-mode>
+      <portlet-mode>edit</portlet-mode>
+    </supports>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.site.resources.SiteResources</resource-bundle>
+    <portlet-info>
+      <title>Portal Site Manager</title>
+      <short-title>Site</short-title>
+      <keywords>admin,site,portal,pages,folders</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>jsRoot</name>
+        <value>/</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet>
+    <description>Remote Portlet Application Deployer for Jetspeed.</description>
+    <description xml:lang="ja">Jetspeed用リモートポートレットアプリケーション配備</description>
+    <portlet-name>RPADPortlet</portlet-name>
+    <display-name>Remote Portlet Application Deployer</display-name>
+    <display-name xml:lang="ja">リモートポートレットアプリケーション配備(RPAD)</display-name>
+    <portlet-class>
+      org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/rpad</value>
+    </init-param>
+    <init-param>
+      <name>editPage</name>
+      <value>/rpad/builder</value>
+    </init-param>
+    <init-param>
+      <name>principalParam</name>
+      <value>user</value>
+    </init-param>
+    <expiration-cache>300</expiration-cache>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <!-- resource-bundle></resource-bundle -->
+    <portlet-info>
+      <title>RPAD</title>
+      <short-title>RPAD</short-title>
+      <keywords>RPAD,Portlet Repository</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>PALab</name>
+        <value>http://pal.sourceforge.jp/portlet-repository.xml</value>
+      </preference>
+      <preference>
+        <name>Apache Portals</name>
+        <value>
+          http://www.bluesunrise.com/rpa/portlet-repository-2.2.xml</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet>
+    <description>Portlet Tracking Manager</description>
+    <description xml:lang="ja">ポートレットトラッキングマネージャ</description>
+    <portlet-name>PortletTracking</portlet-name>
+    <display-name>Portlet Tracking Manager</display-name>
+    <display-name xml:lang="ja">ポートレットトラッキングマネージャ</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.tracking.PortletTrackingPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/tracking/tracking.vm</value>
+    </init-param>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <!-- resource-bundle></resource-bundle -->
+    <portlet-info>
+      <title>Portlet Tracking</title>
+      <short-title>Tracking</short-title>
+      <keywords>admin,tracking,out of service</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <description>Welcome to Jetspeed</description>
+    <description xml:lang="ja">Jetspeedにようこそ</description>
+    <portlet-name>WelcomeToJetspeed</portlet-name>
+    <display-name>Welcome to Jetspeed</display-name>
+    <display-name xml:lang="ja">Jetspeedにようこそ</display-name>
+    <portlet-class>org.apache.portals.gems.file.FilePortlet</portlet-class>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <!-- resource-bundle></resource-bundle -->
+    <portlet-info>
+      <title>Welcome to Jetspeed</title>
+      <short-title>Welcome</short-title>
+      <keywords>welcome,jetspeed</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>file</name>
+        <value>/WEB-INF/view/info/welcome.html</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet>
+    <description>About Jetspeed</description>
+    <description xml:lang="ja">Jetspeedについて</description>
+    <portlet-name>AboutJetspeed</portlet-name>
+    <display-name>About Jetspeed</display-name>
+    <display-name xml:lang="ja">Jetspeedについて</display-name>
+    <portlet-class>org.apache.portals.gems.file.FilePortlet</portlet-class>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <!-- resource-bundle></resource-bundle -->
+    <portlet-info>
+      <title>About Jetspeed</title>
+      <short-title>About</short-title>
+      <keywords>about,jetspeed</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>file</name>
+        <value>/WEB-INF/view/info/about.html</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet>
+    <description>Jetspeed Developer Information</description>
+    <description xml:lang="ja">Jetspeed 開発者情報</description>
+    <portlet-name>JetspeedDeveloper</portlet-name>
+    <display-name>Jetspeed Developer Information</display-name>
+    <display-name xml:lang="ja">Jetspeed 開発者情報</display-name>
+    <portlet-class>org.apache.portals.gems.file.FilePortlet</portlet-class>
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <!-- resource-bundle></resource-bundle -->
+    <portlet-info>
+      <title>Jetspeed Development</title>
+      <short-title>Development</short-title>
+      <keywords>developer,development,jetspeed</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>file</name>
+        <value>/WEB-INF/view/info/developers.html</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="CustomConfigModePortlet">
+    <description>Provides common custom config mode edit
+      portlet.</description>
+    <portlet-name>CustomConfigModePortlet</portlet-name>
+    <display-name>Custom Config Mode Portlet</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.custom.CustomConfigModePortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in config
+        mode.</description>
+      <name>ConfigPage</name>
+      <value>/WEB-INF/view/custom/config-mode.vm</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>config</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>
+      org.apache.jetspeed.portlets.custom.resources.CustomConfigModeResources</resource-bundle>
+    <portlet-info>
+      <title>Custom Config Mode</title>
+      <short-title>Config</short-title>
+      <keywords>admin,config,custom</keywords>
+    </portlet-info>
+  </portlet>
+  
+  <portlet id="CustomPreviewModePortlet">
+    <description>Provides common custom preview mode portlet.</description>
+    <portlet-name>CustomPreviewModePortlet</portlet-name>
+    <display-name>Custom Preview Mode Portlet</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.custom.CustomPreviewModePortlet</portlet-class>
+    <init-param>
+      <name>PreviewPage</name>
+      <value>/WEB-INF/view/custom/preview-mode.jsp</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>preview</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Custom Preview Mode</title>
+      <short-title>Preview</short-title>
+      <keywords>admin,preview,custom</keywords>
+    </portlet-info>
+  </portlet>
+  
+  <portlet>
+    <description>Content Viewer displays the content of an HTML,
+      PDF, or other file types from any where on the file system, or
+      relative to the portlet application.</description>
+    <portlet-name>ContentViewer</portlet-name>
+    <display-name>Content Viewer</display-name>
+    <portlet-class>org.apache.portals.gems.file.FilePortlet</portlet-class>
+    <init-param>
+      <name>folder</name>
+      <value>/WEB-INF</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>folder-remote.png</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supports>
+      <mime-type>application/pdf</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supports>
+      <mime-type>application/zip</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supports>
+      <mime-type>text/xml</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supports>
+      <mime-type>text/csv</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supports>
+      <mime-type>application/vnd.ms-excel</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Content Viewer</title>
+      <short-title>Content</short-title>
+      <keywords>tools,CMS,content,viewer,file</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>file</name>
+        <value>/_content/menu.html</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet>
+    <description>The User Browser displays a list of users managed in
+      this portal. From here you can select users for editing.</description>
+    <portlet-name>JetspeedPrincipalManagementUserPortlet</portlet-name>
+    <display-name>Jetspeed Principal User Browser</display-name>
+    <portlet-class>
+      org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/jetspeedPrincipalManagement</value>
+    </init-param>
+    <init-param>
+      <name>editPage</name>
+      <value>/jetspeedPrincipalManagement/builder</value>
+    </init-param>
+    <init-param>
+      <name>principalParam</name>
+      <value>user</value>
+    </init-param>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>User Browser</title>
+      <short-title>Users</short-title>
+      <keywords>admin,security,users</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>defaultRole</name>
+        <value>user</value>
+      </preference>
+      <preference>
+        <name>defaultProfile</name>
+        <value>j2</value>
+      </preference>
+      <preference>
+        <name>newUserTemplateDirectory</name>
+        <value>/_template/new-user/</value>
+      </preference>
+      <preference>
+        <name>requiredRole</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>subsiteRootFolder</name>
+        <value>/__subsite-root/_hostname/</value>
+      </preference>
+      <preference>
+        <name>defaultSubsite</name>
+        <value></value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+  <portlet>
+    <description>The Group Browser displays a list of groups managed
+      in this portal. From here you can select groups for editing.</description>
+    <portlet-name>JetspeedPrincipalManagementGroupPortlet</portlet-name>
+    <display-name>Jetspeed Principal Group Browser</display-name>
+    <portlet-class>
+      org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/jetspeedPrincipalManagement</value>
+    </init-param>
+    <init-param>
+      <name>principalParam</name>
+      <value>group</value>
+    </init-param>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Group Browser</title>
+      <short-title>Groups</short-title>
+      <keywords>admin,security,groups, group</keywords>
+    </portlet-info>
+  </portlet>
+  <portlet>
+    <description>The Roles Browser displays a list of roles managed
+      in this portal. From here you can select roles for editing.</description>
+    <portlet-name>JetspeedPrincipalManagementRolesPortlet</portlet-name>
+    <display-name>Jetspeed Principal Roles Browser</display-name>
+    <portlet-class>
+      org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/jetspeedPrincipalManagement</value>
+    </init-param>
+    <init-param>
+      <name>principalParam</name>
+      <value>role</value>
+    </init-param>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Role Browser</title>
+      <short-title>Roles</short-title>
+      <keywords>admin,security,roles,role</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet>
+    <description>Profiler Administration</description>
+    <portlet-name>WicketProfilerAdmin</portlet-name>
+    <display-name>Profiler Administration</display-name>
+    <portlet-class>
+      org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/profileradmin</value>
+    </init-param>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <!--
+      <resource-bundle>org.apache.jetspeed.portlets.security.JetspeedPrincipalManagementUsers</resource-bundle>
+    -->
+    <portlet-info>
+      <title>Profiler Admin</title>
+      <short-title>ProfilerAdmin</short-title>
+      <keywords>admin,profiler</keywords>
+    </portlet-info>
+  </portlet>
+
+  <!--
+    <portlet> <description>Portlet Tracking Portlet</description>
+    <portlet-name>WicketPortletTrackingPortlet</portlet-name>
+    <display-name>Portlet Tracking Portlet</display-name>
+    <portlet-class>org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param> <name>wicketFilterPath</name>
+    <value>/portlettracking</value> </init-param> <supports>
+    <mime-type>*/*</mime-type> <portlet-mode>VIEW</portlet-mode>
+    </supports> <supported-locale>en</supported-locale> <portlet-info>
+    <title>Portlet Tracking Portlet</title>
+    <short-title>PortletTracking</short-title>
+    <keywords>admin,tracking</keywords> </portlet-info> </portlet>
+  -->
+
+  <portlet id="PortalDataSerializer">
+    <description>The Portal Data Serializer imports and exports
+      Jetspeed data from and to Jetspeed schema.
+      From here you import and
+      export users, groups, roles and other Jetspeed
+      objects.</description>
+    <portlet-name>PortalDataSerializer</portlet-name>
+    <display-name>Portal Data Serializer</display-name>
+    <portlet-class>
+      org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/portalDataSerializer</value>
+    </init-param>
+    <init-param>
+      <name>serviceComponentNames</name>
+      <value>cps:JetspeedSerializer</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>view</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Import Export Service</title>
+      <short-title>Import Export</short-title>
+      <keywords>admin,schema,data,import,export,serializer</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="SSOReverseProxyIFramePortlet">
+    <description>Places an HTML IFrame with reverse proxied url
+      , with Jetspeed SSO enabled,
+      inside a portlet for easily
+      hosting other
+      web application within a
+      portlet. Sizes of both
+      normal and maximized
+      modes are configurable
+      in edit mode.</description>
+    <portlet-name>SSOReverseProxyIFramePortlet</portlet-name>
+    <display-name>SSO ReverseProxy IFrame Portlet</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.sso.SSOReverseProxyIFramePortlet</portlet-class>
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/view/edit-prefs.vm</value>
+    </init-param>
+    <init-param>
+      <name>HelpPage</name>
+      <value>/WEB-INF/view/iframe-help.html</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>applications-internet.png</value>
+    </init-param>
+    <expiration-cache>300</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>SSOReverseProxyIFrame</title>
+      <short-title>SSOReverseProxyIFrame</short-title>
+      <keywords>tool,sso,reverse,proxy,iframe,web,frame,content,host</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>EDITABLEPREFS</name>
+        <value>TITLE, SRC, PROXYREMOTEURL, PROXYLOCALPATH, WIDTH, HEIGHT, MAX-WIDTH, MAX-HEIGHT, SCROLLING, AUTORESIZE, VISITLASTPAGE</value>
+      </preference>
+      <preference>
+        <name>TITLE</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>SRC</name>
+        <value>http://localhost:${serverPort}${contextPath}/examples/basicauth.jsp</value>
+      </preference>
+      <preference>
+        <name>PROXYREMOTEURL</name>
+        <value>http://localhost:${serverPort}/</value>
+      </preference>
+      <preference>
+        <name>PROXYLOCALPATH</name>
+        <value>${contextPath}/rproxy/localhost_${serverPort}/</value>
+      </preference>
+      <preference>
+        <name>AUTORESIZE</name>
+        <value>true</value>
+      </preference>
+      <preference>
+        <name>VISITLASTPAGE</name>
+        <value>true</value>
+      </preference>
+      <!--
+        Don't specify a HEIGHT if you want a normal filled out layout
+        because percentage values result in the content not to be
+        displayed on IE6. Specific values are ok though.
+      -->
+      <preference>
+        <name>HEIGHT</name>
+        <value>300</value>
+      </preference>
+      <preference>
+        <name>WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>MAX-HEIGHT</name>
+        <value>800</value>
+      </preference>
+      <preference>
+        <name>MAX-WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>SCROLLING</name>
+        <value>AUTO</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+  
+  <portlet id="SSOFormBasedAuthReverseProxyIFramePortlet">
+    <description>Places an HTML IFrame with reverse proxied url
+      , with Jetspeed SSO enabled,
+      inside a portlet for easily
+      hosting other
+      web application within a
+      portlet. Sizes of both
+      normal and maximized
+      modes are configurable
+      in edit mode.</description>
+    <portlet-name>SSOFormBasedAuthReverseProxyIFramePortlet</portlet-name>
+    <display-name>SSO Form Based Authentication Reverse Proxy IFrame Portlet</display-name>
+    <portlet-class>
+      org.apache.jetspeed.portlets.sso.SSOReverseProxyIFramePortlet</portlet-class>
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/view/edit-prefs.vm</value>
+    </init-param>
+    <init-param>
+      <name>HelpPage</name>
+      <value>/WEB-INF/view/iframe-help.html</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>applications-internet.png</value>
+    </init-param>
+    <expiration-cache>300</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>SSOFormBasedAuthReverseProxyIFrame</title>
+      <short-title>SSOFormBasedAuthReverseProxyIFrame</short-title>
+      <keywords>tool,sso,form,auth,reverse,proxy,iframe,web,frame,content,host</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>EDITABLEPREFS</name>
+        <value>TITLE, SRC, PROXYREMOTEURL, PROXYLOCALPATH, WIDTH, HEIGHT, MAX-WIDTH, MAX-HEIGHT, SCROLLING, AUTORESIZE, VISITLASTPAGE</value>
+      </preference>
+      <preference>
+        <name>TITLE</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>SRC</name>
+        <value>http://localhost:${serverPort}${contextPath}/examples/formauth.jsp</value>
+      </preference>
+      <preference>
+        <name>PROXYREMOTEURL</name>
+        <value>http://localhost:${serverPort}/</value>
+      </preference>
+      <preference>
+        <name>PROXYLOCALPATH</name>
+        <value>${contextPath}/rproxy/localhost_${serverPort}/</value>
+      </preference>
+      <preference>
+        <name>AUTORESIZE</name>
+        <value>true</value>
+      </preference>
+      <preference>
+        <name>VISITLASTPAGE</name>
+        <value>true</value>
+      </preference>
+      <!--
+        Don't specify a HEIGHT if you want a normal filled out layout
+        because percentage values result in the content not to be
+        displayed on IE6. Specific values are ok though.
+      -->
+      <preference>
+        <name>HEIGHT</name>
+        <value>300</value>
+      </preference>
+      <preference>
+        <name>WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>MAX-HEIGHT</name>
+        <value>800</value>
+      </preference>
+      <preference>
+        <name>MAX-WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>SCROLLING</name>
+        <value>AUTO</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="SSOIFrame">
+    <description>Places an HTML IFrame inside a portlet for easily
+      hosting other web application within a portlet. Sizes of both
+      normal and maximized modes are configurable in edit mode.
+      Additional Single-Signon Support to automatically log on this
+      portlet to other web sites.</description>
+    <portlet-name>SSOIFramePortlet</portlet-name>
+    <display-name>SSO IFrame Portlet</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.sso.SSOIFramePortlet</portlet-class>
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/security/sso/sso-edit-prefs.vm</value>
+    </init-param>
+    <init-param>
+      <name>HelpPage</name>
+      <value>/WEB-INF/security/sso/iframe-help.html</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-software-update.png</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>SSO IFrame</title>
+      <short-title>SSO</short-title>
+      <keywords>
+        frame,tool,iframe,SSO,single,sign-on,security,web,content,host</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>EDITABLEPREFS</name>
+        <value>
+          TITLE, SRC, WIDTH, HEIGHT, MAX-WIDTH, MAX-HEIGHT, SCROLLING, AUTORESIZE, VISITLASTPAGE,
+          sso.type, sso.url.Principal, sso.url.Credential, 
+          sso.form.Action, sso.form.Principal, sso.form.Credential, sso.form.Args
+        </value>
+      </preference>
+      <preference>
+        <name>TITLE</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>SRC</name>
+        <value>/demo/sso-demo</value>
+      </preference>
+      <preference>
+        <name>HEIGHT</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>MAX-HEIGHT</name>
+        <value>800</value>
+      </preference>
+      <preference>
+        <name>MAX-WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>VISITLASTPAGE</name>
+        <value>true</value>
+      </preference>
+      <preference>
+        <name>sso.type</name>
+        <value>url.base64</value>
+      </preference>
+      <preference>
+        <name>sso.url.Principal</name>
+        <value>sso-principal</value>
+      </preference>
+      <preference>
+        <name>sso.url.Credential</name>
+        <value>sso-credential</value>
+      </preference>
+      <preference>
+        <name>sso.form.Action</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>sso.form.Principal</name>
+        <value>USERID</value>
+      </preference>
+      <preference>
+        <name>sso.form.Credential</name>
+        <value>PASSWORD</value>
+      </preference>
+      <preference>
+        <name>sso.form.Args</name>
+        <value>Submit2=Log In;OP=;OQ=;is_continue=false</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+  
+  <portlet id="SSOWebContent">
+    <description>Includes the content of another website inside the portal without using frames. All links are rewritten back to the portal to attempt to proxy all content through the portal. Additional Single-Signon Support to automatically log on this portlet to other web sites and manage sessions.</description>                
+    <portlet-name>SSOWebContentPortlet</portlet-name>
+    <display-name>SSO WebContent Portlet</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.sso.SSOWebContentPortlet</portlet-class>        
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/security/sso/sso-edit-prefs.vm</value>
+    </init-param>
+    <init-param>
+      <name>HelpPage</name>
+      <value>/WEB-INF/security/sso/sso-webcontent-help.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-software-update.png</value>
+    </init-param>                        
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>        
+    <portlet-info>
+      <title>SSO Web Content</title>
+      <short-title>SSO Content</short-title>
+      <keywords>web,content,webnav,bridge,proxy,rewrite,SSO,single,sign-on</keywords>
+    </portlet-info>
+    <portlet-preferences>            
+      <!--  NY TIMES EXAMPLE, user ID is 'jetspeed_test0' and password is 'jetspeed' -->
+      <preference>
+        <name>SRC</name>
+        <value>http://www.nytimes.com</value>
+      </preference>
+      <preference>
+        <name>PROXYHOST</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>PROXYPORT</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>sso.type</name>
+        <value>form</value>
+      </preference>
+      <preference>
+        <name>sso.form.Action</name>
+        <value>http://www.nytimes.com/auth/login</value>
+      </preference>
+      <preference>
+        <name>sso.form.Principal</name>
+        <value>USERID</value>
+      </preference>
+      <preference>
+        <name>sso.form.Credential</name>
+        <value>PASSWORD</value>
+      </preference>
+      <preference>
+        <name>sso.form.Args</name>
+        <value>Submit2=Log In;OP=;OQ=;is_continue=false</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="SSODemoHelp">
+    <description>SSO Demo help information, contains credentials for SSO demo portlets.</description>
+    <portlet-name>SSODemoHelp</portlet-name>
+    <display-name>SSO Demo Help</display-name>
+    <portlet-class>org.apache.portals.gems.file.FilePortlet</portlet-class>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>folder-remote.png</value>
+    </init-param>                                        
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>SSO Demo Help</title>
+      <short-title>SSO Help</short-title>
+      <keywords>SSO,demo,help</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>file</name>
+        <value>/WEB-INF/security/sso/sso-demo.html</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+    
+  <portlet id="SSOProxyPortlet">
+    <description>SSO Proxy Portlet</description>
+    <portlet-name>SSOProxyPortletPortlet</portlet-name>
+    <display-name>SSOProxyPortlet</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.sso.SSOProxyPortlet</portlet-class>      
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/security/sso/edit-sso-proxy.vm</value>
+    </init-param>
+    
+    <expiration-cache>-1</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>SSOProxyPortlet</title>
+      <short-title>SSOProxyPortlet</short-title>
+      <keywords>SSO,Proxy,Security</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>ForceSSORefresh</name>
+        <value>false</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>    
+
+  <portlet id="RegistryApplicationsList">
+    <description>The Portlet Registry Manager Application List displays a lost of portlet applications deployed to this portal registry. From here you deploy, undeploy, start, stop and edit portlet applications.</description>
+    <portlet-name>RegistryApplicationsList</portlet-name>
+    <display-name>Registry Applications List</display-name>
+    <portlet-class>org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>editPage</name>
+      <value>/prm/edit</value>
+    </init-param>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/prm</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>    
+    <portlet-info>
+      <title>Registry Applications List</title>
+      <short-title>Applications</short-title>
+      <keywords>admin,registry,list,applications,apps,portlets,PRM</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>appRows</name>
+        <value>10</value>
+      </preference>
+      <preference>
+        <name>portletRows</name>
+        <value>10</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+  
+  <portlet id="ApplicationDetails">
+    <description>Application Details List</description>
+    <portlet-name>ApplicationDetails</portlet-name>
+    <display-name>Application Details</display-name>
+    <portlet-class>org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>editPage</name>
+      <value>/pad/edit</value>
+    </init-param>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/pad</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>    
+    <portlet-info>
+      <title>Application Details</title>
+      <short-title>Applications</short-title>
+      <keywords>admin,registry,list,applications,apps,portlets,PRM</keywords>
+    </portlet-info>
+  </portlet>
+  
+  <portlet id="WicketPortletDetails">
+    <description>Portlet Details Manager</description>
+    <portlet-name>PortletDetailsManager</portlet-name>
+    <display-name>Portlet Details Manager</display-name>
+    <portlet-class>org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>editPage</name>
+      <value>/pdm/edit</value>
+    </init-param>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/pdm</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>    
+    <portlet-info>
+      <title>Portlet Details</title>
+      <short-title>Applications</short-title>
+      <keywords>admin,registry,list,portlet,details,apps,portlets,PRM</keywords>
+    </portlet-info>
+  </portlet>
+
+  <portlet id="MFALogin">
+    <description>MFA Login</description>
+    <portlet-name>MFALogin</portlet-name>
+    <display-name>MFA Login</display-name>
+    <portlet-class>org.apache.jetspeed.security.mfa.portlets.MFALogin</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/mfa/login1.jsp</value>
+    </init-param>
+    
+    <init-param>
+      <name>cookieLifetime</name>
+      <value>345600</value>
+    </init-param>
+
+    <init-param>
+      <name>maxNumberOfAuthenticationFailures</name>
+      <value>5</value>
+    </init-param>
+    
+    <init-param>
+      <name>randomQuestions</name>
+      <value>What was the first and last name of your favorite teacher?
+             What was your favorite sport, team, or athlete when you were 16?
+             What was your favorite place to visit when you were 16?
+             Who was your favorite actor, musician, or artist when you were in high-school?
+             What is the first name of your first boyfriend?
+             What is the first name of your first girlfriend?
+             What is the name of your first elementary school?
+             What was the high school mascot at the last high school you attended?
+             In what city was your first elementary school?
+             In what city was your mother born?
+             In what city was your father born?
+             What is the first name of your maternal grandmother (your mother's mother)?
+             What is the first name of your paternal grandmother (your father's mother)?
+             What is the first name of your maternal grandfather (your mother's father)?
+             What is the first name of your paternal grandfather (your father's father)?
+             Who was your first employer?
+             In what city did you meet your spouse?
+             What was the first name of your first roommate during college?
+             In what city did you get married?
+             How old were you at your wedding?
+             What was the first name of the best man at your wedding?
+             What was the first name of the maid of honor at your wedding?</value>
+    </init-param>
+    
+    <init-param>
+      <name>failOnMisconfiguredUser</name>
+      <value>false</value>
+    </init-param>
+ 
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Login</title>
+      <short-title>Login</short-title>
+      <keywords>MFA, login</keywords>
+    </portlet-info>
+    <portlet-preferences>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="UserChooser">        
+    <description>A Popup portlet for selecting a single user from a list of users. Usually not placed on a page directly, but accessed by Jetspeed over the portlet pipeline in a popup window.</description>
+    <description xml:lang="ja">ユーザー一覧からユーザーを選択するポップアップポートレットです。通常、直接ページ上には置かれません。ポップアップウィンドウ内でポートレットのパイプライン外でポータルからアクセスされます。</description>
+    <description xml:lang="zh">选择用户的Portlet</description>
+    <description xml:lang="zh-TW">選擇用戶的Portlet</description>        
+    <portlet-name>UserChooser</portlet-name>
+    <display-name>User Chooser (popup)</display-name>
+    <display-name xml:lang="ja">ユーザー選択(ポップアップ)</display-name>
+    <display-name xml:lang="zh">用户</display-name>
+    <display-name xml:lang="zh-TW">用戶</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.security.choosers.UserChooserPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/choosers/user-chooser.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>system-users.png</value>
+    </init-param>                                                                                   
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.security.resources.SecurityResources</resource-bundle>
+    <portlet-info>
+      <title>User Select</title>
+      <short-title>Users</short-title>
+      <keywords>users,selector,chooser,popup</keywords>
+    </portlet-info>        
+    <portlet-preferences>
+      <preference>
+        <name>WindowSize</name>
+        <value>1000</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+      
+  <portlet id="GroupChooser">
+    <description>A Popup portlet for selecting a single group from a list of groups. Usually not placed on a page directly, but accessed by Jetspeed over the portlet pipeline in a popup window.</description>        
+    <description xml:lang="ja">グループ一覧からグループを選択するポップアップポートレットです。通常、ページ上には置かれません。ポップアップウィンドウ内でポートレットのパイプライン外でポータルからアクセスされます。</description>
+    <description xml:lang="zh">选择组的Portlet</description>
+    <description xml:lang="zh-TW">選擇組的Portlet</description>        
+    <portlet-name>GroupChooser</portlet-name>
+    <display-name>Group Chooser (popup)</display-name>
+    <display-name xml:lang="ja">グループ選択(ポップアップ)</display-name>
+    <display-name xml:lang="zh">组</display-name>
+    <display-name xml:lang="zh-TW">組</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.security.choosers.GroupChooserPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/choosers/group-chooser.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>network-workgroup.png</value>
+    </init-param>                                                    
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.security.resources.SecurityResources</resource-bundle>
+    <portlet-info>
+      <title>Group Select</title>
+      <short-title>Groups</short-title>
+      <keywords>groups,selector,chooser,popup</keywords>
+    </portlet-info>        
+    <portlet-preferences>
+      <preference>
+        <name>WindowSize</name>
+        <value>1000</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="RoleChooser">
+    <description>A Popup portlet for selecting a single role from a list of roles. Usually not placed on a page directly, but accessed by Jetspeed over the portlet pipeline in a popup window.</description>
+    <description xml:lang="ja">ロール一覧からロールを選択するポップアップポートレットです。通常、ページ上には置かれません。ポップアップウィンドウ内でポートレットのパイプライン外でポータルからアクセスされます。</description>
+    <description xml:lang="zh">选择角色的Portlet</description>
+    <description xml:lang="zh-TW">選擇角色的Portlet</description>        
+    <portlet-name>RoleChooser</portlet-name>
+    <display-name>Role Chooser (popup)</display-name>
+    <display-name xml:lang="ja">ロール選択(ポップアップ)</display-name>
+    <display-name xml:lang="zh">角色</display-name>
+    <display-name xml:lang="zh-TW">角色</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.security.choosers.RoleChooserPortlet</portlet-class>
+    <init-param>
+      <description>This parameter sets the template used in view mode.</description>
+      <name>ViewPage</name>
+      <value>/WEB-INF/security/choosers/role-chooser.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>preferences-desktop-theme.png</value>
+    </init-param>                                                                    
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.security.resources.SecurityResources</resource-bundle>
+    <portlet-info>
+      <title>Role Select</title>
+      <short-title>Roles</short-title>
+      <keywords>roles,selector,chooser,popup</keywords>
+    </portlet-info>        
+    <portlet-preferences>
+      <preference>
+        <name>WindowSize</name>
+        <value>1000</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="CacheMonitor">
+    <description>Monitor the Jetspeed Caches.</description>
+    <portlet-name>CacheMonitor</portlet-name>
+    <display-name>Cache Monitor</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.cache.CacheMonitorPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/cache/cacheMonitor.jsp</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.cache.resources.CacheMonitorResources</resource-bundle>
+    <portlet-info>
+      <title>Cache Monitor</title>
+      <short-title>Cache</short-title>
+      <keywords>cache,monitor,memory,admin</keywords>            
+    </portlet-info>
+  </portlet>
+
+  <portlet id="DevelopersBrowser">
+    <description>The User Browser displays a list of users managed in this
+      portal. From here you can select users for editing.</description>
+    <portlet-name>DevelopersBrowser</portlet-name>
+    <display-name>Developers User Browser</display-name>
+    <portlet-class>org.apache.wicket.protocol.http.portlet.WicketPortlet</portlet-class>
+    <init-param>
+      <name>wicketFilterPath</name>
+      <value>/jetspeedPrincipalManagement</value>
+    </init-param>
+    <init-param>
+      <name>editPage</name>
+      <value>/jetspeedPrincipalManagement/builder</value>
+    </init-param>
+    <init-param>
+      <name>principalParam</name>
+      <value>user</value>
+    </init-param>
+    <supports>
+      <mime-type>*/*</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Developer Browser</title>
+      <short-title>Developers</short-title>
+      <keywords>admin,security,developers,delegated security</keywords> 
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>defaultRole</name>
+        <value>user</value>
+      </preference>
+      <preference>
+        <name>defaultProfile</name>
+        <value>user-role-fallback</value>
+      </preference>
+      <preference>
+        <name>newUserTemplateDirectory</name>
+        <value>/_template/dev/</value>
+      </preference>
+      <preference>
+        <name>requiredRole</name>
+        <value>dev</value>
+      </preference>
+      <preference>
+        <name>subsiteRootFolder</name>
+        <value>/__subsite-root/_hostname/</value>
+      </preference>
+      <preference>
+        <name>defaultSubsite</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>filteredRole</name>
+        <value>dev</value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet id="JetspeedToolbox">
+    <description>Jetspeed toolbox and portlet selection controller.</description>
+    <portlet-name>JetspeedToolbox</portlet-name>
+    <display-name>Jetspeed Toolbox</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.toolbox.JetspeedToolbox</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/toolbox/toolbox.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>linux.png</value>
+    </init-param>                        
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>            
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.toolbox.resources.JetspeedToolboxResources</resource-bundle>
+    <portlet-info>
+      <title>Jetspeed Toolbox</title>
+      <short-title>Toolbox</short-title>
+      <keywords>admin,toolbox,portlet,selector,chooser</keywords>                        
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>DefaultCategory</name>
+        <value>News</value>
+      </preference>
+      <preference>
+        <name>Categories</name>
+        <value>Administration,Finance,Fun,News,Security,Sports,Technology,Tools,Tutorial</value>
+      </preference>
+      <preference>
+        <name>Keywords:Administration</name>
+        <value>admin,management</value>
+      </preference>
+      <preference>
+        <name>Keywords:Finance</name>
+        <value>finance,stock,market,money,quote</value>
+      </preference>
+      <preference>
+        <name>Keywords:Fun</name>
+        <value>fun,game,cool</value>
+      </preference>
+      <preference>
+        <name>Keywords:News</name>
+        <value>news,RSS,feed,headline</value>
+      </preference>
+      <preference>
+        <name>Keywords:Security</name>
+        <value>security</value>
+      </preference>
+      <preference>
+        <name>Keywords:Sports</name>
+        <value>sport,football,baseball,hockey,soccer,golf,tennis</value>
+      </preference>
+      <preference>
+        <name>Keywords:Technology</name>
+        <value>technology,computer,web</value>
+      </preference>
+      <preference>
+        <name>Keywords:Tools</name>
+        <value>tools,desktop,weather</value>
+      </preference>            
+      <preference>
+        <name>Keywords:Tutorial</name>
+        <value>demo,learn,tutorial,programming</value>
+      </preference>    
+      <preference>
+        <name>Columns</name>                    
+        <value>4</value>
+      </preference>
+      <preference>
+        <name>Rows</name>                    
+        <value>7</value>
+      </preference>
+    </portlet-preferences>                
+  </portlet>
+
+  <portlet id="SpacesManager">
+    <description>Jetspeed Spaces Manager for maintaining spaces</description>
+    <portlet-name>SpacesManager</portlet-name>
+    <display-name>Spaces Manager</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.spaces.SpacesManager</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/spaces/spaces-manager.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>preferences-desktop-remote-desktop.png</value>
+    </init-param>                        
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>            
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.spaces.resources.SpacesResources</resource-bundle>
+    <portlet-info>
+      <title>Spaces Manager</title>
+      <short-title>Spaces</short-title>
+      <keywords>admin,spaces,space,manager</keywords>                        
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>spaceTemplate</name>
+        <value>/_template/space/</value>
+      </preference>
+      <!-- If the following pref is blank, then the default admin role and admin user is used. -->
+      <preference>
+        <name>spaceAdminRoles</name>
+        <value></value>
+      </preference>
+	</portlet-preferences>        
+  </portlet>
+ 
+   <portlet id="SpaceNavigator">
+    <description>Jetspeed spaces navigation management controller.</description>
+    <portlet-name>SpaceNavigator</portlet-name>
+    <display-name>Space Navigator</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.spaces.SpaceNavigator</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/spaces/space-navigator.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>lock.png</value>
+    </init-param>                        
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>            
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.spaces.resources.SpacesResources</resource-bundle>
+    <portlet-info>
+      <title>Space Navigator</title>
+      <short-title>SpaceNavigator</short-title>
+      <keywords>admin,spaces,space,navigator,pages,nav</keywords>                        
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>spaceEditPath</name>
+        <value>/spaces.psml</value>
+      </preference>
+      <!-- If the following pref is blank, then the default admin role and admin user is used. -->
+      <preference>
+        <name>spaceAdminRoles</name>
+        <value></value>
+      </preference>
+	</portlet-preferences>    
+  </portlet>
+
+   <portlet id="PageNavigator">
+    <description>Jetspeed page navigation management controller.</description>
+    <portlet-name>PageNavigator</portlet-name>
+    <display-name>Page Navigator</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.spaces.PageNavigator</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/spaces/page-navigator.jsp</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>EDIT</portlet-mode>            
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.spaces.resources.SpacesResources</resource-bundle>
+    <portlet-info>
+      <title>Page Navigator</title>
+      <short-title>PageNavigator</short-title>
+      <keywords>admin,spaces,space,navigator,pages,nav</keywords>                        
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>defaultTemplatePage</name>
+        <value>
+          /_template/new-user/min.psml
+        </value>
+      </preference>
+      <preference>
+        <name>templatePages</name>
+        <value>
+          /_template/new-user/min.psml
+          /_template/new-user/default-page.psml
+        </value>
+      </preference>
+      <!-- If the following pref is blank, then the default admin role and admin user is used. -->
+      <preference>
+        <name>spaceAdminRoles</name>
+        <value></value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+   <portlet id="SpacesList">
+    <description>Jetspeed Spaces Administrative List.</description>
+    <portlet-name>SpacesList</portlet-name>
+    <display-name>Spaces List</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.spaces.SpacesList</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/spaces/spaces-list.jsp</value>
+    </init-param>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.spaces.resources.SpacesResources</resource-bundle>
+    <portlet-info>
+      <title>Spaces List</title>
+      <short-title>Spaces</short-title>
+      <keywords>admin,spaces,space,pages,list</keywords>                        
+    </portlet-info>
+  </portlet>
+  
+   <portlet id="BreadcrumbMenu">
+    <description>Jetspeed Breadcrumb Menu widget</description>
+    <portlet-name>BreadcrumbMenu</portlet-name>
+    <display-name>Breadcrumb Menu</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.spaces.BreadcrumbMenu</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/spaces/breadcrumbs.jsp</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.spaces.resources.SpacesResources</resource-bundle>
+    <portlet-info>
+      <title>Breadcrumb Menu</title>
+      <short-title>Breadcrumb</short-title>
+      <keywords>admin,breadcrumb,menu,nav</keywords>                        
+    </portlet-info>
+  </portlet>
+  
+  <portlet id="JetspeedAjaxUserManager">
+    <description>Jetspeed Ajax User Manager, supporting paging.</description>
+    <portlet-name>JetspeedAjaxUserManager</portlet-name>
+    <display-name>Jetspeed Ajax User Manager</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.security.JetspeedUserManagement2Portlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/security/usermanager2.jsp</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>linux.png</value>
+    </init-param>                        
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>Jetspeed Ajax User Manager</title>
+      <short-title>Ajax User Manager</short-title>
+      <keywords>admin,user,ajax,paging,portlet</keywords>                        
+    </portlet-info>
+  </portlet>  
+      
+  <portlet>
+    <description>Portal DynamicPage enabled content portlet that displays content of another website inside the portal without using frames. All links are rewritten back to the portal to attempt to proxy all content through the portal.</description>        
+    <portlet-name>DynamicWebContentPortlet</portlet-name>
+    <display-name>Portal DynamicPage WebContent Portlet</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.content.DynamicWebContentPortlet</portlet-class>        
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/view/edit-prefs.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>preferences-system-network-proxy.png</value>
+    </init-param>                        
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>        
+    <portlet-info>
+      <title>Portal DynamicPage WebContent Portlet</title>
+      <short-title>DynamicWebContent</short-title>
+      <keywords>web,content,webnav,bridge,proxy,rewrite,dpsml</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>SRC</name>
+        <value>http://portals.apache.org/</value>
+      </preference>
+      <preference>
+        <name>PORTALPATH</name>
+        <value>/content/</value>
+      </preference>
+      <preference>
+        <name>PROXYHOST</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>PROXYPORT</name>
+        <value></value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+
+  <portlet>
+    <description>
+      Places an HTML IFrame inside a portlet for easily hosting other
+      web application content within a portlet. This portlet will display
+      a configured page when the current session is not logged in using
+      a specified OpenID provider. Sizes of both normal and maximized
+      modes are configurable in edit mode.
+    </description>
+    <portlet-name>OpenIDIFramePortlet</portlet-name>
+    <display-name>OpenID IFrame Portlet</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.openid.OpenIDIFramePortlet</portlet-class>
+    <init-param>
+      <name>EditPage</name>
+      <value>/WEB-INF/view/edit-prefs.vm</value>
+    </init-param>
+    <init-param>
+      <name>HelpPage</name>
+      <value>/WEB-INF/view/openid/openid-iframe-help.html</value>
+    </init-param>
+    <init-param>
+      <name>NotAvailableViewPage</name>
+      <value>/WEB-INF/view/openid/openid-not-available.vm</value>
+    </init-param>
+    <init-param>
+      <name>portlet-icon</name>
+      <value>applications-internet.png</value>
+    </init-param>
+    <expiration-cache>300</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>EDIT</portlet-mode>
+      <portlet-mode>VIEW</portlet-mode>
+      <portlet-mode>HELP</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <portlet-info>
+      <title>OpenID IFrame</title>
+      <short-title>OpenID IFrame</short-title>
+      <keywords>tool,iframe,web,frame,content,host</keywords>
+    </portlet-info>
+    <portlet-preferences>
+      <preference>
+        <name>EDITABLEPREFS</name>
+        <value>TITLE, SRC, WIDTH, HEIGHT, MAX-WIDTH, MAX-HEIGHT, SCROLLING, AUTORESIZE, VISITLASTPAGE, REQUIREDOPENIDPROVIDER</value>
+      </preference>
+      <preference>
+        <name>TITLE</name>
+        <value></value>
+      </preference>
+      <preference>
+        <name>SRC</name>
+        <value>http://portals.apache.org/</value>
+      </preference>
+      <!-- You can set AUTORESIZE to true when the SRC can be in the same domain of the portal web pages. -->
+      <preference>
+        <name>AUTORESIZE</name>
+        <value>false</value>
+      </preference>
+      <!-- You can set VISITLASTPAGE to true when the SRC can be in the same domain of the portal web pages. -->
+      <preference>
+        <name>VISITLASTPAGE</name>
+        <value>false</value>
+      </preference>
+      <!--
+        Don't specify a HEIGHT if you want a normal filled out layout
+        because percentage values result in the content not to be
+        displayed on IE6. Specific values are ok though.
+      -->
+      <preference>
+        <name>HEIGHT</name>
+        <value>300</value>
+      </preference>
+      <preference>
+        <name>WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>MAX-HEIGHT</name>
+        <value>800</value>
+      </preference>
+      <preference>
+        <name>MAX-WIDTH</name>
+        <value>100%</value>
+      </preference>
+      <preference>
+        <name>SCROLLING</name>
+        <value>AUTO</value>
+      </preference>
+      <preference>
+        <name>REQUIREDOPENIDPROVIDER</name>
+        <value></value>
+      </preference>
+    </portlet-preferences>
+  </portlet>
+  
+  <portlet id="PortletCloneManager">
+    <description>Create Portlet Clone</description>
+    <portlet-name>PortletCloneManager</portlet-name>
+    <display-name>Portlet Clone Manager</display-name>
+    <portlet-class>org.apache.jetspeed.portlets.clone.PortletCloneManagerPortlet</portlet-class>
+    <init-param>
+      <name>ViewPage</name>
+      <value>/WEB-INF/view/prm/portlet-clone-manager-view.jsp</value>
+    </init-param>
+    <expiration-cache>0</expiration-cache>
+    <supports>
+      <mime-type>text/html</mime-type>
+      <portlet-mode>VIEW</portlet-mode>
+    </supports>
+    <supported-locale>en</supported-locale>
+    <supported-locale>ja</supported-locale>
+    <resource-bundle>org.apache.jetspeed.portlets.clone.resources.PortletCloneManagerResources</resource-bundle>
+    <portlet-info>
+      <title>Create Portlet Clone</title>
+      <short-title>Portlet Clone Manager</short-title>
+      <keywords>clone,portlet,management,admin</keywords>
+    </portlet-info>
+  </portlet>
+  
+  <custom-portlet-mode>
+    <description>Custom About Mode</description>
+    <portlet-mode>about</portlet-mode>
+  </custom-portlet-mode>
+  <custom-portlet-mode>
+    <description>Custom Config Mode</description>
+    <portlet-mode>config</portlet-mode>
+  </custom-portlet-mode>
+  <custom-portlet-mode>
+    <description>Custom Edit_defaults Mode</description>
+    <portlet-mode>edit_defaults</portlet-mode>
+  </custom-portlet-mode>
+  <custom-portlet-mode>
+    <description>Custom Preview Mode</description>
+    <portlet-mode>preview</portlet-mode>
+  </custom-portlet-mode>
+  <custom-portlet-mode>
+    <description>Custom Print Mode</description>
+    <portlet-mode>print</portlet-mode>
+  </custom-portlet-mode>
+  
+</portlet-app>

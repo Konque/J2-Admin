@@ -1,0 +1,1205 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+#set($rc = $model.get("renderRequest").getAttribute("org.apache.jetspeed.request.RequestContext"))
+#set($req = $rc.Request)
+
+<div dojoType="LayoutContainer"
+     layoutChildPriority="left-right"
+     style="width: 100%">
+    
+    <div id="mainTabContainer" dojoType="TabContainer" selectedChild="defs" doLayout="false">
+
+        <div id="defs" dojoType="ContentPane" label="Definitions">
+            <div class="tableContainer">
+                <table dojoType="jetspeed:EditorTable" widgetId="defsTable" class="constraints" 
+                       headClass="fixedHeader" tbodyClass="scrollContent" 
+                       enableMultipleSelect="true" enableAlternateRows="true" 
+                       rowAlternateClass="alternateRow" 
+                       templateCssPath="/j2-admin/css/security-constraints.css" 
+                       cellpadding="0" cellspacing="0" border="0">
+
+                    <col width="70%"></col>
+                    <col width="30%"></col>
+
+                    <thead>
+                        <tr>
+                            <th field="name" dataType="String">Definition Name</th>
+                            <th field="owner" dataType="String">Owner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div> <!-- tableContainer --> 
+        </div> <!-- defs -->
+
+        <div id="globals" dojoType="ContentPane" label="Globals">
+            <div class="tableContainer">
+                <table dojoType="jetspeed:EditorTable" widgetId="globalsTable" class="constraints" 
+                       headClass="fixedHeader" tbodyClass="scrollContent" 
+                       enableMultipleSelect="true" enableAlternateRows="true" 
+                       rowAlternateClass="alternateRow" 
+                       templateCssPath="/j2-admin/css/security-constraints.css" 
+                       cellpadding="0" cellspacing="0" border="0">
+
+                    <col width="100%"></col>
+
+                    <thead>
+                        <tr>
+                            <th field="name" dataType="String">Global Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div> <!-- tableContainer --> 
+        </div> <!-- globals --> 
+    </div> <!-- mainTabContainer -->
+
+    <div dojoType="LayoutContainer"
+         layoutChildPriority='none'
+         style="width: 100%; height: 200px; border: 1px solid grey;">
+        
+        <div dojoType="LayoutContainer"
+             widgetId="editorTop"
+             minHeight="20"
+             layoutAlign="top"
+             style="padding: 4px; border-bottom: thin inset grey; width: 100%; height: 85px">
+
+            <div dojoType="LayoutContainer"
+                 widgetId="entryNameContainer"
+                 minHeight="20"
+                 layoutAlign="left"
+                 style="padding: 4px; border-right: thin inset grey; width: 70%; height: 55px">
+                <b>Name</b><br/>
+                <input name="entryName" id="entryName" type="text" size="50" onChange="updateSelectedRow()"/>
+            </div>
+
+            <div dojoType="LayoutContainer"
+                 widgetId="editorControls"
+                 minHeight="20"
+                 layoutAlign="right"
+                 style="width: 20%; height: 85px">
+                <div class="buttonbox">
+                    <button widgetId="newButton" dojoType="Button" onclick="newEntry()">
+                        New
+                    </button>
+                    <button widgetId="saveButton" dojoType="Button" onclick="saveEntry()">
+                        Save
+                    </button>
+                    <button widgetId="revertButton" dojoType="Button" onclick="revertEntry()">
+                        Revert
+                    </button>
+                    <button widgetId="deleteButton" dojoType="Button" onclick="deleteEntry()">
+                        Delete
+                    </button>
+                    <button widgetId="openConstraints" dojoType="Button" onclick="openConstraints()">
+                        Edit Constraints
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <div dojoType="LayoutContainer"
+             widgetId="editorBottom"
+             minHeight="20"
+             layoutAlign="top"
+             style="padding: 4px; border-bottom: thin inset grey; width: 100%; height: 85px">
+            <div dojoType="LayoutContainer"
+                 widgetId="ownerNameContainer"
+                 minHeight="20"
+                 layoutAlign="left"
+                 style="padding: 4px; border-right: thin inset grey; width: 70%; height: 55px">
+                <b>Owner</b><br/>
+                <input name="ownerName" id="ownerName" type="text" size="30" onChange="updateSelectedRow()"/>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+<div dojoType="dialog" id="constraintsDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250">
+	<form onsubmit="return false;">
+        <div id="constraintsEditorPane" dojoType="ContentPane" label="Constraints" class="constraints">
+            <div style="height:21px; padding: 2px"><b>Constraints for Definition Name:&nbsp;</b><span id="constraintsEditorDefName"></span></div>
+            <div class="constraintsTableDiv">
+                <table dojoType="jetspeed:EditorTable" widgetId="constraintsTable" class="constraints"
+                       headClass="fixedHeader" tbodyClass="scrollContent" 
+                       enableMultipleSelect="true" enableAlternateRows="true" 
+                       rowAlternateClass="alternateRow" 
+                       templateCssPath="/j2-admin/css/security-constraints.css" 
+                       cellpadding="0" cellspacing="0" border="0">
+
+                    <col width="29%"></col>
+                    <col width="29%"></col>
+                    <col width="29%"></col>
+                    <col width="13%"></col>
+
+                    <thead>
+                        <tr>
+                            <th field="roles" dataType="String">Roles</th>
+                            <th field="groups" dataType="String">Groups</th>
+                            <th field="actions" dataType="String">Actions</th>
+                            <th field="users" dataType="String">Users</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+            </div>
+
+            <div dojoType="LayoutContainer"
+                 layoutChildPriority='none'
+                 style="width: 100%; height: 210px; border: 1px solid grey;">
+                
+                <div dojoType="LayoutContainer"
+                     widgetId="constraintsEditorTop"
+                     minHeight="20"
+                     layoutAlign="top"
+                     style="padding: 4px; border-bottom: thin inset grey; width: 100%; height: 55px">
+
+                    <div dojoType="LayoutContainer"
+                         widgetId="constraintUsersContainer"
+                         minHeight="20"
+                         layoutAlign="left"
+                         style="padding: 4px; border-right: thin inset grey; width: 70%; height: 55px">
+                        <b>Users</b><br/>
+                        <input name="constraintUsers" id="constraintUsers" type="text" size="60" onChange="updateSelectedConstraintsRow()"/>
+                    </div>
+
+                    <div dojoType="LayoutContainer"
+                         widgetId="constraintsEditorControls"
+                         minHeight="20"
+                         layoutAlign="right"
+                         style="width: 20%; height: 55px">
+                        <div class="buttonbox">
+                            <button widgetId="newConstraintButton" dojoType="Button" onclick="newConstraintsEntry()">
+                                New
+                            </button>
+                            <button widgetId="deleteConstraintButton" dojoType="Button" onclick="deleteConstraintsEntry()">
+                                Delete
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div dojoType="LayoutContainer"
+                     widgetId="rolesContainer"
+                     minHeight="20"
+                     layoutAlign="left"
+                     style="padding: 4px; border-right: thin inset grey; width: 27%; height: 120px; overflow-y: auto; overflow-x: hidden">
+                    <b>Roles</b><br/>
+                    #foreach ($role in $model.get("roles"))
+                    <input type="checkbox" name="role_$velocityCount" id="role_$velocityCount" dojoType="Checkbox"/> <label for="role_$velocityCount">$role.Name</label><br/>
+                    #end
+                </div>
+                <div dojoType="LayoutContainer"
+                     widgetId="groupsContainer"
+                     minHeight="20"
+                     layoutAlign="left"
+                     style="padding: 4px; border-right: thin inset grey; width: 27%; height: 120px; overflow-y: auto; overflow-x: hidden">
+                    <b>Groups</b><br/>
+                    #foreach ($group in $model.get("groups"))
+                    <input type="checkbox" name="group_$velocityCount" id="group_$velocityCount" dojoType="Checkbox"/> <label for="group_$velocityCount">$group.Name</label><br/>
+                    #end
+                </div>
+                <div dojoType="LayoutContainer"
+                     widgetId="actionsContainer"
+                     minHeight="20"
+                     layoutAlign="left"
+                     style="padding: 4px; width: 27%; height: 120px; overflow-y: auto; overflow-x: hidden">
+                    <b>Actions</b><br/>
+                    <input type="checkbox" name="actionview" id="actionview" dojoType="Checkbox" /> <label for="actionview">View</label><br />
+                    <input type="checkbox" name="actionedit" id="actionedit" dojoType="Checkbox" /> <label for="actionedit">Edit</label><br />
+                    <input type="checkbox" name="actionhelp" id="actionhelp" dojoType="Checkbox" /> <label for="actionhelp">Help</label><br />
+                    <input type="checkbox" name="actionabout" id="actionabout" dojoType="Checkbox" /> <label for="actionabout">About</label><br />
+                    <input type="checkbox" name="actionconfig" id="actionconfig" dojoType="Checkbox" /> <label for="actionconfig">Config</label><br />
+                    <input type="checkbox" name="actionedit_defaults" id="actionedit_defaults" dojoType="Checkbox" /> <label for="actionedit_defaults">Edit Defaults</label><br />
+                    <input type="checkbox" name="actionprint" id="actionprint" dojoType="Checkbox" /> <label for="actionprint">Print</label><br />                    
+                </div>
+            </div>
+
+            <div dojoType="LayoutContainer"
+                         widgetId="constraintsEditorBottom"
+                         minHeight="20"
+                         layoutAlign="bottom"
+                         style="padding: 4px; width: 100%; height: 30px">
+                <div dojoType="LayoutContainer"
+                     widgetId="constraintsEditorBottomLeft"
+                     minHeight="20"
+                     layoutAlign="left"
+                     style="padding: 4px; width: 78%; height: 30px">
+                </div>
+                <div dojoType="LayoutContainer"
+                     widgetId="constraintsEditorBottomRight"
+                     minHeight="20"
+                     layoutAlign="right"
+                     style="padding: 4px; border-right: thin inset grey; width: 18%; height: 30px">
+                    <div class="buttonbox">
+                        <button dojoType="Button" onClick="dojo.widget.byId( 'constraintsDialog' ).hide();" >Cancel</button>
+                        <button dojoType="Button" onClick="propagateConstraintsChanges();">OK</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+	</form>
+</div>
+
+<div dojoType="dialog" id="SaveWarningDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250">
+	<form onsubmit="return false;">
+		<table>
+			<tr>
+                <td>Please Save or Revert changes to the selected constraints definition before proceeding.</td><td>&nbsp;</td>
+            </tr>
+			<tr>
+				<td colspan="2" align="right" class="buttonboxright">
+                    <button dojoType="Button" onClick="dojo.widget.byId( 'SaveWarningDialog' ).hide();" >Cancel</button>
+					<button dojoType="Button" onClick="dojo.widget.byId( 'SaveWarningDialog' ).hide(); revertEntry();">Revert</button>
+                    <button dojoType="Button" onClick="dojo.widget.byId( 'SaveWarningDialog' ).hide(); saveEntry();">Save</button>
+                </td>
+			</tr>
+		</table>
+	</form>
+</div>
+
+<script language="JavaScript" type="text/javascript">
+    rolePrincipals = new Array();
+#foreach ($role in $model.get("roles"))
+    rolePrincipals.push( "$role.Name" );
+#end
+    groupPrincipals = new Array();
+#foreach ($group in $model.get("groups"))
+    groupPrincipals.push( "$group.Name" );
+#end
+    actionNames = new Array();
+    actionNames.push( "view" );
+    actionNames.push( "edit" );
+    actionNames.push( "help" );
+    actionNames.push( "about" );
+    actionNames.push( "config" );
+    actionNames.push( "edit_defaults" );
+    actionNames.push( "print" );    
+</script>
+
+<script language="JavaScript" type="text/javascript">
+
+function newDefintionPrototype()
+{
+    return { name: "", owner: "" };
+}
+function newGlobalPrototype()
+{
+    return { name: "" };
+}
+function newConstraintPrototype()
+{
+    return { roles: "", groups: "", actions: "", users: "", ownerOnly: false };
+}
+
+function processTableRowEvent(e, tableName)
+{
+    dojo.widget.byId( tableName ).processTableRowEvent( e );
+}
+function openConstraints()
+{
+    var tblWidget = getTableWidget();
+    var selectedRowData = tblWidget.getSelectedRow();
+    
+    // populate constraintsTable
+
+    var masterData = tblWidget.getData( tblWidget.js_masterdata, selectedRowData.Id );
+    if ( ! masterData ) { dojo.raise( "openConstraints can't find masterdata" ) ; dojo.debugShallow( selectedRowData ); return; } 
+    var constraintsTable = dojo.widget.byId( "constraintsTable" );
+    var constraintsKey = getConstraintsKey( tblWidget.js_type, selectedRowData.Id );
+    var constraints = constraintsByTypeId[ constraintsKey ];
+    var data = [] ;
+    if ( constraints != null )
+    {
+        for ( var i = 0 ; i < constraints.length; i++ )
+        {
+            data.push( dojo.lang.shallowCopy( constraints[ i ] ) );
+        }
+    }
+    constraintsTable.js_masterdata = data;
+    constraintsTable.js_type = "constraintsEditor";
+    constraintsTable.js_def_id = selectedRowData.Id;
+    constraintsTable.js_has_modifications = false ;
+    constraintsTable.parseData( constraintsTable.js_masterdata );
+    constraintsTable.render( true );
+
+    clearAndDisableConstraintsEditor();
+
+    var nameSpan = dojo.byId( "constraintsEditorDefName" );
+    nameSpan.innerHTML = selectedRowData.name;
+    
+    dojo.widget.byId("constraintsDialog").show();
+}
+function updateEditor( rowData, tTableWidget )
+{
+    if ( ! tTableWidget )
+        tTableWidget = getTableWidget();
+    var entryNameTextBox = dojo.byId( "entryName" );
+    if ( tTableWidget.entryIsNew( rowData ) )
+    {
+        entryNameTextBox.disabled = false;
+    }
+    else
+    {
+        entryNameTextBox.disabled = true;
+    }
+    entryNameTextBox.value = rowData.name;
+
+    var ownerNameTextBox = dojo.byId( "ownerName" );
+    if ( ownerNameTextBox )
+    {
+        var ownerContainer = dojo.widget.byId( "ownerNameContainer" );
+        if ( tTableWidget.js_type == "defs" )
+        {
+            ownerContainer.show();
+            ownerNameTextBox.disabled = false;
+            ownerNameTextBox.value = rowData.owner;
+        }
+        else
+        {
+           ownerContainer.hide();
+        }
+    }
+
+    updateEditorControls( tTableWidget );
+}
+
+function btnSetDisabled( btnWidget, /* Boolean */ disabled )
+{
+    if ( ! btnWidget ) return;
+    if ( btnWidget.disabled != disabled ) // bug in widget if called multiple times with same value
+        btnWidget.setDisabled(disabled);
+}
+
+function clearAndDisableEditor( tTableWidget )
+{
+    if ( ! tTableWidget )
+        tTableWidget = getTableWidget();
+    var entryNameTextBox = dojo.byId( "entryName" );
+    if ( entryNameTextBox )
+    {
+        entryNameTextBox.value = "";
+        entryNameTextBox.disabled = true;
+    }
+
+    var ownerNameTextBox = dojo.byId( "ownerName" );
+    if ( ownerNameTextBox )
+    {
+        var ownerContainer = dojo.widget.byId( "ownerNameContainer" );
+        if ( tTableWidget.js_type == "defs" )
+        {
+            ownerContainer.show();
+            ownerNameTextBox.value = "";
+            ownerNameTextBox.disabled = true;
+        }
+        else
+        {
+           ownerContainer.hide();
+        }
+    }
+
+    var buttonWidget = dojo.widget.byId( "newButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, false );
+
+    buttonWidget = dojo.widget.byId( "saveButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+
+    buttonWidget = dojo.widget.byId( "revertButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+
+    buttonWidget = dojo.widget.byId( "deleteButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+
+    buttonWidget = dojo.widget.byId( "openConstraints" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+}
+
+function updateConstraintsEditor( rowData )
+{
+    var usersTextBox = dojo.byId( "constraintUsers" );
+    usersTextBox.disabled = false;
+    usersTextBox.value = rowData.users;
+
+    for ( var i = 0 ; i < actionNames.length; i++ )
+    {
+        var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+        if ( actionCheckbox )
+        {
+            actionCheckbox.disabled = false;
+            actionCheckbox.checked = false;
+            actionCheckbox._setInfo();
+        }
+    }
+
+    var actionsList = rowData.actions.split( new RegExp( " *, *" ) );
+    if ( actionsList )
+    {
+        for ( var i = 0 ; i < actionsList.length ; i++ )
+        {
+            var actionCheckbox = dojo.widget.byId( "action" + actionsList[i] );
+            if ( actionCheckbox )
+            {
+                actionCheckbox.checked = true;
+                actionCheckbox._setInfo();
+            }
+        }
+    }
+
+    for ( var i = 0 ; i < rolePrincipals.length; i++ )
+    {
+        var roleIndex = i + 1;
+        var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+        roleCheckbox.disabled = false;
+        roleCheckbox.checked = false;
+        roleCheckbox._setInfo();
+    }
+    var rolesList = rowData.roles.split( new RegExp( " *, *" ) );
+    if ( rolesList )
+    {
+        for ( var i = 0 ; i < rolesList.length ; i++ )
+        {
+            var tRole = rolesList[i];
+            for ( var j = 0 ; j < rolePrincipals.length; j++ )
+            {
+                if ( tRole == rolePrincipals[j] )
+                {
+                    var roleIndex = j + 1;
+                    var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+                    if ( roleCheckbox )
+                    {
+                        roleCheckbox.checked = true;
+                        roleCheckbox._setInfo();
+                    }
+                }
+            }
+        }
+    }
+
+    for ( var i = 0 ; i < groupPrincipals.length; i++ )
+    {
+        var groupIndex = i + 1;
+        var groupCheckbox = dojo.widget.byId( "group_" + groupIndex );
+        groupCheckbox.disabled = false;
+        groupCheckbox.checked = false;
+        groupCheckbox._setInfo();
+    }
+    var groupsList = rowData.groups.split( new RegExp( " *, *" ) );
+    if ( groupsList )
+    {
+        for ( var i = 0 ; i < groupsList.length ; i++ )
+        {
+            var tGroup = groupsList[i];
+            for ( var j = 0 ; j < groupPrincipals.length; j++ )
+            {
+                if ( tGroup == groupPrincipals[j] )
+                {
+                    var groupIndex = j + 1;
+                    var groupCheckbox = dojo.widget.byId( "group_" + groupIndex );
+                    if ( groupCheckbox )
+                    {
+                        groupCheckbox.checked = true;
+                        groupCheckbox._setInfo();
+                    }
+                }
+            }
+        }
+    }
+
+    updateConstraintsControls();
+}
+
+function updateConstraintsControls()
+{
+    var buttonWidget = dojo.widget.byId( "newConstraintButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, false );
+
+    buttonWidget = dojo.widget.byId( "deleteConstraintButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, false );
+}
+
+function clearAndDisableConstraintsEditor()
+{
+    var usersTextBox = dojo.byId( "constraintUsers" );
+    if ( usersTextBox )
+    {
+        usersTextBox.value = "";
+        usersTextBox.disabled = true;
+    }
+    for ( var i = 0 ; i < actionNames.length; i++ )
+    {
+        var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+        if ( actionCheckbox )
+        {
+            actionCheckbox.checked = false;
+            actionCheckbox.disabled = true;
+            actionCheckbox._setInfo();
+        }
+    }
+    for ( var i = 0 ; i < rolePrincipals.length; i++ )
+    {
+        var roleIndex = i + 1;
+        var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+        if ( roleCheckbox )
+        {
+            roleCheckbox.checked = false;
+            roleCheckbox.disabled = true;
+            roleCheckbox._setInfo();
+        }
+    }
+    for ( var i = 0 ; i < groupPrincipals.length; i++ )
+    {
+        var groupIndex = i + 1;
+        var groupCheckbox = dojo.widget.byId( "group_" + groupIndex );
+        if ( groupCheckbox )
+        {
+            groupCheckbox.checked = false;
+            groupCheckbox.disabled = true;
+            groupCheckbox._setInfo();
+        }
+    }
+
+    var buttonWidget = dojo.widget.byId( "newConstraintButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, false );
+
+    buttonWidget = dojo.widget.byId( "deleteConstraintButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+}
+
+
+function propagateConstraintsChanges()
+{
+    var constraintsTable = dojo.widget.byId("constraintsTable");
+
+    if ( constraintsTable.okToChangeSelectionOrExit() )
+    {
+        if ( constraintsTable.js_has_modifications )
+        {
+            var tTableWidget = getTableWidget();
+    
+            var selectedDefinitionRow = tTableWidget.getData( tTableWidget.data, constraintsTable.js_def_id );
+            if ( ! tTableWidget.entryIsNew( selectedDefinitionRow ) )
+                tTableWidget.setModified( selectedDefinitionRow );
+    
+            var constraints = [];
+            for ( var i = 0 ; i < constraintsTable.js_masterdata.length; i++ )
+            {
+                constraints.push( dojo.lang.shallowCopy( constraintsTable.js_masterdata[ i ] ) );
+            }
+            var constraintsKey = getConstraintsKey( tTableWidget.js_type, constraintsTable.js_def_id );
+            constraintsByTypeId[ constraintsKey ] = constraints;
+
+            constraintsTable.js_has_modifications = false;
+
+            updateEditorControls( tTableWidget );
+        }
+        dojo.widget.byId( 'constraintsDialog' ).hide();
+    }
+}
+
+function saveConstraintsEntrySubmit( removeEntry )
+{   // called for each edited constraints row - set flag so that we know changes have been made
+    //    (all constraints changes are dealt with when the dialog is closed)
+    var constraintsTable = dojo.widget.byId("constraintsTable");
+    constraintsTable.js_has_modifications = true ;
+}
+
+function saveDefinitionEntrySubmit( selectedRowData, removeEntry )
+{
+    var tTableWidget = getTableWidget();
+
+    if ( ! selectedRowData ) { dojo.raise( "saveDefinitionEntrySubmit can't find selectedRowData" ) ; return; }
+
+    var masterData = tTableWidget.getData( tTableWidget.js_masterdata, selectedRowData.Id );
+    if ( ! masterData ) { dojo.raise( "saveDefinitionEntrySubmit can't find masterdata" ) ; return; } 
+
+    var contextPath = document.location.protocol + "/" + "/" + document.location.host + "$req.ContextPath";
+    var requestUrl = contextPath + "/ajaxapi?action=constraints" ;
+
+    requestUrl += "&name=" + encodeURIComponent( selectedRowData.name );
+    if ( removeEntry )
+    {
+        requestUrl += "&method=remove-def";
+    }
+    else if ( tTableWidget.entryIsNew( selectedRowData ) )
+    {
+        requestUrl += "&method=add-def";
+    }
+    else
+    {
+        requestUrl += "&method=update-def";
+    }
+
+    var constraintsKey = getConstraintsKey( tTableWidget.js_type, selectedRowData.Id );
+    var constraints = constraintsByTypeId[ constraintsKey ];
+
+    var xmlData = '<security-constraints-def name="' + dojo.string.escapeXml( selectedRowData.name, true ) + '">';
+    if ( constraints != null )
+    {
+        for ( var i = 0 ; i < constraints.length ; i++ )
+        {
+            var c = constraints[i];
+            xmlData += '<security-constraint>';
+            if ( c.roles != null && c.roles.length > 0 )
+                xmlData += '<roles>' + dojo.string.escapeXml( c.roles, true ) + '</roles>';
+            if ( c.groups != null && c.groups.length > 0 )
+                xmlData += '<groups>' + dojo.string.escapeXml( c.groups, true ) + '</groups>';
+            if ( c.users != null && c.users.length > 0 )
+                xmlData += '<users>' + dojo.string.escapeXml( c.users, true ) + '</users>';
+            xmlData += '<permissions>';
+            if ( c.actions != null )
+                xmlData += dojo.string.escapeXml( c.actions, true );
+            xmlData += '</permissions>';
+            xmlData += '</security-constraint>';
+        }
+    }
+    xmlData += '</security-constraints-def>';
+    
+    requestUrl += "&xml=" + encodeURIComponent( xmlData );
+
+    var mimeType = "text/xml";
+    dojo.io.bind({
+
+        url: requestUrl,
+
+        mimetype: mimeType,
+
+        load: function( type, data, evt )
+        {
+            var success = false;
+            var statusElmt = data.getElementsByTagName( "status" );
+            if ( statusElmt != null )
+            {
+                var successVal = statusElmt[0].firstChild.nodeValue;
+                if ( successVal == "success" )
+                    success = true;
+            }
+            if ( ! success )
+            {
+                var textContent = dojo.dom.innerXML( data );
+                if ( ! textContent )
+                    textContent = ( data != null ? "!= null (IE no XMLSerializer)" : "null" );
+                dojo.raise( "saveDefinitionEntrySubmit failure url=" + requestUrl + "  xml-content=" + textContent );
+            }
+        },
+
+        error: function( type, error )
+        {
+            dojo.raise( "saveDefinitionEntrySubmit failure url=" + requestUrl + " type=" + type + " error=" + jetspeed.printobj( error ) ) ;
+        }
+    });     
+};
+
+function saveGlobalEntrySubmit( selectedRowData, removeEntry )
+{
+    var tTableWidget = getTableWidget();
+
+    if ( ! selectedRowData ) { dojo.raise( "saveGlobalEntrySubmit can't find selectedRowData" ) ; return; }
+
+    var masterData = tTableWidget.getData( tTableWidget.js_masterdata, selectedRowData.Id );
+    if ( ! masterData ) { dojo.raise( "saveGlobalEntrySubmit can't find masterdata" ) ; return; } 
+
+    var contextPath = document.location.protocol + "/" + "/" + document.location.host + "$req.ContextPath";
+    var requestUrl = contextPath + "/ajaxapi?action=constraints" ;
+
+    requestUrl += "&name=" + encodeURIComponent( selectedRowData.name );
+    if ( removeEntry )
+    {
+        requestUrl += "&method=remove-global";
+    }
+    else if ( tTableWidget.entryIsNew( selectedRowData ) )
+    {
+        requestUrl += "&method=add-global";
+    }
+    else
+    {
+        dojo.raise( "saveGlobalEntrySubmit does not support update entry" );
+        return;
+    }
+
+    var xmlData = '<global-security-constraints-ref>' + dojo.string.escapeXml( selectedRowData.name, true ) + '</global-security-constraints-ref>';
+    
+    requestUrl += "&xml=" + encodeURIComponent( xmlData );
+
+    var mimeType = "text/xml";
+    dojo.io.bind({
+
+        url: requestUrl,
+
+        mimetype: mimeType,
+
+        load: function( type, data, evt )
+        {
+            var success = false;
+            var statusElmt = data.getElementsByTagName( "status" );
+            if ( statusElmt != null )
+            {
+                var successVal = statusElmt[0].firstChild.nodeValue;
+                if ( successVal == "success" )
+                    success = true;
+            }
+            if ( ! success )
+            {
+                var textContent = dojo.dom.innerXML( data );
+                if ( ! textContent )
+                    textContent = ( data != null ? "!= null (IE no XMLSerializer)" : "null" );
+                dojo.raise( "saveDefinitionEntrySubmit failure url=" + requestUrl + "  xml-content=" + textContent );
+            }
+        },
+
+        error: function( type, error )
+        {
+            dojo.raise( "saveDefinitionEntrySubmit failure url=" + requestUrl + " type=" + type + " error=" + error ) ;
+        }
+    });     
+};
+
+function updateEditorControls( tTableWidget )
+{
+    if ( ! tTableWidget )
+        tTableWidget = getTableWidget();
+    var hasChanged = checkForChanges();
+
+    var buttonWidget = dojo.widget.byId( "openConstraints" );
+    if ( buttonWidget )
+    {
+        if ( tTableWidget.js_type == "defs" )
+        {
+            buttonWidget.show();
+            btnSetDisabled( buttonWidget, false );
+        }
+        else
+        {
+           buttonWidget.hide();
+        }
+    }
+
+    if ( hasChanged )
+    {
+        buttonWidget = dojo.widget.byId( "saveButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, false );
+
+        buttonWidget = dojo.widget.byId( "revertButton" );
+        if ( buttonWidget )
+        {
+            if ( hasChanged == "modified" )
+            {
+                btnSetDisabled( buttonWidget, false );
+            }
+            else
+            {
+                btnSetDisabled( buttonWidget, true );
+            }
+        }
+
+        buttonWidget = dojo.widget.byId( "newButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, true );
+
+        buttonWidget = dojo.widget.byId( "deleteButton" );
+        if ( buttonWidget )
+        {
+            if ( hasChanged == "modified" )
+            {
+                btnSetDisabled( buttonWidget, true );
+            }
+            else
+            {
+                btnSetDisabled( buttonWidget, false );
+            }
+        }
+    }
+    else
+    {
+        buttonWidget = dojo.widget.byId( "saveButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, true );
+
+        buttonWidget = dojo.widget.byId( "revertButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, true );
+
+        buttonWidget = dojo.widget.byId( "newButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, false );
+
+        buttonWidget = dojo.widget.byId( "deleteButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, false );
+    }
+}
+
+function updateSelectedRow()
+{
+    var tTableWidget = getTableWidget();
+    var selectedRowData = tTableWidget.getSelectedRow() ;
+    if ( selectedRowData != null )
+    {
+        selectedRowData.name = dojo.byId( "entryName" ).value;
+
+        if ( tTableWidget.js_type == "defs" )
+        {
+            selectedRowData.owner = dojo.byId( "ownerName" ).value;
+        }
+        
+        tTableWidget.updateClonedData( selectedRowData, tTableWidget.selected[0] );
+
+        tTableWidget.render(true);
+        tTableWidget.showSelections();
+
+        updateEditorControls();
+    }
+}
+
+function updateSelectedConstraintsRow()
+{
+    var tTableWidget = dojo.widget.byId("constraintsTable");
+    var selectedRowData = tTableWidget.getSelectedRow() ;
+
+    if ( selectedRowData != null )
+    {
+        selectedRowData.users = dojo.byId( "constraintUsers" ).value;
+
+        var updatedActions = "";
+        for ( var i = 0 ; i < actionNames.length; i++ )
+        {
+            var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+            if ( actionCheckbox && actionCheckbox.checked )
+            {
+                if ( updatedActions.length > 0 )
+                    updatedActions += ", ";
+                updatedActions += actionNames[i];
+            }
+        }
+        selectedRowData.actions = updatedActions;
+
+        var updatedRoles = "";
+        for ( var i = 0 ; i < rolePrincipals.length; i++ )
+        {
+            var roleIndex = i + 1;
+            var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+            if ( roleCheckbox && roleCheckbox.checked )
+            {
+                if ( updatedRoles.length > 0 )
+                    updatedRoles += ",";
+                updatedRoles += rolePrincipals[i];
+            }
+        }
+        selectedRowData.roles = updatedRoles;
+
+        var updatedGroups = "";
+        for ( var i = 0 ; i < groupPrincipals.length; i++ )
+        {
+            var groupIndex = i + 1;
+            var groupCheckbox = dojo.widget.byId( "group_" + groupIndex );
+            if ( groupCheckbox && groupCheckbox.checked )
+            {
+                if ( updatedGroups.length > 0 )
+                    updatedGroups += ",";
+                updatedGroups += groupPrincipals[i];
+            }
+        }
+        selectedRowData.groups = updatedGroups;
+        
+        tTableWidget.updateClonedData( selectedRowData, tTableWidget.selected[0] );
+
+        tTableWidget.render(true);
+        tTableWidget.showSelections();
+
+        updateConstraintsControls();
+    }
+}
+
+function getTableWidget( containedInTab )
+{
+    if ( ! containedInTab )
+        containedInTab = dojo.widget.byId( "mainTabContainer" ).selectedChildWidget;
+    if ( ! containedInTab )
+        alert( "no selected mainTabContainer child widget" );
+    var tableWidgetId = containedInTab.widgetId + "Table";
+    var tableWidget = dojo.widget.byId( tableWidgetId );
+    if ( ! tableWidget )
+        alert( "no table widget " + tableWidgetId + " could be found" );
+    return tableWidget;
+}
+function checkForChanges()
+{
+    var tTableWidget = getTableWidget();
+    return tTableWidget.checkForChanges();
+}
+function newEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.newEntry();
+}
+function deleteEntry()
+{
+    var tTableWidget = getTableWidget();
+    var selectedRowData = tTableWidget.getSelectedRow();
+    tTableWidget.deleteEntry();
+    var constraintsKey = getConstraintsKey( tTableWidget.js_type, selectedRowData.Id );
+    delete origConstraintsByTypeId[ constraintsKey ];
+    delete constraintsByTypeId[ constraintsKey ];
+    
+}
+function saveEntry()
+{
+    var tTableWidget = getTableWidget();
+    var selectedRowData = tTableWidget.getSelectedRow();
+    tTableWidget.saveEntry();
+    
+    var constraintsKey = getConstraintsKey( tTableWidget.js_type, selectedRowData.Id );
+    origConstraintsByTypeId[ constraintsKey ] = constraintsByTypeId[ constraintsKey ];
+}
+function revertEntry()
+{
+    var tTableWidget = getTableWidget();
+    var selectedRowData = tTableWidget.getSelectedRow();
+    tTableWidget.revertEntry();
+    
+    var constraintsKey = getConstraintsKey( tTableWidget.js_type, selectedRowData.Id );
+    constraintsByTypeId[ constraintsKey ] = origConstraintsByTypeId[ constraintsKey ];
+}
+function newConstraintsEntry()
+{
+    var tTableWidget = dojo.widget.byId("constraintsTable");
+    tTableWidget.newEntry();
+}
+function deleteConstraintsEntry()
+{
+    var tTableWidget = dojo.widget.byId("constraintsTable");
+    tTableWidget.deleteEntry();
+}
+function okToChangeSelectionOrExit(invocation)
+{
+    var tTableWidget = getTableWidget();
+    return tTableWidget.okToChangeSelectionOrExit(invocation);
+}
+function okToChangeConstraintsSelectionOrExit(invocation)
+{
+    var tTableWidget = dojo.widget.byId("constraintsTable");
+    return tTableWidget.okToChangeSelectionOrExit(invocation);
+}
+function dumpCS()
+{
+    var tTableWidget = dojo.widget.byId("constraintsTable");
+    alert( jetspeed.printobj( tTableWidget.getSelectedRow() ) );
+}
+function dumpDS()
+{
+    var tTableWidget = dojo.widget.byId("defsTable");
+    alert( jetspeed.printobj( tTableWidget.getSelectedRow() ) + "  hasChanged=" + checkForChanges() );
+}
+
+
+function getConstraintsKey( type, id )
+{
+    var constraintsKey = type + "_" + id;
+    return constraintsKey;
+}
+
+function addListeners()
+{
+    constraintsByTypeId = {};
+    origConstraintsByTypeId = {};
+
+    var data = null, constraints = null, roles = null, groups = null, actions = null, users = null ;
+
+
+    // ... mainTabContainer
+
+    var tabContainer = dojo.widget.byId("mainTabContainer");
+    dojo.event.connect("around", tabContainer, "selectChild", function(invocation) {
+        if ( ! okToChangeSelectionOrExit() )
+        {
+            return false;  // was return (with no value) 2006/08/29
+        }
+        
+        var tab = invocation.args[0];
+        var tTableWidget = getTableWidget( tab );
+        var selectedRowData = tTableWidget.getSelectedRow();
+    
+        if ( ! selectedRowData )
+        {
+            clearAndDisableEditor( tTableWidget );
+        }
+        else
+        {
+            tTableWidget.showSelections();
+            updateEditor( selectedRowData, tTableWidget );
+        }
+        invocation.proceed();
+        return true;
+    });
+
+
+    // ... defsTable
+
+    var defsTable = dojo.widget.byId("defsTable");
+    dojo.event.connect( "around", defsTable, "onUISelect", okToChangeSelectionOrExit );
+    dojo.event.connect(defsTable, "onSelect", function(e) {
+        processTableRowEvent(e, "defsTable");
+    });
+    dojo.event.connect(defsTable, "updateEditor", updateEditor );
+    dojo.event.connect(defsTable, "saveEntrySubmit", saveDefinitionEntrySubmit );
+    dojo.event.connect(defsTable, "clearAndDisableEditor", clearAndDisableEditor );
+    defsTable.getNewEntryPrototype = newDefintionPrototype;
+    defsTable.js_type = "defs";
+    defsTable.saveWarningDialogWidgetId = "SaveWarningDialog";
+
+    data = [];
+#foreach ($def in $model.get("defs"))
+   #set ($scs = $def.SecurityConstraints)
+   constraints = [] ;
+   #foreach($sc in $scs)
+      roles = "";
+      #foreach($role in $sc.Roles)
+          #if ( $velocityCount > 1 )
+              roles += ",";
+          #end
+          roles += "$role";
+      #end
+      groups = "";
+      #foreach($group in $sc.Groups)
+          #if ( $velocityCount > 1 )
+              groups += ",";
+          #end
+          groups += "$group";
+      #end
+      actions = "";
+      #foreach($action in $sc.Permissions)
+          #if ( $velocityCount > 1 )
+              actions += ",";
+          #end
+          actions += "$action";
+      #end
+      users = "";
+      #foreach($user in $sc.Users)
+          #if ( $velocityCount > 1 )
+              users += ",";
+          #end
+          users += "$user";
+      #end
+      constraints.push( { roles: roles, groups: groups, actions: actions, users: users, Id: (constraints.length +1) } );
+   #end
+   data.push( { name: "$def.Name", owner: "", Id: $velocityCount } );
+   var constraintsKey = getConstraintsKey( defsTable.js_type, $velocityCount );
+   constraintsByTypeId[ constraintsKey ] = constraints;
+   origConstraintsByTypeId[ constraintsKey ] = constraints;
+#end
+
+    defsTable.js_masterdata = data;
+    defsTable.parseData( defsTable.js_masterdata );
+    defsTable.render( true );
+
+
+    // ... globalsTable
+
+    var globalsTable = dojo.widget.byId("globalsTable");
+    dojo.event.connect( "around", globalsTable, "onUISelect", okToChangeSelectionOrExit );
+    dojo.event.connect(globalsTable, "onSelect", function(e) {
+        processTableRowEvent(e, "globalsTable");
+    });
+    dojo.event.connect(globalsTable, "updateEditor", updateEditor );
+    dojo.event.connect(globalsTable, "saveEntrySubmit", saveGlobalEntrySubmit );
+    dojo.event.connect(globalsTable, "clearAndDisableEditor", clearAndDisableEditor );
+    globalsTable.getNewEntryPrototype = newGlobalPrototype;
+    globalsTable.js_type = "globals";
+    globalsTable.saveWarningDialogWidgetId = "SaveWarningDialog";
+
+    data = [];
+#foreach ($global in $model.get("globals"))
+   data.push( { name: "$global", Id: $velocityCount } );
+#end
+
+    globalsTable.js_masterdata = data;
+    globalsTable.parseData( globalsTable.js_masterdata );
+    globalsTable.render( true );
+
+
+    // ... constraintsTable
+
+    var constraintsTable = dojo.widget.byId("constraintsTable");
+    dojo.event.connect( "around", constraintsTable, "onUISelect", okToChangeConstraintsSelectionOrExit );
+    dojo.event.connect(constraintsTable, "onSelect", function(e) {
+        processTableRowEvent(e, "constraintsTable");
+    });
+    dojo.event.connect(constraintsTable, "updateEditor", updateConstraintsEditor );
+    dojo.event.connect(constraintsTable, "saveEntrySubmit", saveConstraintsEntrySubmit );
+    dojo.event.connect(constraintsTable, "clearAndDisableEditor", clearAndDisableConstraintsEditor );
+    constraintsTable.getNewEntryPrototype = newConstraintPrototype;
+
+    // no saveWarningDialogWidgetId for constaintsTable means that saveEntry will be called automatically
+
+
+    for ( var i = 0 ; i < actionNames.length; i++ )
+    {
+        var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+        if ( actionCheckbox )
+        {
+            dojo.event.connect(actionCheckbox, "onClick", function() {
+                if(!actionCheckbox.disabled){
+                    updateSelectedConstraintsRow();
+                }
+            });
+        }
+    }
+    for ( var i = 0 ; i < rolePrincipals.length; i++ )
+    {
+        var roleIndex = i + 1;
+        var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+        if ( roleCheckbox )
+        {
+            dojo.event.connect(roleCheckbox, "onClick", function() {
+                if(!roleCheckbox.disabled){
+                    updateSelectedConstraintsRow();
+                }
+            });
+        }
+    }
+    for ( var i = 0 ; i < groupPrincipals.length; i++ )
+    {
+        var groupIndex = i + 1;
+        var groupCheckbox = dojo.widget.byId( "group_" + groupIndex );
+        if ( groupCheckbox )
+        {
+            dojo.event.connect(groupCheckbox, "onClick", function() {
+                if(!groupCheckbox.disabled){
+                    updateSelectedConstraintsRow();
+                }
+            });
+        }
+    }
+
+    clearAndDisableEditor();
+}
+dojo.addOnLoad( window.addListeners );
+</script>

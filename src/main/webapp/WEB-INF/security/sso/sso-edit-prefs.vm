@@ -1,0 +1,59 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+<h2 class="portlet-section-header">Edit Preferences</h2>
+
+<form action="$renderResponse.createActionURL()" method="post">
+<table>
+#foreach ($pref in $prefs)
+#if ($pref.Key == "sso.type")
+  <tr colspan="4" align="right">
+    <td width="5%" class="portlet-form-label" align="left">&nbsp;</td>
+    <td nowrap class="portlet-section-alternate" align="left">$pref.Key:&nbsp;</td>
+    <td class="portlet-form-input-field" align="left">
+	  <select id="$pref.Key" name="$pref.Key">
+#foreach ($ssoType in $ssoTypes)        
+#if ($ssoType == $ssoTypeSelected)
+            <option selected value="$ssoType">$ssoType</option>
+#else
+            <option value="$ssoType">$ssoType</option>
+#end
+#end            
+        </select>            
+    </td>
+    <td width="5%" class="portlet-form-label" align="left">&nbsp;</td>  
+  </tr>
+#else
+#prefField($pref.Key $pref.Value "40")
+#end
+#end
+<hr/>
+#form4ColumnCell("SSO Principal" $ssoPrincipal 30 "ssoPrincipal")
+#form4PasswordCell("SSO Credential" $ssoCredential 30 "ssoCredential")
+</table>
+<input type="submit" name="Save" value="Save" />
+</form>
+
+#if ($statusMsg)
+<table width="100%" cellpadding="0" cellspacing="0" border="0">
+<tr>
+	<div class="$statusMsg.Type">$statusMsg.Text</div>
+</tr>
+</table>
+#end
+
+
+

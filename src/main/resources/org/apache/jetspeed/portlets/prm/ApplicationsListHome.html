@@ -1,0 +1,101 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!-- 
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:wicket="http://wicket.sourceforge.net/" xml:lang="en" lang="en">
+<head></head>
+<body>
+
+<div class="portlet-message-error" wicket:id="feedback"></div>
+
+<form wicket:id="appSearchForm">
+    <input type='text' wicket:id="appSearchField" />
+    <input type='submit' wicket:id="appSearchButton" value='search' /> | 
+    <a wicket:id="appDeploy"><wicket:message key="pam.details.action.deploy" /></a> | 
+    <a wicket:id="appHome"><wicket:message key="pam.details.action.refresh" /></a> |
+    <input type="checkbox" wicket:id="filterPortlet" /> <wicket:message key="pam.details.filter.portlet" />
+    <input type="checkbox" wicket:id="filterClone" /> <wicket:message key="pam.details.filter.clone" />
+</form>
+
+<table style="border-collapse: collapse; margin-top: 8px; margin-left: 2px; float: left;">
+	<tr>
+		<th class="portlet-section-header" colspan="5"><wicket:message key="pam.details.applications"/></th>
+	</tr>
+	<tr>
+		<th class="portlet-section-subheader">
+		  <a href="#" wicket:id="appOrderByName"><wicket:message key="pam.details.name" /></a>
+		</th>
+		<th class="portlet-section-subheader">
+		  <a href="#" wicket:id="appOrderByVersion"><wicket:message key="pam.details.version" /></a>
+		</th>
+		<th class="portlet-section-subheader">
+		  <a href="#" wicket:id="appOrderByPath"><wicket:message key="pam.details.path" /></a>
+		</th>
+		<th class="portlet-section-subheader">
+		  <wicket:message key="pam.details.status" />
+		</th>
+		<th class="portlet-section-subheader">
+		  <wicket:message key="pam.details.actions" />
+		</th>
+	</tr>
+	<tr wicket:id="appTable">
+		<td class="portlet-section-body"><a href='#' wicket:id='nameLink'><span
+			wicket:id="nameLabel">[name]</span></a></td>
+		<td class="portlet-section-body"><span wicket:id="version">[version]</span></td>
+		<td class="portlet-section-body"><span wicket:id="path">[path]</span></td>
+		<td class="portlet-section-body"><span wicket:id="running">[running]</span></td>
+		<td class="portlet-section-body"><span wicket:id="actions">[actions]</span></td>
+	</tr>
+	<tr class="portlet-section-footer">
+		<td colspan="5"><span wicket:id="appNavigator">[dataview navigator]</span></td>
+	</tr>
+</table>
+<table style="border-collapse: collapse; margin-top: 8px; margin-left: 4px; float: left;">
+	<tr>
+		<th class="portlet-section-header" colspan="3"><wicket:message key="pam.details.portlets"/></th>
+	</tr>
+	<tr>
+		<th class="portlet-section-subheader">
+		  <span wicket:id="plOrderByDisplayName"><wicket:message key="pam.details.name"/></span>
+		</th>
+        <th class="portlet-section-subheader">
+          <wicket:message key="pam.details.cloned" />
+        </th>
+        <th class="portlet-section-subheader">
+          <wicket:message key="pam.details.actions" />
+        </th>
+	</tr>
+	<tr wicket:id="portletTable">
+		<td class="portlet-section-body" >
+		  <a href="#" wicket:id="nameLink">
+		      <span wicket:id="nameLabel">[name]</span>
+		  </a>
+	    </td>
+	    <td class="portlet-section-body"><span wicket:id="status">[status]</span></td>
+	    <td class="portlet-section-body" nowrap="true"><span wicket:id="actions">[actions]</span></td>
+	</tr>
+	<tr class="portlet-section-footer">
+		<td colspan="3"><span wicket:id="plNavigator">[dataview navigator]</span></td>
+	</tr>
+</table>
+
+<div wicket:id="modalwindow"></div>
+<div wicket:id="modalWindowCloseScript" class="modal-window-close-script" style="DISPLAY: none"></div>
+
+</body>
+</html>

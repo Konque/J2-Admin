@@ -1,0 +1,377 @@
+#*
+Licensed to the Apache Software Foundation (ASF) under one or more
+contributor license agreements.  See the NOTICE file distributed with
+this work for additional information regarding copyright ownership.
+The ASF licenses this file to You under the Apache License, Version 2.0
+(the "License"); you may not use this file except in compliance with
+the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+*#
+#set ($refreshLink = $renderResponse.createActionURL())
+$refreshLink.setParameter("reset","true")
+#set ($renderLink = $renderResponse.createActionURL())
+#set ($messages = $portletConfig.getResourceBundle($renderRequest.Locale))
+#set ($portalContextPath=$renderRequest.getAttribute("org.apache.jetspeed.request.RequestContext").request.contextPath)
+<!-- Search Form -->
+<form id='jsSelectorForm' onSubmit='return false;' style="height:21px; padding: 2px; margin:10px">
+<table>
+<tr>
+<td nowrap class="portlet-section-alternate" align="right">$messages.getString("search.portlet"):&nbsp;</td>
+<td nowrap class="portlet-section-alternate">
+<input type="text" name="filter" id="searchString" size="40" value="$!searchString" class="portlet-form-field-label">    
+<input type="submit" value="$messages.getString("search")" onClick='javascript:performSearch();'>
+<input type="submit" value="$messages.getString("refresh")" onClick="javascript:performRefresh()">
+<input type="hidden" value="$category" id="category" name="category">
+<input type="hidden" value="$pageNumber" id="pageNumber" name="pageNumber">
+<input type="hidden" value="$jspage" id="pagePath" name="pagePath">
+</td>
+<td nowrap>
+<a href='' id='previousButton'><img style="border:none" src="${portalContextPath}/images/portlets/go-previous.png"></a>
+</td>
+</tr>
+</table>
+</form>
+
+<table id='ctable' cellspacing="5" cellpadding="5" style="margin:10px">
+</table>
+<table id='pagtable' border="1" cellspacing="10" cellpadding="1" align="center">
+    <tr>
+        <td>
+            <table id='pagtable1' border="1" cellspacing="10" cellpadding="1">
+            </table>
+        </td>
+        <td>
+            <table id='pagtable2' border="1" cellspacing="10" cellpadding="1">
+            </table>
+        </td>
+        <td>
+            <table id='pagtable3' border="1" cellspacing="10" cellpadding="1">
+            </table>
+        </td>    
+</table>
+<table id='ptable' border="1" cellspacing="10" cellpadding="1">
+</table>
+<script language="JavaScript" type="text/javascript">
+function PortletInfo(name, display, desc, image, count)
+{
+  this.name = name;
+  this.display = display;
+  this.desc = desc;
+  this.image = image;
+  this.count = count;
+}
+function CategoryInfo(name)
+{
+   this.name = name;
+}
+function performRefresh()
+{
+   var searchForm = document.getElementById('jsSelectorForm');
+   searchForm.action = "$refreshLink";
+   searchForm.submit();
+}
+function addPortletToPage(theNewPortlet,pID)
+{                                                      
+   //dojo.widget.byId("AddPortletDialog").hide();   
+   var portletDef = new jetspeed.selector.PortletDef( theNewPortlet );   
+   var pagePath = jetspeed.url.removeAllQueryParameters( jetspeed.url.basePortalUrl() + jetspeed.url.path.AJAX_API + getReturnPagePath() );
+   jetspeed.selector.addNewPortletDefinition( portletDef, pagePath, getAddToLayoutId() );
+   selectorPortlets[pID].count = parseInt(selectorPortlets[pID].count) + 1;
+   var cell = document.getElementById(theNewPortlet);
+   if (cell != null)
+   {
+      cell.innerHTML = "$messages.getString("count"): " + selectorPortlets[pID].count; // TODO: localize
+   }
+}
+function performSearch()
+{
+    var searchForm = document.getElementById('jsSelectorForm');	
+    	document.getElementById("category").value = 'Search';
+    document.getElementById("pageNumber").value='1';
+    searchForm.action = "$renderLink";
+    searchForm.submit();
+}
+function searchFinishedFunction(domainObjects, portletList)
+{
+   var searchIndex = categories.length-1; 
+   for ( var i = 0 ; i < portletList.length ; i++ )
+   {
+       categories[searchIndex].portlets[i] = portletList[i].portletName;
+   }
+   displayPortlets("Search");   
+}
+function highlightSelectedCategory(cat)
+{
+    var ctable = document.getElementById('ctable');
+    var row = ctable.rows[0];
+    for (i = 0; i < row.childNodes.length; i++)
+    {
+        var a = row.childNodes[i].firstChild;
+        var atext = a.innerHTML;
+        var style = row.childNodes[i].firstChild.attributes.getNamedItem("style");
+        if (atext == cat)
+             a.setAttribute("style", "font-weight:bold");
+        else
+             a.setAttribute("style", "font-weight:normal");
+    }
+}
+function clearTable( tableNode )
+{
+    if ( ! tableNode ) return;
+    while ( tableNode.hasChildNodes() )
+    {
+        var lastChild = tableNode.lastChild;
+        var childNodeName = lastChild.nodeName;
+        if ( childNodeName && childNodeName.toLowerCase() == "tbody" )
+            break;
+        tableNode.removeChild( lastChild );
+    }
+}
+
+function createPagination(Pagenumber,PageCount)
+{
+    var pagtable1 = document.getElementById('pagtable1');   
+    var pagtable3 = document.getElementById('pagtable3');
+    var pagtable = document.getElementById('pagtable2');   
+    clearTable( pagtable1 );
+    clearTable( pagtable3 );
+    clearTable( pagtable );
+
+    var pgRoww = null;
+    var pgCol=null;
+    var a = null;    
+    pgRoww = pagtable1.insertRow(0);
+    pgCol = pgRoww.insertCell(0);
+    if (Pagenumber != 1)
+    {
+        a = document.createElement("a");
+        a.innerHTML = '$messages.getString("previous")';
+        a.href = "javascript:displayPortlets(" + "\"" + (Pagenumber-1)+ "\"" + ")";
+        pgCol.appendChild(a);              
+        pgCol = pgRoww.insertCell(1);    
+        a = document.createElement("a");
+        a.innerHTML = '$messages.getString("first")';
+        a.href = "javascript:displayPortlets(" + "\"" + 1+ "\"" + ")";
+        pgCol.appendChild(a);              
+    }
+    
+    if (PageCount > 1)
+    {
+        var pgRoww = pagtable.insertRow(0);
+        var pgCol=null;
+        var a = null;  
+        for(iz=0;iz<PageCount;iz++)
+        {
+            pgCol = pgRoww.insertCell(iz);
+            if (Pagenumber != iz+1){
+                a = document.createElement("a");
+                a.innerHTML = iz+1;
+                a.href = "javascript:displayPortlets(" + "\"" + (iz+1) + "\"" + ")";
+                pgCol.appendChild(a);       
+            }else{
+                pgCol.innerHTML = (iz+1);
+            }       
+         }
+     }
+    pgRoww = pagtable3.insertRow(0);
+    pgCol = pgRoww.insertCell(0);
+    if (Pagenumber != PageCount)
+    {
+        if (PageCount > 1)	
+        {
+			          a = document.createElement("a");
+          			a.innerHTML = '$messages.getString("last")';
+          			a.href = "javascript:displayPortlets(" + "\"" + PageCount+ "\"" + ")";
+          			pgCol.appendChild(a);              
+          			pgCol = pgRoww.insertCell(1);   
+          			a = document.createElement("a");    
+          			a.innerHTML = '$messages.getString("next")';
+          			a.href = "javascript:displayPortlets(" + "\"" + (parseInt(Pagenumber)+1)+ "\"" + ")";
+          			pgCol.appendChild(a);              
+        		}
+    }
+}
+
+function categoriesBar()
+{
+	  categories[0] = new CategoryInfo("All");    
+  #foreach ( $cat in $categories)
+  		  categories[$velocityCount] = new CategoryInfo("$cat.Name");
+    		#set ($icount = $velocityCount)
+  #end
+  var ctable = document.getElementById('ctable');
+  var row = ctable.insertRow(0);
+  for(i=0; i<categories.length; i++)
+  {    
+    var c1 = row.insertCell(i);
+    var a = document.createElement("a");
+    a.innerHTML = categories[i].name;
+    a.href = "javascript:displayCategorties(" + "\"" + categories[i].name + "\"" + ")";
+    a.setAttribute("style", "font-weight:normal");
+    c1.appendChild(a);
+  }
+  categories[categories.length] = new CategoryInfo("Search"); // TODO: localize
+  var c1 = row.insertCell(i);
+  var a = document.createElement("a");
+  a.innerHTML = categories[i].name;
+  a.href = "javascript:displayCategorties(" + "\"" + categories[i].name + "\"" + ")";
+  a.setAttribute("style", "font-weight:normal");
+  c1.appendChild(a);
+  var c2 = row.insertCell(i+1);
+  var a2 = document.createElement("a");
+  a2.innerHTML = "[$messages.getString("goback")]";  // TODO: localize
+  // TODO: determine if JETSPEED or DESKTOP 
+  var retHref = null;
+  if ( jetspeed.url.isDesktop() && jetspeed.page )
+     retHref = "javascript: jetspeed.page.addPortletTerminate( '" + getReturnURL() + "', '" + getReturnPagePath() + "' )";
+  else
+     retHref = getReturnURL();
+  a2.href = retHref;
+  a2.setAttribute("style", "font-weight:normal");
+  c2.appendChild(a2);
+  var prevButton = document.getElementById("previousButton");
+  prevButton.setAttribute('href', retHref);
+}
+function displayGridPortlet()
+{
+  //var currentPortlets = selectorPortlets;
+  	//getting portlet table and deleting all items
+  	//befor adding the new
+  	var ptable = document.getElementById('ptable');
+    clearTable( ptable );
+
+  	var outerRow = null;
+  	var iz = 0;
+  	var ri = 0;
+  	var ci = 0;
+  //for(ri=0;ri<$Rows;ri++)
+		  //alert(' s ' +  selectorPortlets.length);
+  		while(iz<selectorPortlets.length)
+		  {
+    			//alert('cret  iz ' + iz);	
+    			//alert('cret  row ' + ci);	
+    			if (iz > 0)
+    			{
+      				//alert('cret  row ' + iz % $Columns);	
+      				if (iz % $Columns ==0)
+      				{
+        ri =  ri+1;
+        					ci = 0;
+        					outerRow = ptable.insertRow(ri);								
+      				}
+    			}
+    			else
+    			{
+      					outerRow = ptable.insertRow(ri);								
+    			}		
+		   		 var cell = outerRow.insertCell(ci);            
+   				 // Creating the image and Name table		
+	   			 var pt1 = document.createElement("table");
+				    var row0 = pt1.insertRow(0);
+				    var c0 = row0.insertCell(0);
+   				 var c1 = row0.insertCell(1);
+				    c1.setAttribute("style","font-size: 9pt; color: blue;");
+				    var image = new Image();
+				    image.src = "${portalContextPath}/"+selectorPortlets[iz].image;
+	   			 c0.appendChild(image);
+   				 c1.innerHTML = selectorPortlets[iz].display;
+				 
+   				 // Creating description table
+   				 var pt2 = document.createElement("table");
+   				 var row1 = pt2.insertRow(0);
+   				 c0 = row1.insertCell(0);
+				    c0.setAttribute("style","font-size: 8pt; color: green;");
+   				 c0.innerHTML = selectorPortlets[iz].desc;
+				 
+   				 // Creating the Add link and count table
+   				 var pt3 = document.createElement("table");
+   				 var row3 = pt3.insertRow(0);
+   				 c0 = row3.insertCell(0);
+   				 c0.setAttribute("style","font-size: 8pt; color: blue;");
+   				 var a = document.createElement("a");
+   				 a.innerHTML = "$messages.getString("add")"; // TODO: localize
+   				 a.href = "javascript:addPortletToPage("+"\""+selectorPortlets[iz].name+"\""+",\"" + iz + "\")";
+   				 c0.appendChild(a);
+   				 c1 = row3.insertCell(1);
+   				 // TODO: localize
+   				 c1.innerHTML = "$messages.getString("count"): " + selectorPortlets[iz].count;
+   				 c1.setAttribute("style","font-size: 8pt; color: blue;");
+   				 c1.setAttribute("id", selectorPortlets[iz].name);
+
+   				 //Adding the final tables in Cell
+   				 cell.appendChild(pt1);
+   				 cell.appendChild(pt2);
+   				 cell.appendChild(pt3);
+    				iz=iz+1;
+    				ci =  ci + 1;
+  			//}
+		  }
+}
+function initializePortletSelector()
+{
+  categoriesBar();
+  	var pageCount = getPageCount($Count,$Columns*$Rows);	
+  	displayGridPortlet();
+  	createPagination($pageNumber,pageCount);
+  	highlightSelectedCategory('$category');
+}
+function displayCategorties(category)
+{
+  	renderPage(category,1);
+}
+function displayPortlets(pageNumber)
+{
+	renderPage(document.getElementById("category").value,pageNumber);
+}
+function renderPage(category,pageNumber)
+{
+	document.getElementById("category").value = category;
+    document.getElementById("pageNumber").value=pageNumber;
+    var searchForm = document.getElementById('jsSelectorForm');
+    searchForm.action = "$renderLink";
+    searchForm.submit();
+}
+
+function getReturnPagePath()
+{
+   var jsPagePath = jetspeed.url.getQueryParameter( document.location.href, "jspage" );
+   if ( jsPagePath == null )
+		jsPagePath = "$jspage";
+   return jsPagePath;
+}
+function getPageCount(portletCount,portletPerPage)
+{
+		  var tmp = Math.floor(portletCount / portletPerPage);
+		  if (portletCount % portletPerPage > 0) {
+			    return (tmp + 1);
+  		} else {
+    			return (tmp);
+  		}
+}
+function getAddToLayoutId()
+{
+   var jsLayoutId = jetspeed.url.getQueryParameter( document.location.href, "jslayoutid" );
+   if ( jsLayoutId == null )
+		jsLayoutId = "$!jslayoutid";
+   return jsLayoutId;
+}
+function getReturnURL()
+{
+   return jetspeed.url.basePortalUrl() + jetspeed.url.path.JETSPEED + jetspeed.url.servletPath() + getReturnPagePath();
+}
+window.selectorPortlets = new Array();
+window.categories = new Array();
+#set ($count = 0)
+#foreach ( $portlet in $portlets )
+   selectorPortlets[$count] = new PortletInfo("$portlet.Name", "$!portlet.DisplayName", "$!portlet.Description", "$!portlet.Image", "$!portlet.Count");
+   #set ($count = $count + 1)
+#end
+dojo.addOnLoad( window.initializePortletSelector );
+</script>

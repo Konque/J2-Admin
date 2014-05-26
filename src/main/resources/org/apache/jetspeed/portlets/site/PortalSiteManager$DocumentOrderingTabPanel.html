@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">   
+<!-- 
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  
+  Author <a href="mailto:vkumar@apache.org">Vivek Kumar</a>
+  Version $Id$
+ -->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<wicket:panel>
+&nbsp;
+	<div wicket:id='feedback'></div>
+	<form wicket:id="docuOrderingForm">
+	<table style="width:100%;">
+		<tr>
+			<td width="20%" class="portlet-section-header"><span wicket:id="doucmentOrderLabel"></span></td>
+			<td width="20%" class="portlet-section-body">
+				<select id="docOrders" wicket:id="docOrders">
+					<option>sammple option comes here</option>
+				</select>
+			</td>
+			<td width="60%" class="portlet-section-body">&nbsp;&nbsp;
+				<input type="button" onClick="javascript:moveUpList();" value="Move Up" /><br/>&nbsp;&nbsp;<input type="button" onClick="javascript:moveDownList();" value="Move Down" />
+			</td>
+		</tr>
+		<tr>
+			<td class="portlet-section-body" colspan="3"><input type="button" wicket:id="save"/></td>
+		</tr>
+	</table>
+		<input type="hidden" wicket:id="pageOrder" id="pageOrder"/>
+	</form>
+<script language="JavaScript">
+function moveUpList() {
+   var listField = document.getElementById('docOrders');
+   if ( listField.length == -1) {  // If the list is empty
+      alert("There are no values which can be moved!");
+   } else {
+      var selected = listField.selectedIndex;
+      if (selected == -1) {
+         alert("You must select an entry to be moved!");
+      } else {  // Something is selected
+         if ( listField.length == 0 ) {  // If there's only one in the list
+            alert("There is only one entry!\nThe one entry will remain in place.");
+         } else {  // There's more than one in the list, rearrange the list order
+            if ( selected == 0 ) {
+               alert("The first entry in the list cannot be moved up.");
+            } else {
+               // Get the text/value of the one directly above the hightlighted entry as
+               // well as the highlighted entry; then flip them
+               var moveText1 = listField[selected-1].text;
+               var moveText2 = listField[selected].text;
+               var moveValue1 = listField[selected-1].value;
+               var moveValue2 = listField[selected].value;
+               listField[selected].text = moveText1;
+               listField[selected].value = moveValue1;
+               listField[selected-1].text = moveText2;
+               listField[selected-1].value = moveValue2;
+               listField.selectedIndex = selected-1; // Select the one that was selected before
+            }  // Ends the check for selecting one which can be moved
+         }  // Ends the check for there only being one in the list to begin with
+      }  // Ends the check for there being something selected
+   }  // Ends the check for there being none in the list
+  }
+  
+  function moveDownList() {
+  var listField = document.getElementById('docOrders');
+	   if ( listField.length == -1) {  // If the list is empty
+	      alert("There are no values which can be moved!");
+	   } else {
+	      var selected = listField.selectedIndex;
+	      if (selected == -1) {
+	         alert("You must select an entry to be moved!");
+	      } else {  // Something is selected
+	         if ( listField.length == 0 ) {  // If there's only one in the list
+	            alert("There is only one entry!\nThe one entry will remain in place.");
+	         } else {  // There's more than one in the list, rearrange the list order
+	            if ( selected == listField.length-1 ) {
+	               alert("The last entry in the list cannot be moved down.");
+	            } else {
+	               // Get the text/value of the one directly below the hightlighted entry as
+	               // well as the highlighted entry; then flip them
+	               var moveText1 = listField[selected+1].text;
+	               var moveText2 = listField[selected].text;
+	               var moveValue1 = listField[selected+1].value;
+	               var moveValue2 = listField[selected].value;
+	               listField[selected].text = moveText1;
+	               listField[selected].value = moveValue1;
+	               listField[selected+1].text = moveText2;
+	               listField[selected+1].value = moveValue2;
+	               listField.selectedIndex = selected+1; // Select the one that was selected before
+	            }  // Ends the check for selecting one which can be moved
+	         }  // Ends the check for there only being one in the list to begin with
+	      }  // Ends the check for there being something selected
+	   }  // Ends the check for there being none in the list
+  }
+function convertToString()
+	{
+		var columns = document.getElementById('docOrders');
+		var len = columns.length;
+		var tempValue = '';
+		for(var j=0; j<len; j++)
+		{
+			tempValue = tempValue + "," + columns.options[j].text;
+		}
+		document.getElementById('pageOrder').value = tempValue.substring(1);
+	}
+</script>
+</wicket:panel>
+</html>

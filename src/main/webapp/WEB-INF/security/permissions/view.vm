@@ -1,0 +1,695 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+#set($rc = $renderRequest.getAttribute("org.apache.jetspeed.request.RequestContext"))
+#set($req = $rc.Request)
+
+
+
+<!--
+javascript: alert( dojo.widget.byId( "portletsTable" ).data[3].actions = "none" )
+javascript: alert( dojo.widget.byId( "portletsTable" ).render(true) )
+
+
+var row=dojo.html.getParentByType(e.target,"tr");
+var body=dojo.html.getParentByType(row,"tbody");
+this.resetSelections(body);
+row.setAttribute("selected","true");
+this.setSelectionByRow(row);
+
+javascript: alert( dojo.widget.byId( "portletsTable").data[1].name )
+javascript: alert( updateSelectedRow() )
+
+javascript: alert( dojo.html.disableSelection(dojo.byId( "resourceName" )) )
+
+dojo.lang.shallowCopy(this.portlets) ;
+-->
+
+<div dojoType="LayoutContainer" widgetId="permsRootLContainer" class="permsRootLContainer"
+     layoutChildPriority="left-right">
+
+    <div dojoType="LayoutContainer" widgetId="permsTabLContainer" class="permsTabLContainer" layoutAlign="top" layoutChildPriority="none">
+
+        <div id="permsTabContainer" dojoType="TabContainer" selectedChild="portlets" doLayout="false">
+
+            <div id="portlets" dojoType="ContentPane" label="Portlets">
+                <div class="tableContainer">
+
+                    <table dojoType="jetspeed:EditorTable" widgetId="portletsTable" class="permissions" headClass="fixedHeader" tbodyClass="scrollContent" enableMultipleSelect="true" enableAlternateRows="true" rowAlternateClass="alternateRow" templateCssPath="/j2-admin/css/security-permissions.css" cellpadding="0" cellspacing="0" border="0">
+                        <col width="45%"></col>
+                        <col width="15%"></col>
+                        <col width="35%"></col>
+                        <thead>
+                            <tr>
+                                <th field="name" dataType="String">Resource</th>
+                                <th field="actions" dataType="String">Actions</th>
+                                <th field="roles" dataType="String">Roles</th>        
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div id="folders" dojoType="ContentPane" label="Folders">
+                <div class="tableContainer">
+
+                    <table dojoType="jetspeed:EditorTable" widgetId="foldersTable" class="permissions" headClass="fixedHeader" tbodyClass="scrollContent" enableMultipleSelect="true" enableAlternateRows="true" rowAlternateClass="alternateRow" templateCssPath="/j2-admin/css/security-permissions.css" cellpadding="0" cellspacing="0" border="0">
+                        <col width="45%"></col>
+                        <col width="15%"></col>
+                        <col width="35%"></col>
+                        <thead>
+                            <tr>
+                                <th field="name" dataType="String">Resource</th>
+                                <th field="actions" dataType="String">Actions</th>
+                                <th field="roles" dataType="String">Roles</th>        
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+
+            <div id="pages" dojoType="ContentPane" label="Pages">
+                <div class="tableContainer">
+
+                    <table dojoType="jetspeed:EditorTable" widgetId="pagesTable" class="permissions" headClass="fixedHeader" tbodyClass="scrollContent" enableMultipleSelect="true" enableAlternateRows="true" rowAlternateClass="alternateRow" templateCssPath="/j2-admin/css/security-permissions.css" cellpadding="0" cellspacing="0" border="0">
+                        <col width="45%"></col>
+                        <col width="15%"></col>
+                        <col width="35%"></col>
+                        <thead>
+                            <tr>
+                                <th field="name" dataType="String">Resource</th>
+                                <th field="actions" dataType="String">Actions</th>
+                                <th field="roles" dataType="String">Roles</th>    
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <div dojoType="LayoutContainer" widgetId="editorLContainer" class="editorLContainer" layoutAlign="client" layoutChildPriority="top-bottom">
+
+        <div dojoType="LayoutContainer" widgetId="editorLTop" class="editorLTop" layoutAlign="top">
+
+            <div dojoType="ContentPane"
+                 widgetId="resourceNameLContainer"
+                 class="resourceNameLContainer"
+                 layoutAlign="left">
+                <b>Resource</b><br/>
+                <input name="resourceName" id="resourceName" type="text" size="45" onChange="updateSelectedRow()">
+            </div>
+
+            <div dojoType="ContentPane"
+                 widgetId="editorControls"
+                 class="editorControlsLContainer buttonbox"
+                 layoutAlign="client">
+
+                <button widgetId="deleteButton" dojoType="Button" onclick="deleteEntry()">
+                    Delete
+                </button>
+
+                <button widgetId="revertButton" dojoType="Button" onclick="revertEntry()">
+                    Revert
+                </button>
+
+                <button widgetId="saveButton" dojoType="Button" onclick="saveEntry()">
+                    Save
+                </button>
+                
+                <button widgetId="newButton" dojoType="Button" onclick="newEntry()">
+                    New
+                </button>
+
+            </div>
+        </div>
+
+        <div dojoType="LayoutContainer" widgetId="editorLBottom" class="editorLBottom" layoutAlign="client">
+
+            <div dojoType="ContentPane"
+                 widgetId="actionsContainer"
+                 class="actionsLContainer"
+                 layoutAlign="right">
+                <b>Actions</b><br/>
+                <input type="checkbox" name="actionview" id="actionview" dojoType="Checkbox" /> <label for="actionview">View</label><br />
+                <input type="checkbox" name="actionedit" id="actionedit" dojoType="Checkbox" /> <label for="actionedit">Edit</label><br />
+                <input type="checkbox" name="actionhelp" id="actionhelp" dojoType="Checkbox" /> <label for="actionhelp">Help</label><br />
+                <input type="checkbox" name="actionabout" id="actionabout" dojoType="Checkbox" /> <label for="actionabout">About</label><br />
+                <input type="checkbox" name="actionconfig" id="actionconfig" dojoType="Checkbox" /> <label for="actionconfig">Config</label><br />
+                <input type="checkbox" name="actionedit_defaults" id="actionedit_defaults" dojoType="Checkbox" /> <label for="actionedit_defaults">Edit Defaults</label><br />
+                <input type="checkbox" name="actionprint" id="actionprint" dojoType="Checkbox" /> <label for="actionprint">Print</label><br />                
+            </div>
+
+            <div dojoType="ContentPane"
+                 widgetId="rolesContainer"
+                 class="rolesLContainer"
+                 layoutAlign="client">
+
+                <b>Roles</b><br />
+                #foreach ($role in $roles)
+                <input type="checkbox" name="role_$velocityCount" id="role_$velocityCount" dojoType="Checkbox" /> <label for="role_$velocityCount">$role.Name</label><br />
+                #end
+
+            </div>
+
+
+        </div>
+
+        <div dojoType="dialog" id="SaveWarningDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250">
+            <form onsubmit="return false;">
+                <table>
+                    <tr>
+                        <td>Please Save or Revert changes to the selected permissions record before proceeding.</td><td>&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" align="right" class="buttonboxright">
+                            <button dojoType="Button" onClick="dojo.widget.byId( 'SaveWarningDialog' ).hide();" >Cancel</button>
+                            <button dojoType="Button" onClick="dojo.widget.byId( 'SaveWarningDialog' ).hide(); revertEntry();">Revert</button>
+                            <button dojoType="Button" onClick="dojo.widget.byId( 'SaveWarningDialog' ).hide(); saveEntry();">Save</button>
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script language="JavaScript" type="text/javascript">
+    rolePrincipals = new Array();
+#foreach ($role in $roles)
+    rolePrincipals.push( "$role.Name" );
+#end
+    actionNames = new Array();
+    actionNames.push( "view" );
+    actionNames.push( "edit" );
+    actionNames.push( "help" );
+    actionNames.push( "about" );
+    actionNames.push( "config" );
+    actionNames.push( "edit_defaults" );
+    actionNames.push( "print" );
+</script>
+<script type="text/javascript">
+
+
+function processTableRowEvent(e, tableName)
+{
+    dojo.widget.byId( tableName ).processTableRowEvent( e );
+}
+
+function clearAndDisableEditor()
+{
+    var resourceTextBox = dojo.byId( "resourceName" );
+    if ( resourceTextBox )
+    {
+        resourceTextBox.value = "";
+        resourceTextBox.disabled = true;
+    }
+    for ( var i = 0 ; i < actionNames.length; i++ )
+    {
+        var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+        if ( actionCheckbox )
+        {
+            actionCheckbox.checked = false;
+            actionCheckbox.disabled = true;
+            actionCheckbox._setInfo();
+        }
+    }
+    for ( var i = 0 ; i < rolePrincipals.length; i++ )
+    {
+        var roleIndex = i + 1;
+        var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+        if ( roleCheckbox )
+        {
+            roleCheckbox.checked = false;
+            roleCheckbox.disabled = true;
+            roleCheckbox._setInfo();
+        }
+    }
+
+    var buttonWidget = dojo.widget.byId( "newButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, false );
+
+    buttonWidget = dojo.widget.byId( "saveButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+
+    buttonWidget = dojo.widget.byId( "revertButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+
+    buttonWidget = dojo.widget.byId( "deleteButton" );
+    if ( buttonWidget )
+        btnSetDisabled( buttonWidget, true );
+}
+
+function updateEditor( rowData )
+{
+    var resourceTextBox = dojo.byId( "resourceName" );
+    if ( rowData.__isNew )
+    {
+        resourceTextBox.disabled = false;
+    }
+    else
+    {
+        resourceTextBox.disabled = true;
+    }
+    resourceTextBox.value = rowData.name;
+
+    for ( var i = 0 ; i < actionNames.length; i++ )
+    {
+        var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+        if ( actionCheckbox )
+        {
+            actionCheckbox.disabled = false;
+            actionCheckbox.checked = false;
+            actionCheckbox._setInfo();
+        }
+    }
+
+    var actionsList = rowData.actions.split( new RegExp( " *, *" ) );
+    if ( actionsList )
+    {
+        for ( var i = 0 ; i < actionsList.length ; i++ )
+        {
+            var actionCheckbox = dojo.widget.byId( "action" + actionsList[i] );
+            if ( actionCheckbox )
+            {
+                actionCheckbox.checked = true;
+                actionCheckbox._setInfo();
+            }
+        }
+    }
+
+    for ( var i = 0 ; i < rolePrincipals.length; i++ )
+    {
+        var roleIndex = i + 1;
+        var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+        roleCheckbox.disabled = false;
+        roleCheckbox.checked = false;
+        roleCheckbox._setInfo();
+    }
+    var rolesList = rowData.roles.split( new RegExp( " *, *" ) );
+    if ( rolesList )
+    {
+        for ( var i = 0 ; i < rolesList.length ; i++ )
+        {
+            var tRole = rolesList[i];
+            for ( var j = 0 ; j < rolePrincipals.length; j++ )
+            {
+                if ( tRole == rolePrincipals[j] )
+                {
+                    var roleIndex = j + 1;
+                    var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+                    if ( roleCheckbox )
+                    {
+                        roleCheckbox.checked = true;
+                        roleCheckbox._setInfo();
+                    }
+                }
+            }
+        }
+    }
+
+    updateEditorControls();
+}
+function getTableWidget( containedInTab )
+{
+    if ( ! containedInTab )
+        containedInTab = dojo.widget.byId( "permsTabContainer" ).selectedChildWidget;
+    return dojo.widget.byId( containedInTab.widgetId + "Table" );
+}
+function checkForChanges()
+{
+    var tTableWidget = getTableWidget();
+    return tTableWidget.checkForChanges();
+}
+function updateSelectedRow()
+{
+    var tTableWidget = getTableWidget();
+    var selectedRowData = tTableWidget.getSelectedRow() ;
+    if ( selectedRowData != null )
+    {
+        selectedRowData.name = dojo.byId( "resourceName" ).value;
+
+        var updatedActions = "";
+        for ( var i = 0 ; i < actionNames.length; i++ )
+        {
+            var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+            if ( actionCheckbox && actionCheckbox.checked )
+            {
+                if ( updatedActions.length > 0 )
+                    updatedActions += ", ";
+                updatedActions += actionNames[i];
+            }
+        }
+        selectedRowData.actions = updatedActions;
+
+        var updatedRoles = "";
+        for ( var i = 0 ; i < rolePrincipals.length; i++ )
+        {
+            var roleIndex = i + 1;
+            var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+            if ( roleCheckbox && roleCheckbox.checked )
+            {
+                if ( updatedRoles.length > 0 )
+                    updatedRoles += ",";
+                updatedRoles += rolePrincipals[i];
+            }
+        }
+        selectedRowData.roles = updatedRoles;
+        
+        tTableWidget.updateClonedData( selectedRowData, tTableWidget.selected[0] );
+
+        tTableWidget.render(true);
+        tTableWidget.showSelections();
+
+        updateEditorControls();
+    }
+}
+
+function btnSetDisabled( btnWidget, /* Boolean */ disabled )
+{
+    if ( ! btnWidget ) return;
+    if ( btnWidget.disabled != disabled ) // bug in widget if called multiple times with same value
+        btnWidget.setDisabled(disabled);
+}
+
+function updateEditorControls()
+{
+    var hasChanged = checkForChanges();
+    if ( hasChanged )
+    {
+        var buttonWidget = dojo.widget.byId( "saveButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, false );
+
+        buttonWidget = dojo.widget.byId( "revertButton" );
+        if ( buttonWidget )
+        {
+            if ( hasChanged == "modified" )
+            {
+                btnSetDisabled( buttonWidget, false );
+            }
+            else
+            {
+                btnSetDisabled( buttonWidget, true );
+            }
+        }
+
+        buttonWidget = dojo.widget.byId( "newButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, true );
+
+        buttonWidget = dojo.widget.byId( "deleteButton" );
+        if ( buttonWidget )
+        {
+            if ( hasChanged == "modified" )
+            {
+                btnSetDisabled( buttonWidget, true );
+            }
+            else
+            {
+                btnSetDisabled( buttonWidget, false );
+            }
+        }
+    }
+    else
+    {
+        var buttonWidget = dojo.widget.byId( "saveButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, true );
+
+        buttonWidget = dojo.widget.byId( "revertButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, true );
+
+        buttonWidget = dojo.widget.byId( "newButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, false );
+
+        buttonWidget = dojo.widget.byId( "deleteButton" );
+        if ( buttonWidget )
+            btnSetDisabled( buttonWidget, false );
+    }
+}
+
+
+
+// http://localhost:8080/jetspeed/ajaxapi?action=permissions&method=add&type=portlet&resource=demo::*&roles=role1,role2,role3&actions=view,edit
+// http://localhost:8080/jetspeed/ajaxapi?action=permissions&method=update&type=portlet&resource=jsf-demo%3A%3A*&roles=admin%2Cuser%2Csubsite2&actions=view%2C%20edit&oldactions=view%2C%20edit xml-content=<js><status>failure</status><action>unknown</action></js>
+
+
+function saveEntrySubmit( selectedRowData, removeEntry )
+{
+    var tTableWidget = getTableWidget();
+
+    if ( ! selectedRowData ) { dojo.raise( "saveEntrySubmit can't find selectedRowData" ) ; return; }
+
+    var masterData = tTableWidget.getData( tTableWidget.js_masterdata, selectedRowData.Id );
+    if ( ! masterData ) { dojo.raise( "saveEntrySubmit can't find masterdata" ) ; return; } 
+
+    var contextPath = document.location.protocol + "/" + "/" + document.location.host + "$req.ContextPath";
+    var requestUrl = contextPath + "/ajaxapi?action=permissions" ;
+
+    if ( removeEntry )
+    {
+        requestUrl += "&method=remove";
+    }
+    else if ( tTableWidget.entryIsNew( selectedRowData ) )
+    {
+        requestUrl += "&method=add";
+    }
+    else
+    {
+        requestUrl += "&method=update";
+    }
+    requestUrl += "&type=" + tTableWidget.js_type;
+    
+    requestUrl += "&resource=" + encodeURIComponent( selectedRowData.name );
+    requestUrl += "&roles=" + encodeURIComponent( selectedRowData.roles );
+    requestUrl += "&actions=" + encodeURIComponent( selectedRowData.actions );
+    requestUrl += "&oldactions=" + encodeURIComponent( masterData.actions );
+    
+    var mimeType = "text/xml";
+    dojo.io.bind({
+
+        url: requestUrl,
+
+        mimetype: mimeType,
+
+        load: function( type, data, evt )
+        {
+            var success = false;
+            var statusElmt = data.getElementsByTagName( "status" );
+            if ( statusElmt != null )
+            {
+                var successVal = statusElmt[0].firstChild.nodeValue;
+                if ( successVal == "success" )
+                    success = true;
+            }
+            if ( ! success )
+            {
+                var textContent = dojo.dom.innerXML( data );
+                if ( ! textContent )
+                    textContent = ( data != null ? "!= null (IE no XMLSerializer)" : "null" );
+                dojo.raise( "saveEntrySubmit failure url=" + requestUrl + "  xml-content=" + textContent );
+            }
+        },
+
+        error: function( type, error )
+        {
+            dojo.raise( "saveEntrySubmit failure url=" + requestUrl + " type=" + type + " error=" + error ) ;
+        }
+    });     
+};
+
+function newEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.newEntry();
+}
+function getNewEntryPrototype()
+{
+    return { name: "", actions: "", roles: "" };
+}
+
+function deleteEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.deleteEntry();
+}
+function saveEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.saveEntry();
+}
+
+function revertEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.revertEntry();
+}
+
+function okToChangeSelectionOrExit(invocation)
+{
+    var tTableWidget = getTableWidget();
+    return tTableWidget.okToChangeSelectionOrExit(invocation);
+}
+
+function dojoDebugCurrentTableData()
+{
+    dojo.debug( debugCurrentTableData() );
+}
+function alertDebugCurrentTableData()
+{
+    alert( debugCurrentTableData() );
+}
+function debugCurrentTableData()
+{
+    var tTableWidget = getTableWidget();
+    return tTableWidget.debugTableData();
+}
+
+function addListeners()
+{
+    var tabContainer = dojo.widget.byId("permsTabContainer");
+    dojo.event.connect("around", tabContainer, "selectChild", function(invocation) {
+        if ( checkForChanges() )
+        {
+            dojo.widget.byId( "SaveWarningDialog" ).show();
+            return;
+        }
+        invocation.proceed();
+        var tab = invocation.args[0];
+        var tTableWidget = getTableWidget( tab );
+        var selectedRowData = tTableWidget.getSelectedRow();
+    
+        if ( ! selectedRowData )
+        {
+            clearAndDisableEditor();
+        }
+        else
+        {
+            tTableWidget.showSelections();
+            updateEditor( selectedRowData );
+        }
+    });
+
+    var portletsTable = dojo.widget.byId("portletsTable");
+    dojo.event.connect( "around", portletsTable, "onUISelect", "okToChangeSelectionOrExit" );
+    dojo.event.connect(portletsTable, "onSelect", function(e) {
+        processTableRowEvent(e, "portletsTable");
+    });
+    dojo.event.connect(portletsTable, "updateEditor", updateEditor );
+    dojo.event.connect(portletsTable, "saveEntrySubmit", saveEntrySubmit );
+    dojo.event.connect(portletsTable, "clearAndDisableEditor", clearAndDisableEditor );
+    portletsTable.getNewEntryPrototype = getNewEntryPrototype;
+    var data = [] ;
+#foreach($p in $portletPermissions)
+    data.push( { name: "$p.Permission.Name", actions: "$p.Permission.Actions", roles: "$p.Roles", Id: $velocityCount } );
+#end
+    portletsTable.js_masterdata = data;
+    portletsTable.js_type = "portlet";
+    portletsTable.saveWarningDialogWidgetId = "SaveWarningDialog";
+    portletsTable.parseData( portletsTable.js_masterdata );
+    portletsTable.render( true );
+    
+    
+    var foldersTable = dojo.widget.byId("foldersTable");
+    dojo.event.connect( "around", foldersTable, "onUISelect", "okToChangeSelectionOrExit" );
+    dojo.event.connect(foldersTable, "onSelect", function(e) {
+        //dojo.debugShallow( e.currentTarget );
+        processTableRowEvent(e, "foldersTable");
+    });
+    dojo.event.connect(foldersTable, "updateEditor", updateEditor );
+    dojo.event.connect(foldersTable, "saveEntrySubmit", saveEntrySubmit );
+    dojo.event.connect(foldersTable, "clearAndDisableEditor", clearAndDisableEditor );
+    foldersTable.getNewEntryPrototype = getNewEntryPrototype;
+    
+    data = [] ;
+#foreach($p in $folderPermissions)
+    data.push( { name: "$p.Permission.Name", actions: "$p.Permission.Actions", roles: "$p.Roles", Id: $velocityCount } );
+#end
+    foldersTable.js_masterdata = data;
+    foldersTable.js_type = "folder";
+    foldersTable.saveWarningDialogWidgetId = "SaveWarningDialog";
+    foldersTable.parseData( data );
+    foldersTable.render( true );
+
+    var pagesTable = dojo.widget.byId("pagesTable");
+    dojo.event.connect( "around", pagesTable, "onUISelect", "okToChangeSelectionOrExit" );
+    dojo.event.connect(pagesTable, "onSelect", function(e) {
+        //dojo.debugShallow( e.currentTarget );
+        processTableRowEvent(e, "pagesTable");
+    });
+    dojo.event.connect(pagesTable, "updateEditor", updateEditor );
+    dojo.event.connect(pagesTable, "saveEntrySubmit", saveEntrySubmit );
+    dojo.event.connect(pagesTable, "clearAndDisableEditor", clearAndDisableEditor );
+    pagesTable.getNewEntryPrototype = getNewEntryPrototype;
+    data = [] ;
+#foreach($p in $pagePermissions)
+    data.push( { name: "$p.Permission.Name", actions: "$p.Permission.Actions", roles: "$p.Roles", Id: $velocityCount } );
+#end
+    pagesTable.js_masterdata = data;
+    pagesTable.js_type = "page";
+    pagesTable.saveWarningDialogWidgetId = "SaveWarningDialog";
+    pagesTable.parseData( data );
+    pagesTable.render( true );
+
+    for ( var i = 0 ; i < actionNames.length; i++ )
+    {
+        var actionCheckbox = dojo.widget.byId( "action" + actionNames[i] );
+        if ( actionCheckbox )
+        {
+            dojo.event.connect(actionCheckbox, "onClick", function() {
+                if(!actionCheckbox.disabled){
+                    updateSelectedRow();
+                }
+            });
+        }
+    }
+    for ( var i = 0 ; i < rolePrincipals.length; i++ )
+    {
+        var roleIndex = i + 1;
+        var roleCheckbox = dojo.widget.byId( "role_" + roleIndex );
+        if ( roleCheckbox )
+        {
+            dojo.event.connect(roleCheckbox, "onClick", function() {
+                if(!roleCheckbox.disabled){
+                    updateSelectedRow();
+                }
+            });
+        }
+    }
+
+    clearAndDisableEditor();
+}
+
+
+dojo.addOnLoad( window.addListeners );
+</script>

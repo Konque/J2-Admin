@@ -1,0 +1,74 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+<p>The <b>sso.type</b> preference on the WebContent portlet chooses the type of single-signon method to use. Depending on which method is selected, 
+you will need to configure more preferences. See the methods of SSO described below for specific instructions
+</p>
+<h3>Basic authentication</h3> 
+<p>
+Basic Authentication is the default configuration method.
+This method allows the web browser, or other client program, to provide credentials Ð in the form of a user name and password Ð 
+when making a request. One advantage of the basic access authentication is that it is supported by all popular web browsers. 
+It is rarely used on publicly accessible Internet web sites but may be useful for quick SSO scenarios within a company intranet.
+</p>
+<p>
+The <i>SRC</i> is a required preference to point at the website being securely accessed.
+</p>
+<h3>Preemptive Basic Authentication</h3> 
+<p>
+Same as Basic authentication above, except credentials are sent preemptively. 
+</p>
+<h3>URL authentication</h3>
+<p>
+A username and password are sent on the URL as query parameters. Best to be used over a secure connection.
+Requires the <i>sso.url.Principal</i> preference to be declared in your portlet.xml and set to the name of the URL request parameter for the username.
+Alo requires the <i>sso.url.Credential</i> preference to be declared in your portlet.xml and set to the name of the URL request parameter for the password.
+The <i>SRC</i> is a required preference to point at the website being securely accessed.
+</p>
+<h3>Base64 URL authentication</h3>
+<p>
+Same as URL authentication with Base64 encoding.
+</p>
+<p>
+<h3>Form authentication</h3>
+<p>
+HTTP+HTML Form-based Authentication is arguably the most prevalent user authentication technique employed on the Web today. It is the approach of choice for essentially all wikis, forums, banking/financial websites, ecommerce websites, Web search engines, Web portals, etc.
+</p>
+<p>
+The <i>SRC</i> is a required preference to point at the website being securely accessed.
+</p>
+Additional parameters are required:
+<ul>
+<li>sso.form.Principal - the form field input id for the username principal</li>
+<li>sso.form.Credential - the form field input id for the credential (password)</li>
+<li>sso.form.Action - the URL of the Form Action to be executed upon signing on, could be different from SRC. This preference is not required</li>
+<li>sso.form.Args - name value pair of Form parameters. Name value pairs come in <i>name=value</i> definitions. Multiple arguments are separated by semi-colons(;)</li>
+</ul>
+<p>
+<h3>Certificate</h3>
+<p>
+Currently not supported.
+</p>
+<h3>Credentials</h3>
+<p>
+Credentials are gathered from the Jetspeed SSO Data Store. Credentials can be configured in the Jetspeed SSO Administrative Portlet, or in this portlet directly in edit mode.
+If you enter credentials here, they are stored only for the specific user currently logged in. The administrative portlet allows editing credentials for users or groups of users.
+There are two credentials on this form, they are optional and will be ignored if left blank:
+<ul>
+<li>ssoPrincipal (SSO Principal): optionally sets the remote username to login to the site configured for this portlet for the local user</li>
+<li>ssoCrendential (SSO Credential): optionally sets the remote credential (password) to login to the site configured for this portlt for the local user</li>
+</ul>
+</p>

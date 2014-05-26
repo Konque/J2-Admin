@@ -1,0 +1,79 @@
+<!-- 
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<wicket:panel>
+
+    <div style="border:1px solid black; margin:4px; padding:4px;">
+
+	    <form wicket:id="criterionEditForm">
+
+	        <table cellpadding="2">
+	            <tr>
+	                <td>
+	                    <span wicket:id="criterionNameLabel">Name</span>
+	                </td>
+	                <td>
+	                    <input wicket:id="criterionNameField"/>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <span wicket:id="criterionValueLabel">Name</span>
+	                </td>
+	                <td>
+	                    <input wicket:id="criterionValueField"/>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <span wicket:id="criterionResolverTypeLabel">ResolverType</span>
+	                </td>
+	                <td>
+	                    <select wicket:id="criterionResolverTypeField">
+	                        <option>option 1</option>
+	                        <option>option 2</option>
+	                    </select>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <span wicket:id="criterionFallbackLabel">Fallback</span>
+	                </td>
+	                <td>
+	                    <select wicket:id="criterionFallbackField">
+	                        <option>option 1</option>
+	                        <option>option 2</option>
+	                    </select>
+	                </td>
+	            </tr>
+	            <tr>
+	                <td>
+	                    <span wicket:id="criterionOrderLabel">Order</span>
+	                </td>
+	                <td>
+	                    <input wicket:id="criterionOrderField"/>
+	                </td>
+	            </tr>
+	        </table>
+	        
+	        <input type="submit" wicket:id="saveCriterionButton"/>
+	        <input type="submit" wicket:id="removeCriterionButton"/>
+	    
+	    </form>
+
+    </div>
+
+</wicket:panel>

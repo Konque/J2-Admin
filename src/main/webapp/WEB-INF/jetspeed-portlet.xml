@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements. See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version
+    2.0 (the "License"); you may not use this file except in compliance
+    with the License. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0 Unless required by
+    applicable law or agreed to in writing, software distributed under
+    the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
+    OR CONDITIONS OF ANY KIND, either express or implied. See the
+    License for the specific language governing permissions and
+    limitations under the License.
+  -->
+<portlet-app id="j2-admin" version="1.0"
+  xmlns="http://portals.apache.org/jetspeed" xmlns:js="http://portals.apache.org/jetspeed"
+  xmlns:dc="http://www.purl.org/dc" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://portals.apache.org/jetspeed http://portals.apache.org/jetspeed-2/2.1/schemas/jetspeed-portlet.xsd">
+
+  <js:security-constraint-ref>admin</js:security-constraint-ref>
+
+  <dc:title>Jetspeed-2 Administration Portlets</dc:title>
+  <dc:title xml:lang="en">Jetspeed-2 Administration
+    Portlets</dc:title>
+  <dc:creator>J2 Team</dc:creator>
+  <js:metadata name="pa-version">2.2</js:metadata>
+
+  <portlet>
+    <portlet-name>LoginPortlet</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <dc:title>Login Portlet</dc:title>
+    <dc:creator>J2 Team</dc:creator>
+  </portlet>
+
+  <portlet>
+    <portlet-name>LoginPortletForXHTMLBasic</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <dc:title>Login XHTML Portlet</dc:title>
+    <dc:creator>J2 Team</dc:creator>
+    <js:metadata name="selector.conditional.role">admin</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>OpenIDLoginPortlet</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <dc:title>OpenID Login Portlet</dc:title>
+    <dc:creator>J2 Team</dc:creator>
+  </portlet>
+
+  <portlet>
+    <portlet-name>PortalLoginPortlet</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <dc:title>Portal Login Portlet</dc:title>
+    <dc:creator>J2 Team</dc:creator>
+    <js:metadata name="selector.conditional.role">admin</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>MFALogin</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <dc:title>Login</dc:title>
+    <dc:creator>J2 Team</dc:creator>
+  </portlet>
+
+  <portlet>
+    <portlet-name>LocaleSelector</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <dc:title>Locale Selector Portlet</dc:title>
+    <dc:creator>J2 Team</dc:creator>
+  </portlet>
+
+  <portlet>
+    <portlet-name>DateTimePortlet</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+  </portlet>
+
+  <portlet>
+    <portlet-name>ForgottenPasswordPortlet</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <js:metadata name="merge.portal.parameters.with.portlet.parameters">true</js:metadata>
+    <js:metadata name="merge.portal.parameters.before.portlet.parameters">true</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>UserRegistrationPortlet</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <js:metadata name="merge.portal.parameters.with.portlet.parameters">true</js:metadata>
+    <js:metadata name="merge.portal.parameters.before.portlet.parameters">true</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>CategoryPortletSelector</portlet-name>
+    <js:security-constraint-ref>AEUV</js:security-constraint-ref>
+    <js:metadata name="merge.portal.parameters.with.portlet.parameters">true</js:metadata>
+    <js:metadata name="merge.portal.parameters.before.portlet.parameters">true</js:metadata>
+    <js:metadata name="selector.conditional.role">admin</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>WelcomeToJetspeed</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <js:metadata name="selector.conditional.role">*</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>AboutJetspeed</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <js:metadata name="selector.conditional.role">*</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>JetspeedDeveloper</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+    <js:metadata name="selector.conditional.role">*</js:metadata>
+  </portlet>
+
+  <portlet>
+    <portlet-name>ChangePasswordPortlet</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+  </portlet>
+
+  <portlet>
+    <portlet-name>SSOIFramePortlet</portlet-name>
+    <js:security-constraint-ref>user-edit</js:security-constraint-ref>
+  </portlet>
+
+  <portlet>
+    <portlet-name>SSOWebContentPortlet</portlet-name>
+    <js:security-constraint-ref>user-edit</js:security-constraint-ref>
+  </portlet>
+
+  <portlet>
+    <portlet-name>BreadcrumbMenu</portlet-name>
+    <js:security-constraint-ref>public-view</js:security-constraint-ref>
+  </portlet>
+
+  <portlet>
+    <portlet-name>PortalSiteManager</portlet-name>
+    <js:metadata name="merge.portal.parameters.with.portlet.parameters">true</js:metadata>
+    <js:metadata name="merge.portal.parameters.before.portlet.parameters">true</js:metadata>
+  </portlet>
+  
+  <portlet>
+    <portlet-name>SpaceNavigator</portlet-name>
+    <js:metadata name="selector.conditional.role">*</js:metadata>
+  </portlet>
+  
+  <portlet>
+    <portlet-name>CustomConfigModePortlet</portlet-name>
+    <js:metadata name="selector.conditional.role">*</js:metadata>
+  </portlet>
+  
+  <portlet>
+    <portlet-name>CustomPreviewModePortlet</portlet-name>
+    <js:metadata name="selector.conditional.role">*</js:metadata>
+  </portlet>
+  
+  <!-- Render time enforced security constaints (admin) -->
+  
+  <!-- PAM portlets -->
+  <portlet>
+    <portlet-name>RegistryApplicationsList</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>
+  <portlet>
+    <portlet-name>PortletDetailsManager</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>
+  <portlet>
+    <portlet-name>ApplicationDetails</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>  
+  <portlet>
+    <portlet-name>PortletCloneManager</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>  
+  
+  <!-- Permissions and Constraints -->
+  <portlet>
+    <portlet-name>SecurityPermissionsPortlet</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>  
+  <portlet>
+    <portlet-name>SecurityConstraintsPortlet</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>  
+  
+  <!-- RPAD -->
+  <portlet>
+    <portlet-name>RPADPortlet</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>
+  
+  <!-- Serializer -->  
+  <portlet>
+    <portlet-name>PortalDataSerializer</portlet-name>
+    <js:metadata name="render-time.security-constraints">true</js:metadata>
+  </portlet>  
+  
+  <js:services>
+    <js:service name='ApplicationServerManager' />
+    <js:service name='DeploymentManager' />
+    <js:service name='EntityAccessor' />
+    <js:service name='GroupManager' />
+    <js:service name='PageManager' />
+    <js:service name='PermissionManager' />
+    <js:service name='PortletFactory' />
+    <js:service name='PortletPreferencesProvider' />
+    <js:service name='PortalAdministration' />
+    <js:service name='PortletRegistryComponent' />
+    <js:service name='PortalStatistics' />
+    <js:service name="Profiler" />
+    <js:service name='RoleManager' />
+    <js:service name='SearchComponent' />
+    <js:service name="SSO" />
+    <js:service name='UserManager' />
+    <js:service name='DecorationFactory' />
+    <js:service name='SecurityAccessController' />
+    <js:service name='PortletTrackingManager' />
+    <js:service name='PortalConfiguration' />
+    <js:service name='ImporterManager' />
+    <js:service name='AuditActivity' />
+    <js:service name='JetspeedSerializer' />
+    <js:service name='JetspeedPrincipalManagerProvider' />
+    <js:service name='PAM' />
+    <js:service name='AuthenticationProvider' />
+    <js:service name='CacheMonitor' />
+    <js:service name='SpacesService' />
+    <js:service name='PageLayoutComponent' />
+  </js:services>
+
+</portlet-app>

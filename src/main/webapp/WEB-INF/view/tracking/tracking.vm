@@ -1,0 +1,52 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+<h3>List of Portlets out of Service: </h3>
+<p>
+#set ($formAction = $renderResponse.createActionURL())
+<form name='trackingForm' action="$formAction" method="post">
+<input type="submit" name="refresh" value="Refresh" class="portlet-form-button"/>
+<input type="submit" name="checks" value="Put in Service" class="portlet-form-button"/>
+</p>
+<p>Count: $!count</p>
+<br/>
+
+<table cellpadding=0 cellspacing=1 border=0 width='100%' >
+  <input type="hidden" name="group" value="$!group">
+  <input type="submit" id="removeChecked$Targets" name="group.action.Remove_Checked_$Targets" value='$MESSAGES.getString("removechecked$targets")' style="display:none"/>
+  <tr>
+     <th width="10"></th>
+      <th align='center' class="portlet-section-header" nowrap>
+        Portlet
+      </th>
+  </tr>
+#foreach ( $entry in $outOfService )
+  <tr>
+#if ($velocityCount % 2 == 0)
+#set($rowstyle = "portlet-section-body")
+#else
+#set($rowstyle = "portlet-section-alternate")
+#end  
+    <td class="$rowstyle" width="10">
+        <input type="checkbox" name="$entry.UniqueName"/>
+    </td>
+    <td class="$rowstyle" nowrap>
+      <div align="center">$entry.UniqueName</div>
+    </td>
+   </tr>
+#end
+</table>
+</form>

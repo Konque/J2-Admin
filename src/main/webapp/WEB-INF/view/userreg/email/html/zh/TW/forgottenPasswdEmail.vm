@@ -1,0 +1,30 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+您好  $!{map.get("user.name.given")} $!{map.get("user.name.family")}:
+
+您已經請求了一個新的密碼。
+您的帳號: $!{map.get("username")}
+新 密 碼: $!{map.get("password")}
+您<b>必須</b>點擊下面的鏈結才能啟動新密碼:
+$!{map.get("returnURL")}
+如果您接受這封Email有錯誤，請<b>不要</b>更新您的密碼，
+請您<b>不要</b>點擊上面的鏈結，您的帳號的密碼將不會改變。
+
+此致
+敬禮 
+
+The Jetspeed Team.

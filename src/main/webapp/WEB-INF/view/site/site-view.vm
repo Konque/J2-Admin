@@ -1,0 +1,2615 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+#set($rc = $renderRequest.getAttribute("org.apache.jetspeed.request.RequestContext"))
+#set($req = $rc.Request)
+#set($app = $renderRequest.getContextPath())
+#set($rooturl = "${req.scheme}://${req.serverName}:${req.serverPort}${req.contextPath}/")
+#set($treeName = $renderRequest.getParameter("treeName"))
+#set($renderURL = $renderResponse.createRenderURL())
+#set($actionURL = $renderResponse.createActionURL())
+#set($status = $renderRequest.getPortletSession().getAttribute("status"))
+  <div dojoType="dialog" id="CopyResourceDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250" >
+    <form onsubmit="return false;">
+    <table>
+      <tr>
+        <td>Copying resource <b><span  id='c.name'></span></b></td><td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>New Name</b>&nbsp;<input class="medium" type="text" maxlength="20" id="cName" onChange="disableCopySave();"></td>&nbsp;<td></td>
+      </tr>	
+	  <tr>
+		<td>
+			<table id="cfolderpath"></table>
+		</td>
+	  </tr>
+	  <tr>
+		<td>
+			<table id="cfolderlist"></table>
+		</td>
+	  </tr>
+      <tr>
+        <td colspan="2" align="right" class="buttonboxright">
+          <button dojoType="Button" onClick="dojo.widget.byId( 'CopyResourceDialog' ).hide();" >Cancel</button>
+          <button dojoType="Button" widgetId='copy.save' onClick="dojo.widget.byId( 'CopyResourceDialog' ).hide(); copyAction();">Copy</button>
+		  <input type="hidden" id="cType" value="">
+        </td>
+      </tr>
+    </table>
+    </form>
+  </div>
+
+    <div dojoType="dialog" id="MoveResourceDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250" >
+    <form onsubmit="return false;">
+    <table>
+      <tr>
+		<td>Moving resource <b><span  id='m.name'></span></b></td><td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td><b>New Name</b>&nbsp;<input class="medium" type="text" maxlength="20" id="mName"></td>&nbsp;<td></td>
+      </tr>
+	  <tr>
+		<td>
+			<table id="mfolderpath"></table>
+		</td>
+	  </tr>
+	  <tr>
+		<td>
+			<table id="mfolderlist"></table>
+		</td>
+	  </tr>
+      <tr>
+        <td colspan="2" align="right" class="buttonboxright">
+          <button dojoType="Button" onClick="dojo.widget.byId( 'MoveResourceDialog' ).hide();" >Cancel</button>
+          <button dojoType="Button" widgetId='move.save' onClick="dojo.widget.byId( 'MoveResourceDialog' ).hide(); moveAction();">Move</button>
+		  <input type="hidden" id="mType" value="">
+        </td>
+      </tr>
+    </table>
+    </form>
+  </div>
+  <div dojoType="dialog" id="DeleteResourceDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250">
+    <form onsubmit="return false;">
+    <table>
+      <tr>
+        <td>Confirm Deletion of <span id='del.kind'></span> <span id='del.name'></span>:</td><td>&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="2" align="right" class="buttonboxright">
+          <button dojoType="Button" onClick="dojo.widget.byId( 'DeleteResourceDialog' ).hide();" >Cancel</button>
+          <button dojoType="Button" onClick="dojo.widget.byId( 'DeleteResourceDialog' ).hide(); deleteResource();">Delete</button>
+        </td>
+      </tr>
+    </table>
+    </form>
+  </div>
+
+  <div dojoType="dialog" id="NewResourceDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250" class="constraints">
+    <form onsubmit="return false;">
+    <table>      
+    <tr>
+      <td class="permissions" colspan='2'>Create new <span id='res.kind'></span>:</td><td>&nbsp;</td>        
+    </tr>      
+    <tr>
+      <td class="permissions">Name</td>
+      <td class="permissions">
+        <input type="text" id="res.name" class="medium" required="true" onChange="validateResourceName()"/>
+        <input type='hidden' id='res.parent' />
+      </td>
+    </tr>
+    <tr>
+      <td class="permissions">Title</td>
+      <td class="permissions">
+        <input type="text" id="res.title" class="medium" required="true" onChange="validateNewField()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="permissions">Short Title</td>
+      <td class="permissions">
+        <input type="text" id="res.short-title" class="medium" />
+      </td>
+    </tr>      
+    <tr id="res.link">
+      <td class="permissions">URL</td>
+      <td class="permissions">
+        <input type="text" id="res.url" class="medium" onChange="validateNewField()"/>
+      </td>
+    </tr>
+      <tr>
+        <td align='right'>
+          <button widgetId='res.save' dojoType="Button" onClick="dojo.widget.byId( 'NewResourceDialog' ).hide(); createResource();">Create</button>
+        </td>
+        <td align='right'>
+          <button dojoType="Button" onClick="dojo.widget.byId( 'NewResourceDialog' ).hide();" >Cancel</button>
+        </td>
+      </tr>
+    </table>
+    </form>
+  </div>
+
+  <div dojoType="dialog" id="NewOwnerDialog" bgColor="grey" bgOpacity="0.5" toggle="fade" toggleDuration="250" class="constraints">
+    <form onsubmit="return false;">
+    <table>      
+    <tr>
+      <td class="permissions" colspan='2'>Owner Constraint:</td><td>&nbsp;</td>        
+    </tr>      
+    <tr>
+      <td class="permissions">Name</td>
+      <td class="permissions">
+        <input type="text" id="owner.name" class="medium" required="true" onChange="validateOwnerName()"/>
+      </td>
+    </tr>
+    <tr>
+        <td align='right'>
+          <button widgetId='owner.save' dojoType="Button" onClick="dojo.widget.byId( 'NewOwnerDialog' ).hide(); createOwner();">Save</button>
+        </td>
+        <td align='right'>
+          <button dojoType="Button" onClick="dojo.widget.byId( 'NewOwnerDialog' ).hide();" >Cancel</button>
+        </td>
+      </tr>
+    </table>
+    </form>
+  </div>
+
+<div dojoType="jetspeed:SiteManagerTreeRPCController" 
+     RPCUrl="${rooturl}/ajaxapi?action=getfolderlist" 
+     widgetId="treeController" 
+     DNDController="create">
+</div>
+
+<div dojoType="TreeSelector" widgetId="treeSelector" eventNames="select:nodeSelected"></div>
+
+<div dojoType="TreeContextMenu" toggle="explode" contextMenuForWindow="false" widgetId="treeContextMenu">
+  <div dojoType="TreeMenuItem" treeActions="remove" iconSrc="$app/images/delete.png" caption="Remove" widgetId="treeContextMenuRemove"></div> 
+  <div dojoType="TreeMenuItem" treeActions="newFolder" iconSrc="$app/images/folder_new.gif" caption="New Folder" widgetId="treeContextMenuNewFolder"></div>
+  <div dojoType="TreeMenuItem" treeActions="newPage" iconSrc="$app/images/page_new.gif" caption="New Page" widgetId="treeContextMenuNewPage"></div>  
+  <div dojoType="TreeMenuItem" treeActions="newLink" iconSrc="$app/images/link_add.png" caption="New Link" widgetId="treeContextMenuNewLink"></div>  
+  <div dojoType="TreeMenuItem" treeActions="copy" iconSrc="$app/images/mouse_add.png" caption="Copy" widgetId="treeContextMenuCopy"></div>
+  <div dojoType="TreeMenuItem" treeActions="move" iconSrc="$app/images/move.gif" caption="Move" widgetId="treeContextMenuMove"></div>
+</div>
+
+<input type="hidden" id="path">
+<input type="hidden" id="action">
+<input type="hidden" id="destination">
+<input type="hidden" id="destinationName">
+<script type="text/javascript">
+function folder(name, path)
+{
+  this.name = name;
+  this.path = path;
+}
+function isDupeObject(name,type)
+{
+	var list;
+	if (type == 'Link'){
+		list = links;
+	}else if (type == 'Folder'){
+		list = folders;
+	}else if (type == 'Page'){
+		list = pages;
+	}
+    for(var i=0; i<list.length; i++) 
+    {
+		if (list[i].folderName == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+function setDestination(path,name)
+{
+	document.getElementById('destination').value = path;
+	getSelectedFolders(path);
+}
+
+   var pages = new Array();
+   var links = new Array();
+   var folders = new Array();
+   var rootfolders = new Array();   
+
+  #set($count = 0)
+  rootfolders[$count] = new folder('$folders.Path','$folders.Name');
+  #set($count = $count + 1)
+  #foreach($subf in $folders.Folders.iterator())
+		rootfolders[$count] = new folder('$subf.Name','$subf.Path');	
+		#set($count = $count + 1)
+  #end  
+
+  function createpopUpTable(action)
+{
+    document.getElementById('path').value = '/'; 
+	var foldersTable;
+	createAddressBar(action);	
+	if (action == 'copy')
+	{	
+		btnSetDisabled( dojo.widget.byId("copy.save"), true );    		
+		foldersTable = document.getElementById('cfolderlist');   
+	}
+	else
+	{	
+		btnSetDisabled( dojo.widget.byId("move.save"), true );    		
+		foldersTable = document.getElementById('mfolderlist');   
+	}
+	var folder_len = rootfolders.length;	
+    while (foldersTable.hasChildNodes())
+    {
+		foldersTable.removeChild(foldersTable.lastChild);
+    }	
+	var pgRoww = null;
+    var pgCol=null;
+    var img = null;    
+	var frmObj = null;    
+	var a = null;
+
+	for ( var i = 0 ; i < folder_len ; i++ )
+	{   
+		pgRoww = foldersTable.insertRow(i);
+		pgCol = pgRoww.insertCell(0);
+		frmObj = document.createElement("input");
+		frmObj.type = "radio";
+		frmObj.name = "fDestination";
+		frmObj.id = "fDestination";
+		//frmObj.setAttribute("dojoType","Radio");
+		//frmObj.value = rootfolders[i].path;
+		frmObj.setAttribute("onChange","javascript:setDestination('"+ rootfolders[i].path+"','" +rootfolders[i].name + "')");
+		pgCol.appendChild(frmObj);        
+		pgCol = pgRoww.insertCell(1);
+		img = document.createElement("img");
+        img.src = '$app/images/folder.gif';
+        pgCol.appendChild(img);        
+		pgCol = pgRoww.insertCell(2);
+		a = document.createElement("a");
+		a.innerHTML =rootfolders[i].name;
+		a.href = "javascript:getFolders('" +  rootfolders[i].path + "')";
+		pgCol.appendChild(a);              
+	}   
+}
+function createAddressBar(action)
+{
+	var foldersTable;
+	if (action =='copy')
+	{
+		foldersTable= document.getElementById('cfolderpath');   
+	}else
+	{
+		foldersTable= document.getElementById('mfolderpath');   
+	}
+	
+	var address = document.getElementById('path').value;
+	while (foldersTable.hasChildNodes())
+    {
+      foldersTable.removeChild(foldersTable.lastChild);
+    }
+	var paths = address.split('/');
+	var pgRoww = null;
+    var pgCol=null;
+	var a = null;
+	pgRoww = foldersTable.insertRow(0);
+	var cnt = 0;
+	pgCol = pgRoww.insertCell(cnt);
+	a = document.createElement("a");
+	a.innerHTML ='/';
+	a.href = "javascript:getFolders('/')";
+	pgCol.appendChild(a);
+	cnt = cnt + 1;	
+	for ( var i = 0 ; i < paths.length ; i++ )
+	{
+		if (paths[i] != '')
+		{	
+			pgCol = pgRoww.insertCell(cnt);
+			pgCol.innerHTML = ' >> ';			
+			cnt = cnt + 1;
+			pgCol = pgRoww.insertCell(cnt);
+			a = document.createElement("a");
+			a.innerHTML =paths[i];
+			a.href = "javascript:getFolders('" + getPath(address,i) + "')";
+			pgCol.appendChild(a);
+			cnt = cnt + 1;
+		}
+	}	
+}
+function getPath(address,index)
+{
+	var paths = address.split('/');
+	var path =''; 
+	for(i = 0;i<=index;i++)
+	{
+		if (paths[i] != "")
+			{
+				path=  path + "/" + paths[i];
+			}
+	}
+	return path;
+}
+function getSelectionResult(domainObjects, folderList,pagesList,linksList)
+{
+    pages = pagesList;
+	links = linksList;
+	folders = folderList;	
+	document.getElementById('destinationName').value = name;	 	
+	var selector = dojo.widget.byId('treeSelector');
+	var objectType = selector.selectedNode.object;
+	var name;
+	var status;
+	if (document.getElementById('action').value == 'copy')
+	{
+		name = document.getElementById('cName').value;
+	}
+	else{
+		name = document.getElementById('mName').value;		
+	}
+	
+	if (objectType =='Page')
+	{
+		name = name + '.psml';
+	}else if(objectType =='Link')
+	{
+		name = name + '.link';
+	}
+	
+	status = isDupeObject(name,objectType);
+	if (status == true) 		
+	{
+		alert(objectType+ " name " + name + " is already in use. Please chose another name.");
+		if (document.getElementById('action').value == 'copy')
+		{
+			btnSetDisabled( dojo.widget.byId("copy.save"), true );
+		}else{
+			btnSetDisabled( dojo.widget.byId("move.save"), true );
+		}
+	}
+	else
+	{
+		if (document.getElementById('action').value == 'copy')
+		{
+			btnSetDisabled( dojo.widget.byId("copy.save"), false );
+		}else{
+			btnSetDisabled( dojo.widget.byId("move.save"), false );
+		}
+	}
+}
+function btnSetDisabled( btnWidget, /* Boolean */ disabled )
+{
+    if ( ! btnWidget ) return;
+    if ( btnWidget.disabled != disabled ) // bug in widget if called multiple times with same value
+        btnWidget.setDisabled( disabled );
+}
+function getFoldersResult(domainObjects, folderList,pagesList,linksList)
+{
+    pages = pagesList;
+	links = linksList;
+	createAddressBar(document.getElementById("action").value);	
+	document.getElementById('destination').value = '';
+	btnSetDisabled( dojo.widget.byId("copy.save"), true );
+    var folder_len = folderList.length
+    var foldersTable;
+	if (document.getElementById("action").value =='copy')
+	{
+		foldersTable = document.getElementById('cfolderlist');   
+	}else{
+		foldersTable = document.getElementById('mfolderlist');   
+	}
+    while (foldersTable.hasChildNodes())
+    {
+      foldersTable.removeChild(foldersTable.lastChild);
+    }	
+	var pgRoww = null;
+    var pgCol=null;
+    var img = null;    
+	var frmObj = null;    
+	var a = null;
+	var folder =document.getElementById('path').value;
+	var rowNum;
+	if(folder =='/')
+	{
+		pgRoww = foldersTable.insertRow(0);
+		pgCol = pgRoww.insertCell(0);
+		frmObj = document.createElement("input");
+		frmObj.type = "radio";
+		frmObj.name = "fDestination";
+		frmObj.setAttribute("onChange","javascript:setDestination('/','/')");
+		pgCol.appendChild(frmObj);   
+		pgCol = pgRoww.insertCell(1);
+		img = document.createElement("img");
+        img.src = '$app/images/folder.gif';
+        pgCol.appendChild(img);        
+		pgCol = pgRoww.insertCell(2);
+		a = document.createElement("a");
+		a.innerHTML = '/';
+		a.href = "javascript:getFolders('/')";
+		pgCol.appendChild(a);              
+
+	}
+	for ( var i = 0 ; i < folder_len ; i++ )
+	{   
+		if(folder =='/'){
+			rowNum = i+1;
+		}else{
+			rowNum = i;
+		}
+		pgRoww = foldersTable.insertRow(rowNum);
+		pgCol = pgRoww.insertCell(0);
+		frmObj = document.createElement("input");
+		frmObj.type = "radio";
+		frmObj.name = "fDestination";
+		//frmObj.setAttribute("dojoType","Radio");
+		//frmObj.value = folderList[i].folderPath
+		frmObj.setAttribute("onChange","javascript:setDestination('"+ folderList[i].folderPath+"','" + folderList[i].folderName +"')");
+		pgCol.appendChild(frmObj);   
+		pgCol = pgRoww.insertCell(1);
+		img = document.createElement("img");
+        img.src = '$app/images/folder.gif';
+        pgCol.appendChild(img);        
+		pgCol = pgRoww.insertCell(2);
+		a = document.createElement("a");
+		a.innerHTML =folderList[i].folderName;
+		a.href = "javascript:getFolders('" + folderList[i].folderPath + "')";
+		pgCol.appendChild(a);              
+	}   
+}
+function getSelectedFolders(folder)
+{
+   document.getElementById('path').value = folder;
+   jetspeed.site.getFolders(folder,getSelectionResult);
+}
+
+function getFolders(folder)
+{
+   document.getElementById('path').value = folder; 
+   jetspeed.site.getFolders(folder,getFoldersResult);
+}
+function getNewMetaPrototype()
+{
+    return { name: "", language: "", value: "" };
+}
+function getNewSecurityPrototype()
+{
+    return { name: "", kind: "" };
+}
+function createNewInformation(kind)
+{
+    return { kind: kind, modified: false}
+}
+var FolderHandler = function()
+{
+  this.populate = function(data) 
+  {
+     document.getElementById("rhs").style.display = "block";
+     dojo.widget.byId("rhs").show();
+     elementToInput("finfo", "name", data);
+     elementToInput("finfo", "path", data);                                  
+     titlesToInput("finfo", "title", "short-title", data);
+     elementToInput("finfo", "default-page", data);
+     attributeToSelect("finfo", "defaults", "layout-decorator", data);
+     attributeToSelect("finfo", "defaults", "portlet-decorator", data);
+     attributeToCheckbox("finfo", "folder", "hidden", data);
+     window.information = createNewInformation("finfo");
+     populateMetadata("metadata", data, "folder");
+     populateSecurity("security", data, "folder");
+     document.getElementById("divFolderButtons").style.display = "block";     
+  }     
+  this.failure = function(data)
+  {
+  }
+}
+var PageHandler = function()
+{
+  this.populate = function(data) 
+  {
+     document.getElementById("rhs").style.display = "block";
+     dojo.widget.byId("rhs").show();
+     elementToInput("pinfo", "name", data);
+     elementToInput("pinfo", "path", data);
+     titlesToInput("pinfo", "title", "short-title", data);
+     attributeToSelect("pinfo", "defaults", "layout-decorator", data);
+     attributeToSelect("pinfo", "defaults", "portlet-decorator", data);
+     attributeToSelect("pinfo", "defaults", "theme", data);
+     attributeToCheckbox("pinfo", "page", "hidden", data);     
+     window.information = createNewInformation("pinfo");
+     populateMetadata("metadata", data, "page");
+     populateSecurity("security", data, "page");
+     document.getElementById("divFolderButtons").style.display = "none";
+  }     
+  this.failure = function(data)
+  {
+  }
+}
+var LinkHandler = function()
+{
+  this.populate = function(data) 
+  {
+     document.getElementById("rhs").style.display = "block";
+     dojo.widget.byId("rhs").show();
+     elementToInput("linfo", "name", data);
+     elementToInput("linfo", "path", data);
+     titlesToInput("linfo", "title", "short-title", data);
+     elementToInput("linfo", "url", data);
+     elementToSelect("linfo", "target", data);    
+     attributeToCheckbox("linfo", "link", "hidden", data);     
+     window.information = createNewInformation("linfo");
+     populateMetadata("metadata", data, "link");
+     populateSecurity("security", data, "link");
+     document.getElementById("divFolderButtons").style.display = "none";
+  }     
+  this.failure = function(data)
+  {
+  }
+}
+function showPopUpfolderTree(node)
+{
+    if (node == null)
+    {
+       alert("Please select a resource in the portal site tree.");
+       return;
+    }    
+    determineSave();
+    if ( node.object == "Folder" )
+    {   
+        var names = new Array("folder");
+        var values = new Array(node.widgetId);
+        ajaxInvoke("getfolder", names, values, new popFolderHandler() );     
+    }
+}
+function editResource(node)
+{
+    if (node == null)
+    {
+       alert("Please select a resource in the portal site tree.");
+       return;
+    }    
+	#if($status != '')    
+		document.getElementById("infobar").style.display = 'none';
+	#end
+    determineSave();
+    if ( node.object == "Folder" )
+    {   
+        var names = new Array("folder");
+        var values = new Array(node.widgetId);
+        ajaxInvoke("getfolder", names, values, new FolderHandler() );     
+        btnSetDisabled( dojo.widget.byId( "saveFInfoButton" ), true );
+        btnSetDisabled( dojo.widget.byId( "revertFInfoButton" ), true );
+        displayTabs( [ "infoTabFolder", "securityTab", "metaTab", "menusTab", "orderTab","import","export"] );
+		populateImport(node);		
+    }
+    if ( node.object == "Page" )
+    {
+        var names = new Array("page", "fragments");
+        var values = new Array(node.widgetId, "false");
+        ajaxInvoke("getpage", names, values, new PageHandler() );     
+        btnSetDisabled( dojo.widget.byId( "savePInfoButton" ), true );
+        btnSetDisabled( dojo.widget.byId( "revertPInfoButton" ), true );
+        displayTabs( [ "infoTabPage", "securityTab", "metaTab","export" ] );
+    }
+    else if ( node.object == "Link" )
+    {
+        var names = new Array("link");
+        var values = new Array(node.widgetId);
+        ajaxInvoke("getlink", names, values, new LinkHandler() );         
+        btnSetDisabled( dojo.widget.byId( "saveLInfoButton" ), true );
+        btnSetDisabled( dojo.widget.byId( "revertLInfoButton" ), true );        
+		displayTabs( [ "infoTabLinks", "securityTab", "metaTab","export" ] );
+    }
+	populateExport(node);
+}
+
+function populateImport(node)
+{
+	document.getElementById('importPath').value = node.widgetId;    
+}
+function populateExport(node)
+{
+	document.getElementById("exportAns").innerHTML = '';
+	if ( node.object == "Folder" )
+    {
+		document.getElementById('exptRecurs').style.display = 'block';
+	}
+	else
+	{
+		document.getElementById('exptRecurs').style.display = 'none';
+	}
+	document.getElementById('exportObject').value = node.title;
+	document.getElementById('objName').value = node.title;
+	document.getElementById('objType').value = node.object;
+	document.getElementById('objPath').value = node.widgetId;    
+}
+
+function validateNewField()
+{
+    btnSetDisabled( dojo.widget.byId("res.save"), disableNewSave( ));    
+}
+function validateName(kind,name,action)
+{
+    var valid = true;
+    if (name != null && dojo.string.trim(name).length > 0)
+    {
+        name = dojo.string.trim(name.toLowerCase());
+        if (kind == "Page")
+        {
+            var regex = new RegExp("[0-9a-zA-Z_].psml");
+            if (name.match(regex))
+            {
+				valid = false;
+				alert('Please choose a valid name');
+            }
+        }
+        else if (kind == "Link")
+        {
+            var regex = new RegExp("[0-9a-zA-Z_].link");
+            if (name.match(regex))
+            {
+                valid = false;
+				alert('Please choose a valid name');
+            }
+        }
+	}else{
+	           valid = false;
+			   alert('Please choose a valid name');
+	}
+	if(valid == false)
+	{
+		if (action =='copy'){
+			btnSetDisabled( dojo.widget.byId("copy.save"), true );
+			return true;
+		}else{
+			btnSetDisabled( dojo.widget.byId("move.save"), true );    		
+			return  true;
+		}
+	}
+	return false;
+}
+function validateResourceName()
+{
+    var name = dojo.byId("res.name").value;   
+    var kind = dojo.byId("res.kind").innerHTML;
+    if (name != null && dojo.string.trim(name).length > 0)
+    {
+        name = dojo.string.trim(name.toLowerCase());
+        if (kind == "Page")
+        {
+            var regex = new RegExp("[0-9a-zA-Z_].psml");
+            if (!name.match(regex))
+            {
+                name = name + ".psml";
+                dojo.byId("res.name").value = name;
+            }
+        }
+        else if (kind == "Link")
+        {
+            var regex = new RegExp("[0-9a-zA-Z_].link");
+            if (!name.match(regex))
+            {
+                name = name + ".link";
+                dojo.byId("res.name").value = name;
+            }
+        }
+        if (isDupe(kind, name))
+        {
+             alert(kind + " name " + name + " is already in use. Please chose another name.");
+             btnSetDisabled( dojo.widget.byId("res.save"), true );    
+        }
+    }
+    btnSetDisabled( dojo.widget.byId("res.save"), disableNewSave( ));    
+}
+function disableNewSave()
+{
+    var title = dojo.byId("res.title").value;   
+    var name = dojo.byId("res.name").value;   
+    var kind = dojo.byId("res.kind").innerHTML;
+    var disabled = false;    
+    if (name == null || dojo.string.trim(name) == "" ||
+        title == null || dojo.string.trim(title) == "")
+        disabled = true;
+    if (kind == "Link")
+    {
+        var url = dojo.byId("res.url").value;
+        if (url == null || dojo.string.trim(url) == "")
+            disabled = true;
+    }
+    return disabled;    
+}
+function isDupe(kind, name)
+{
+    var selector = dojo.widget.byId('treeSelector');
+    var parent = selector.selectedNode;
+    for(var i=0; i<parent.children.length; i++) 
+    {
+        var child = parent.children[i];
+        if (child.object == kind && child.title == name)
+        {
+            return true;
+        }
+    }
+    return false;
+}
+function createResource()
+{
+    var selector = dojo.widget.byId('treeSelector');
+    if (selector.selectedNode == null)
+    {
+        alert("Please select a resource");
+        return;
+    }
+    var parent = selector.selectedNode;
+    if (selector.selectedNode.isFolder == false)
+        parent = selector.selectedNode.parent;
+
+    var node = new dojo.widget.TreeNode();
+    node.isFolder = false;
+    node.object = document.getElementById("res.kind").innerHTML;
+    var sep = "/";
+    if (parent.widgetId.substring(parent.widgetId.length-1) == "/")
+       sep = "";
+    node.widgetId = parent.widgetId + sep + document.getElementById("res.name").value;
+    node.title = document.getElementById("res.name").value;
+    node.childIconSrc = "$app/images/" + node.object.toLowerCase() + ".gif";
+    node.isFolder = (node.object == "Folder");
+    // create new Node
+    var action = "update" + node.object.toLowerCase();
+    var names = new Array();
+    var values = new Array();
+    names[0] = "method";
+    values[0] = "add";
+    names[1] = "path";
+    values[1] = node.widgetId;
+    names[2] = "name";
+    values[2] = node.title;
+    names[3] = "title";
+    values[3] = document.getElementById("res.title").value;
+    names[4] = "defaultLayout";
+    values[4] = document.getElementById("defaultLayout").value;
+    var index = 5;
+    var stitle = document.getElementById("res.short-title").value;
+    if (stitle != null && stitle != "")
+    {
+        names[index] = "short-title";
+        values[index] = stitle;
+        index = index + 1;
+    }
+    if (node.object == "Link")
+    {
+        names[index] = "url";
+        values[index] = document.getElementById("res.url").value;
+        index = index + 1;
+    }
+    ajaxInvoke(action, names, values, new ResourceAddHandler(parent, node) );     
+}
+function copyResource()
+{
+    var selector = dojo.widget.manager.getWidgetById('treeSelector');
+	document.getElementById("action").value = 'copy';
+    if (selector.selectedNode == null)
+    {
+        alert("Please select a resource");
+        return;
+    }
+    var node = selector.selectedNode;
+    var parent = selector.selectedNode.parent;
+    if (node.title == "/")
+    {
+        alert("Please do not copy the root folder!");
+        return;
+    }
+	document.getElementById("cName").value = node.title.substring(0,node.title.lastIndexOf('.'));
+	document.getElementById("c.name").innerHTML = node.title
+	document.getElementById("cType").value = node.object	
+	createpopUpTable('copy');
+    jetspeed.widget.openDialog( dojo.widget.byId( "CopyResourceDialog" ) );
+}
+
+function copyAction()
+{
+	var nodeName = document.getElementById("cName").value;
+	var kind = document.getElementById("cType").value;
+	var destinationPath = document.getElementById('destination').value;
+	
+	var status  = validateName(kind,nodeName,'copy');
+	if(status == true) 
+	{
+		return;
+	}
+	var selector = dojo.widget.byId('treeSelector');
+    if (selector.selectedNode == null)
+    {
+        alert("Please select a resource");
+        return;
+    }
+    var parent = selector.selectedNode;
+    if (selector.selectedNode.isFolder == false)
+        parent = selector.selectedNode.parent;
+
+    var node = new dojo.widget.TreeNode();
+    node.isFolder = false;
+    node.object = kind;
+    var sep = "/";
+    if (parent.widgetId.substring(parent.widgetId.length-1) == "/")
+       sep = "";
+	var source; 
+	var nd = new dojo.widget.TreeNode();
+	    if (node.object != "Folder")
+	{		
+		source = parent.widgetId + sep + document.getElementById("c.name").innerHTML;
+	}
+	else{
+		source = parent.widgetId;
+
+	}
+	
+	nodeName = getFullName(nodeName,kind)
+	var par= dojo.widget.byId(destinationPath);
+
+    var action = "update" + node.object.toLowerCase();
+    var names = new Array();
+    var values = new Array();
+    names[0] = "method";
+    values[0] = "copy";
+    names[1] = "path";
+    values[1] = source;
+    names[2] = "name";
+    values[2] = nodeName;
+    names[3] = "destination";
+	values[3] = destinationPath;
+	this.parent = parent;
+	this.node = node;
+    ajaxInvoke(action, names, values, new ResourceCopyHandler(parent, node) );     
+}
+
+function moveResource()
+{
+    var selector = dojo.widget.manager.getWidgetById('treeSelector');
+	document.getElementById("action").value = 'move';
+    if (selector.selectedNode == null)
+    {
+        alert("Please select a resource");
+        return;
+    }
+    var node = selector.selectedNode;
+    var parent = selector.selectedNode.parent;
+    if (node.title == "/")
+    {
+        alert("Please do not move the root folder!");
+        return;
+    }	
+	document.getElementById("m.name").innerHTML = node.title
+	document.getElementById("mName").value = node.title.substring(0,node.title.lastIndexOf('.'));
+	document.getElementById("mType").value = node.object	
+	createpopUpTable('move');
+    jetspeed.widget.openDialog( dojo.widget.byId( "MoveResourceDialog" ) );
+}
+
+function moveAction()
+{
+	var nodeName = document.getElementById("mName").value;
+	var kind = document.getElementById("mType").value;
+	
+	var status  = validateName(kind,nodeName,'move');
+
+	if(status == true) 
+	{
+		return;
+	}
+
+    var selector = dojo.widget.byId('treeSelector');
+    if (selector.selectedNode == null)
+    {
+        alert("Please select a resource");
+        return;
+    }
+    var parent = selector.selectedNode;
+    if (selector.selectedNode.isFolder == false)
+        parent = selector.selectedNode.parent;
+
+    var node = new dojo.widget.TreeNode();
+    node.isFolder = false;
+    node.object = kind
+    var sep = "/";
+    if (parent.widgetId.substring(parent.widgetId.length-1) == "/")
+       sep = "";
+	if (node.object != "Folder")
+	{		
+		node.widgetId = parent.widgetId + sep + document.getElementById("mName").innerHTML;
+	}
+	else{
+		node.widgetId = selector.selectedNode.widgetId;
+	}
+
+    node.title = document.getElementById("res.name").value;
+	var name = nodeName;
+	nodeName =  getFullName(nodeName,kind); 
+    node.childIconSrc = "$app/images/" + node.object.toLowerCase() + ".gif";
+    node.isFolder = (node.object == "Folder");
+    // create new Node
+    var action = "update" + node.object.toLowerCase();
+    var names = new Array();
+    var values = new Array();
+    names[0] = "method";
+    values[0] = "move";
+    names[1] = "path";
+    values[1] = node.widgetId+nodeName;
+    names[2] = "name";
+	values[2] = nodeName;
+    names[3] = "destination";
+    values[3] = document.getElementById('destination').value;
+    ajaxInvoke(action, names, values, new ResourceMoveHandler(parent, node) );     
+}
+var ResourceMoveHandler = function(parent, node)
+{
+  var nodeName=document.getElementById('mName').value;
+  var action = document.getElementById("action").value;
+  var kind = document.getElementById("mType").value;
+  var destinationPath = document.getElementById('destination').value;
+
+  var selector = dojo.widget.byId('treeSelector');
+  var node = selector.selectedNode;
+
+  var controller = dojo.widget.byId('treeController');
+  var res = controller.removeNode(node);
+  parent= dojo.widget.byId(destinationPath);
+  var node1 = new dojo.widget.TreeNode();
+  node1.object = kind;
+  node1.title = getFullName(nodeName,kind);
+  node1.widgetId = getDestination(destinationPath) + getFullName(nodeName,kind);
+  node1.childIconSrc = "$app/images/" + kind.toLowerCase() + ".gif";
+  this.populate = function(data) 
+  { 
+    // insert in sorted order
+    for(var i=0; i<parent.children.length; i++) 
+    {
+        var child = parent.children[i];
+        if (child.object == node1.object)
+        {
+             if (child.title > node1.title)
+             {
+                break;
+             }
+        }
+        else
+        {
+            if (node1.object == "Folder")
+                break;
+            if (node1.object == "Page" && child.object == "Link")
+                break;
+        }
+    }
+    var controller = dojo.widget.byId('treeController');
+	if(parent.isExpanded == true) {
+		var res = controller.createChild(parent, i, node1);
+	}
+    var selector = dojo.widget.byId('treeSelector');
+    selector.select({ source: parent, event: {} });
+    editResource(parent);
+  }
+  this.failure = function(data)
+  {
+  }
+}
+function deleteResource()
+{
+    var selector = dojo.widget.manager.getWidgetById('treeSelector');
+    if (selector.selectedNode == null)
+    {
+        alert("Please select a resource");
+        return;
+    }
+    var node = selector.selectedNode;
+    var parent = selector.selectedNode.parent;
+    if (node.title == "/")
+    {
+        alert("Please do not delete the root folder!");
+        return;
+    }
+    var kind = document.getElementById("res.kind").innerHTML;
+
+    var action = "update" + node.object.toLowerCase();
+    var names = new Array();
+    var values = new Array();
+    names[0] = "method";
+    values[0] = "remove";
+    names[1] = "path";
+    values[1] = node.widgetId;
+    ajaxInvoke(action, names, values, new ResourceDeleteHandler(parent, node) );     
+}
+var ResourceCopyHandler = function(parent, node1)
+{
+  var nodeName=document.getElementById('cName').value;
+  var action = document.getElementById("action").value;
+  var kind = document.getElementById("cType").value;
+  var destinationPath = document.getElementById('destination').value;
+  parent= dojo.widget.byId(destinationPath);
+  var node = new dojo.widget.TreeNode();
+
+  if(kind != 'Folder') {
+	node.isFolder = false;
+   }else{
+	node.isFolder = false
+   }
+
+  if (action == 'copy')
+  {
+	node.object = kind;
+	node.title = getFullName(nodeName,kind);
+	node.widgetId = getDestination(destinationPath) + getFullName(nodeName,kind);
+	node.childIconSrc = "$app/images/" + kind.toLowerCase() + ".gif";
+  }
+
+  this.populate = function(data) 
+  { 
+    // insert in sorted order
+    for(var i=0; i<parent.children.length; i++) 
+    {
+        var child = parent.children[i];
+        if (child.object == node.object)
+        {
+             if (child.title > node.title)
+             {
+                break;
+             }
+        }
+        else
+        {
+            if (node.object == "Folder")
+                break;
+            if (node.object == "Page" && child.object == "Link")
+                break;
+        }
+    }
+    var controller = dojo.widget.byId('treeController');
+	if(parent.isExpanded == true) {
+		var res = controller.createChild(parent, i, node);
+	}
+    var selector = dojo.widget.byId('treeSelector');
+    selector.select({ source: parent, event: {} });
+    editResource(parent);
+  }
+  this.failure = function(data)
+  {
+  }
+}
+var ResourceAddHandler = function(parent, node)
+{
+  this.parent = parent;
+  this.node = node;
+  this.populate = function(data) 
+  { 
+    var controller = dojo.widget.byId('treeController');
+    if ( parent.state != parent.loadStates.LOADED )
+    {
+        controller.loadRemote( parent, true );
+        controller.expand( parent ) ;
+    }
+    else
+    {   // insert among already populated child tree nodes of parent
+        // insert in sorted order
+        var addAtIndex = -1;
+        var alreadyExists = false;
+        for(var i=0; i<parent.children.length; i++) 
+        {
+            var child = parent.children[i];
+            if ( addAtIndex == -1 )
+            {
+                if (child.object == node.object)
+                {
+                     if (child.title > node.title)
+                     {
+                        addAtIndex = i;
+                     }
+                }
+                else
+                {
+                    if (node.object == "Folder")
+                        addAtIndex = i;
+                    if (node.object == "Page" && child.object == "Link")
+                        addAtIndex = i;
+                }
+            }
+            if ( child.object == node.object )
+            {
+                if ( child.title == node.title )
+                {
+                    alreadyExists = true;
+                    break;
+                }
+            }
+        }
+        if ( ! alreadyExists )
+        {
+            if ( addAtIndex == -1 )
+                addAtIndex = parent.children.length;
+            var controller = dojo.widget.byId('treeController');
+            var res = controller.createChild(parent, addAtIndex, node);
+            var selector = dojo.widget.byId('treeSelector');
+            selector.select({ source: parent, event: {} });
+            editResource(parent);
+        }
+    }
+  }
+  this.failure = function(data)
+  {
+  }
+}
+var ResourceDeleteHandler = function(parent, node)
+{
+  this.parent = parent;
+  this.node = node;
+  this.populate = function(data) 
+  { 
+    var controller = dojo.widget.byId('treeController');
+    var res = controller.removeNode(node);
+    var selector = dojo.widget.byId('treeSelector');
+    selector.select({ source: parent, event: {} });
+    editResource(parent);
+  }
+  this.failure = function(data)
+  {
+  }
+}
+function getFullName(name,kind)
+{
+  if (kind=='Page'){ 
+	name = name + '.psml';
+  }else if (kind =='Link'){
+	name = name + '.link';
+  }
+  return name;
+}
+function getDestination(path)
+{
+	if (path !='/')
+	{
+		path = path + '/';
+	}
+	return path;
+} 
+function removeResource(xnode)
+{
+    var selector = dojo.widget.byId('treeSelector');
+    var node = selector.selectedNode;
+    if (node == null)
+    {
+        selector.select({ source: xnode, event: {} });
+        node = xnode;
+    }
+    var parent = selector.selectedNode.parent;
+    if (node.title == "/")
+    {
+        alert("Please do not delete the root folder!");
+        return;
+    }
+
+    document.getElementById("res.parent").value = node.widgetId;
+    document.getElementById("res.name").value = "";
+    document.getElementById("res.title").value = "";
+    document.getElementById("res.short-title").value = "";
+    document.getElementById("del.kind").innerHTML = node.object;
+    document.getElementById("del.name").innerHTML = node.title;    
+    btnSetDisabled( dojo.widget.byId("res.save"), true );
+    jetspeed.widget.openDialog( dojo.widget.byId( "DeleteResourceDialog" ) );
+}
+function viewResource(xnode)
+{
+    var selector = dojo.widget.byId('treeSelector');
+    var node = selector.selectedNode;
+    
+    var title = "w";
+    var i;
+    for (i=0; i<node.title.length; i++)
+    {
+    	if ( node.title.charAt(i) >= 'a' && node.title.charAt(i) <= 'z' || node.title.charAt(i) >= 'A' && node.title.charAt(i) <= 'Z' )
+    	{
+    		title = title + node.title.charAt(i);
+    	}
+    }
+    
+    if (node == null)
+    {
+        selector.select({ source: xnode, event: {} });
+        node = xnode;
+    }
+    if (node.object == "Link")
+    {
+        var url = document.getElementById("linfo.url").value;
+        window.open(url, title);
+    }
+    else 
+    {
+        var servletPath = "${req.ServletPath}";
+        var regex = new RegExp("/portal.*");
+        if (servletPath.match(regex))
+            servletPath = "configure";
+        else
+        {
+            if (servletPath == "/")
+                servletPath = "configure";
+            else
+                servletPath = "configure";
+        }
+        window.open("${rooturl}" + servletPath + node.widgetId, title);
+    }
+}
+function newResource(kind, xnode)
+{
+    var selector = dojo.widget.byId('treeSelector');
+    var node = selector.selectedNode;
+    if (node == null)
+    {
+        selector.select({ source: xnode, event: {} });
+        node = xnode;
+    }
+    document.getElementById("res.parent").value = node.widgetId;
+    document.getElementById("res.name").value = "";
+    document.getElementById("res.title").value = "";
+    document.getElementById("res.short-title").value = "";
+    document.getElementById("res.kind").innerHTML = kind; 
+    if (kind == "Link")
+        document.getElementById("res.link").style.display = "";
+    else
+        document.getElementById("res.link").style.display = "none";
+    btnSetDisabled( dojo.widget.byId("res.save"), true );
+    jetspeed.widget.openDialog( dojo.widget.byId( "NewResourceDialog" ) ) ;
+}
+// single click node handler
+var TreeNodeSelectionHandler = function(notUsed) 
+{
+  //this.name = eventName;
+  this.run = function(message) 
+  {        
+      editResource(message.node);
+  }
+}
+// subscribe to node selected (single left-click) event on tree
+dojo.addOnLoad(function() 
+{   
+   dojo.event.topic.subscribe("nodeSelected", new TreeNodeSelectionHandler("notUsed"), 'run');   
+}); 
+/* setup context menu actions */
+dojo.addOnLoad(function() 
+{
+  dojo.event.topic.subscribe('treeContextMenuRemove/engage',
+  function (menuItem) 
+  { 
+      removeResource(menuItem.getTreeNode());   
+  });
+  dojo.event.topic.subscribe('treeContextMenuNewFolder/engage',
+  function (menuItem) 
+  { 
+     newResource("Folder", menuItem.getTreeNode());     
+  });
+  dojo.event.topic.subscribe('treeContextMenuNewPage/engage',
+  function (menuItem) 
+  { 
+     newResource("Page", menuItem.getTreeNode());     
+  });
+  dojo.event.topic.subscribe('treeContextMenuNewLink/engage',
+  function (menuItem) 
+  { 
+     newResource("Link", menuItem.getTreeNode());     
+  });    
+  dojo.event.topic.subscribe('treeContextMenuCopy/engage',
+  function (menuItem) 
+   { 
+      copyResource(menuItem.getTreeNode());
+   });
+  dojo.event.topic.subscribe('treeContextMenuMove/engage',
+  function (menuItem) 
+   { 
+      moveResource(menuItem.getTreeNode());   
+   });
+});
+</script>
+
+#macro (TraverseFolders $f)
+  <div isFolder='true' object='Folder' dojoType="TreeNode" widgetId="$f.Path" title="$f.Name" childIconSrc="$app/images/folder.gif">
+  #foreach($subf in $f.Folders.iterator())
+##    #TraverseFolders($subf) 
+	#if($userTree == 'false')
+		#if($subf.Name != '_user')
+    <div isFolder='true' object='Folder' dojoType="TreeNode" widgetId="$subf.Path" title="$subf.Name" childIconSrc="$app/images/folder.gif"></div>
+   		#end
+	#else
+		<div isFolder='true' object='Folder' dojoType="TreeNode" widgetId="$subf.Path" title="$subf.Name" 	childIconSrc="$app/images/folder.gif"></div>
+	#end          
+  #end  
+  #foreach($p in $f.Pages.iterator())
+    <div object='Page' dojoType="TreeNode" widgetId="$p.Path" title="$p.Name" childIconSrc="$app/images/page.gif" actionsDisabled="newPage,newFolder,newLink"></div>
+  #end  
+  #foreach($link in $f.Links.iterator())
+    <div object='Link' dojoType="TreeNode" widgetId="$link.Path" title="$link.Name" childIconSrc="$app/images/link.gif" actionsDisabled="newPage,newFolder,newLink,customize"></div>
+  #end  
+  </div>
+#end
+
+#macro (TraverseUserFolder $f)
+  <div isFolder='true' object='Folder' dojoType="TreeNode" widgetId="$f.Path" title="$f.Name" childIconSrc="$app/images/folder.gif">
+  #foreach($subf in $f.Folders.iterator())
+	#if($subf.Name == '_user')
+    <div isFolder='true' object='Folder' dojoType="TreeNode" widgetId="$subf.Path" title="$subf.Name" childIconSrc="$app/images/folder.gif"></div>
+	 #end
+  #end  
+  </div>
+#end
+
+#macro (FolderTreeView $f)
+<div dojoType="Tree"  widgetId="siteTree" DNDMode="between" selector="treeSelector" 
+      actionsDisabled="customize,move,delete" toggler="fade" DNDAcceptTypes="siteTree" controller="treeController" menu='treeContextMenu'>
+#TraverseFolders($f)
+</div>
+#end
+
+#macro (UserTreeView $f)
+<div dojoType="Tree" widgetId="siteTree" DNDMode="between" selector="treeSelector" 
+      actionsDisabled="customize,move,delete" toggler="fade" DNDAcceptTypes="siteTree" controller="treeController" menu='treeContextMenu'>
+	#TraverseUserFolder($f)
+</div>
+#end
+<!-- state -->
+<input type="hidden" id="site.path"/>
+<input type="hidden" id="site.kind"/>
+<input type="hidden" id="defaultLayout" value="$!defaultLayout"/>
+#if($status != '')
+	<div id="infobar">
+	#if($status == 'false')
+		Error occured during file import.
+	#else
+		$status imported succesfully
+	#end	
+	</div>
+#end 
+
+<!-- Start Site View Layout -->
+<div dojoType="LayoutContainer" style="width: 100%; height: 500px; border: 1px solid gray;">
+
+<!-- Start LHS -->    
+<div dojoType="LayoutContainer" widgetId="lhs" layoutAlign="left" style="width: 32%; border: 1px solid gray; overflow:auto;">
+#if (!$treeName ||  $treeName =='portal')
+	$!renderURL.setParameter("treeName","user")
+	#set($label = "User")
+	#set($treeName = "portal")	
+
+	#if($userTree == 'false')
+		Click here for <a href="$renderURL">$label</a> Tree 
+	#end
+	<div id="lmainTabContainer" dojoType="TabContainer" doLayout="false" selectedChild="fullTree">
+		<div dojoType="ContentPane" widgetId="fullTree" style="width: 100%; height: 100%; overflow:auto;" label="Portal Tree">
+			#FolderTreeView($folders)
+		</div>
+	</div>
+#end
+#if ($treeName =='user')
+	$!renderURL.setParameter("treeName","portal")
+	#set($label = "Portal")
+	#set($treeName = "user")
+	#if($userTree == 'false')
+		Click here for <a href="$renderURL">$label</a> Tree 
+	#end
+	<div id="lmainTabContainer" dojoType="TabContainer" doLayout="false" selectedChild="userTree">
+		<div dojoType="ContentPane" widgetId="userTree"  style="width: 100%; height: 100%; overflow:auto;" label="User Tree">
+			#UserTreeView($folders)
+		</div>
+</div>
+#end
+</div>
+<!-- Start RHS -->    
+<div dojoType="LayoutContainer" id="rhs" widgetId="rhs" layoutAlign="client" style="display:none; border: 1px solid gray; width: 68%">
+<!-- Start Main Tab Container -->    
+<div id="mainTabContainer" dojoType="TabContainer" selectedChild="infoTabFolder" doLayout="false">
+<div id="infoTabFolder" dojoType="ContentPane" label="Information">
+  <table class="formAnswer" style="width: 100%;">
+    <tr>
+      <td class="emphasise">Name</td>
+      <td width="100%">
+        <input type="text" DISABLED id="finfo.name" class="long" required="true" onChange="updateInfoFields()"/>
+        <input type="hidden" id="finfo.path"/>        
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Title</td>
+      <td width="100%">
+        <input type="text" id="finfo.title" class="long" required="true" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Short Title</td>
+      <td>
+        <input type="text" id="finfo.short-title" class="medium" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Default Page</td>
+      <td>
+        <input type="text" id="finfo.default-page" class="medium" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Page Decorator</td>
+      <td>                                        
+        <select id="finfo.layout-decorator" onChange="updateInfoFields()">
+            <option selected value=""></option>
+#foreach ($dec in $page-decorations)        
+            <option value="$dec">$dec</option>
+#end            
+        </select>      
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Portlet Decorator</td>
+      <td>
+        <select id="finfo.portlet-decorator" onChange="updateInfoFields()">
+            <option selected value=""></option>        
+#foreach ($dec in $portlet-decorations)        
+            <option value="$dec">$dec</option>
+#end            
+        </select>      
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Hidden</td>
+      <td>
+        <input type="checkbox" id="finfo.hidden" onChange="updateInfoFields()"/> 
+      </td>
+    </tr>
+  </table>
+<div dojoType="LayoutContainer" widgetId="FEditorControls" minHeight="20" layoutAlign="bottom" style="width: 20%; height: 55px">
+  <div class="buttonbox">
+    <button widgetId="saveFInfoButton" dojoType="Button" onclick="saveInfo()">Save</button>
+    <button widgetId="revertFInfoButton" dojoType="Button" onclick="revertInfo()">Revert</button>
+  </div>
+</div>
+
+</div> <!-- End Tab Information -->
+
+<div id="infoTabPage" dojoType="ContentPane" label="Information">
+  <table class="formAnswer" style="width: 100%;">
+    <tr>
+      <td class="emphasise">Name</td>
+      <td width="100%">
+        <input DISABLED type="text" id="pinfo.name" class="long" required="true" onChange="updateInfoFields()"/>
+        <input type="hidden" id="pinfo.path"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Title</td>
+      <td width="100%">
+        <input type="text" id="pinfo.title" class="long" required="true" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Short Title</td>
+      <td>
+        <input type="text" id="pinfo.short-title" class="medium" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Page Decorator</td>
+      <td>                                        
+        <select id="pinfo.layout-decorator" onChange="updateInfoFields()">
+            <option selected value=""></option>           
+#foreach ($dec in $page-decorations)    
+            <option value="$dec">$dec</option>
+#end            
+        </select>      
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Portlet Decorator</td>
+      <td>
+        <select id="pinfo.portlet-decorator" onChange="updateInfoFields()">
+            <option selected value=""></option>           
+#foreach ($dec in $portlet-decorations)        
+            <option value="$dec">$dec</option>
+#end            
+        </select>      
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Desktop Theme</td>
+      <td>
+        <select id="pinfo.theme" onChange="updateInfoFields()">
+            <option selected value=""></option>           
+#foreach ($dec in $themes)        
+            <option value="$dec">$dec</option>
+#end            
+        </select>      
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Hidden</td>
+      <td>
+        <input type="checkbox" id="pinfo.hidden" onChange="updateInfoFields()" /> 
+      </td>
+    </tr>
+  </table>
+
+<div dojoType="LayoutContainer" widgetId="PEditorControls" minHeight="20" layoutAlign="bottom" style="width: 20%; height: 55px">
+  <div class="buttonbox">
+    <button widgetId="savePInfoButton" dojoType="Button" onclick="saveInfo()">Save</button>
+    <button widgetId="revertPInfoButton" dojoType="Button" onclick="revertInfo()">Revert</button>
+  </div>
+</div>
+
+</div> <!-- End Tab Information -->
+
+<div id="infoTabLinks" dojoType="ContentPane" label="Information">
+  <table class="formAnswer" style="width: 100%;">
+    <tr>
+      <td class="emphasise">Name</td>
+      <td width="100%">
+        <input DISABLED type="text" id="linfo.name" class="long" required="true" onChange="updateInfoFields()"/>
+        <input type="hidden" id="linfo.path"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Title</td>
+      <td width="100%">
+        <input type="text" id="linfo.title" class="long" required="true" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Short Title</td>
+      <td>
+        <input type="text" id="linfo.short-title"  class="medium" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">URL</td>
+      <td>
+        <input type="text" id="linfo.url" class="long" required="true" onChange="updateInfoFields()"/>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Target Window</td>
+      <td>
+        <select id="linfo.target" onChange="updateInfoFields()">
+            <option value="blank">New</option>
+            <option value="self">Self</option>
+            <option value="parent">Parent</option>
+            <option value="top">Top</option>
+       </select>
+      </td>
+    </tr>
+    <tr>
+      <td class="emphasise">Hidden</td>
+      <td>
+        <input type="checkbox" id="linfo.hidden" onChange="updateInfoFields()" /> 
+      </td>
+    </tr>
+  </table>
+
+<div dojoType="LayoutContainer" widgetId="LEditorControls" minHeight="20" layoutAlign="bottom" style="width: 20%; height: 55px">
+  <div class="buttonbox">
+    <button widgetId="saveLInfoButton" dojoType="Button" onclick="saveInfo()">Save</button>
+    <button widgetId="revertLInfoButton" dojoType="Button" onclick="revertInfo()">Revert</button>
+  </div>
+</div>
+
+</div> <!-- End Tab Information Link -->
+
+
+<div id="securityTab" dojoType="ContentPane" label="Security">
+<table dojoType="jetspeed:EditorTable" widgetId="securityTable" class="permissions" headClass="fixedHeader" tbodyClass="scrollContent" enableMultipleSelect="true" enableAlternateRows="true" rowAlternateClass="alternateRow" templateCssPath="/j2-admin/css/security-permissions.css" cellpadding="0" cellspacing="0" border="0">
+  <col width="70%"></col>
+  <col width="25%"></col>
+  <thead>
+  <tr>
+  <th field="name" dataType="String">Security Constraint</th>
+  <th field="kind" dataType="String">Constraint Type</th>
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<table>
+  <tr>
+    <td>Security Constraint</td>
+      <td>
+        <select id="security.list" onChange="updateSecurityRow('security.list')">
+            <option selected value=""></option>           
+#foreach ($sec in $allSecurityRefs)        
+            <option value="$sec.Name">$sec.Name</option>
+#end            
+        </select>      
+      </td>
+      <td><button widgetId="security.owner" dojoType="Button" onclick="enterOwner()">Owner</button></td>
+  </tr>
+      <td></td>
+      <td></td>
+  </tr>
+</table>
+<div dojoType="LayoutContainer" widgetId="securityControls" minHeight="20" layoutAlign="bottom" style="width: 100%; height: 25px;">
+  <div class="buttonbox">
+    <button widgetId="securityRevertButton" dojoType="Button" onclick="revertEntry()">Revert</button>
+    <button widgetId="securityDeleteButton" dojoType="Button" onclick="deleteEntry()">Delete</button>
+    <button widgetId="securitySaveButton" dojoType="Button" onclick="saveEntry()">Save</button>
+    <button widgetId="securityNewButton" dojoType="Button" onclick="newEntry()">New</button>
+  </div>
+</div>
+</div> <!-- End Tab Security -->
+
+<div id="metaTab" dojoType="ContentPane" label="Metadata">
+
+<table dojoType="jetspeed:EditorTable" widgetId="metaTable" class="permissions" headClass="fixedHeader" tbodyClass="scrollContent" enableMultipleSelect="true" enableAlternateRows="true" rowAlternateClass="alternateRow" templateCssPath="/j2-admin/css/security-permissions.css" cellpadding="0" cellspacing="0" border="0">
+  <col width="35%"></col>
+  <col width="15%"></col>
+  <col width="45%"></col>
+  <thead>
+  <tr>
+  <th field="name" dataType="String">Name</th>
+  <th field="language" dataType="String">Language</th>
+  <th field="value" dataType="String">Value</th>        
+  </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+<table>
+  <tr>
+    <td >Name</td>
+    <td >
+      <input type="text" id="meta.name" class="long" required="true" onChange="updateMetaRow('meta.name')"/>
+    </td>
+  </tr>
+  <tr>
+    <td >Language</td>
+    <td >
+      <input type="text" id="meta.language" class="medium" required="true" onChange="updateMetaRow('meta.language')"/>
+    </td>
+  </tr>
+  <tr>
+    <td >Value</td>
+    <td >
+      <input type="text" id="meta.value" class="long" required="true" onChange="updateMetaRow('meta.value')"/>
+    </td>
+  </tr>
+</table>
+<div dojoType="LayoutContainer" widgetId="metaControls" minHeight="20" layoutAlign="bottom" style="width: 100%; height: 25px;">
+  <div class="buttonbox">
+    <button widgetId="metaRevertButton" dojoType="Button" onclick="revertEntry()">Revert</button>
+    <button widgetId="metaDeleteButton" dojoType="Button" onclick="deleteEntry()">Delete</button>
+    <button widgetId="metaSaveButton" dojoType="Button" onclick="saveEntry()">Save</button>
+    <button widgetId="metaNewButton" dojoType="Button" onclick="newEntry()">New</button>
+  </div>
+</div>
+</div> <!-- End Tab Metadata -->
+
+<div id="menusTab" dojoType="ContentPane" label="Menus">
+<p>Coming soon...</p>
+</div> <!-- End Tab Menus -->
+
+<div id="orderTab" dojoType="ContentPane" label="Order">
+<p>Coming soon...</p>
+</div> <!-- End Tab Order -->
+
+	<div id="import" dojoType="ContentPane" label="Import">
+		<form action="$actionURL" method="post" name="importObject" enctype="multipart/form-data">
+		<table class="formAnswer" style="width: 100%;">
+			<tr>
+				<td colspan="2" width="100%" class="emphasise"><b>Import</b><br>
+				Browse a file from the local machine and its destination from tree
+				</td>
+			</tr>
+			<tr>
+				<td width="20%" class="emphasise">File to Import</td>
+					<td width="80%"><input type="file" name="psmlFile"></td>
+			</tr>
+			<tr>
+				<td width="20%" class="emphasise">File destination</td>
+				<td width="80%"><input type="text" name="importPath" id="importPath" readonly /></td>
+			</tr>
+			<tr>
+				<td colspan="2" width="100%">
+				<input type="hidden" name="fileType" id="fileType"/>
+				<input type="button" value="Import" onClick="javascript:submtimport();"/>
+				</td>
+			</tr>				
+		</table>
+		</form>
+	</div>
+	<div id="export" dojoType="ContentPane" label="Export">
+		<form>
+		<table class="formAnswer" style="width: 100%;">
+			<tr>
+				<td colspan="2" width="100%" class="emphasise"><b>Export</b><br><br></td>
+			</tr>
+			<tr>
+				<td width="20%" class="emphasise">Export Object</td>
+				<td width="80%"><input type="text" name="exportObject" id="exportObject" readonly /></td>
+			</tr>			
+			<tr id="exptRecurs" style="display:none">
+				<td width="20%" class="emphasise">Export recursively</td>
+				<td width="80%"><input type="checkbox" name="exportRecursively" id="exportRecursively" value='1' /></td>
+			</tr>			
+			<tr>
+				<td colspan="2" width="100%">
+				<input type="hidden" id="objName" name="objName">
+				<input type="hidden" id="objType" name="objType">
+				<input type="hidden" id="objPath" name="objPath">							
+				<input type="button" value="Export" id="exprtBtn" onClick="javascript:submtexport();"/>
+				</td>
+			</tr>				
+			<tr><td colspan="2" width="100%" id="exportAns"></td>
+			</tr>
+		</table>
+		</form>
+	</div>
+</div> <!-- End Tab Container -->
+
+<div dojoType="LayoutContainer" widgetId="MajorActions" minHeight="20" layoutAlign="bottom" style="width: 20%; height: 55px">
+  <div class="buttonbox">
+    <button widgetId="buttonView" dojoType="Button" onclick="viewResource()">View</button>
+    <button widgetId="buttonRemove" dojoType="Button" onclick="removeResource()">Remove</button>
+    <div id='divFolderButtons'>
+    <button widgetId="buttonAddPage" dojoType="Button" onclick="newResource('Page')">Add Page</button>
+    <button widgetId="buttonAddFolder" dojoType="Button" onclick="newResource('Folder')">Add Folder</button>
+    <button widgetId="buttonAddLink" dojoType="Button" onclick="newResource('Link')">Add Link</button>
+    </div>
+  </div>
+</div>
+
+</div> <!-- End RHS -->
+</div> <!-- End Site View Layout -->
+
+<script type="text/javascript">
+// var starttime=new Date().getTime();
+
+var siteViewAllTabIds = [ "infoTabFolder", "infoTabPage", "infoTabLinks", "securityTab", "metaTab", "menusTab", "orderTab","import","export" ];
+var siteViewAllTabWidgets = {};
+function displayTabs( tabIdList )
+{
+    var tabContainer = dojo.widget.byId( "mainTabContainer" );
+    for ( var i = 0 ; i < siteViewAllTabIds.length; i++ )
+    {     
+        if ( siteViewAllTabWidgets[ siteViewAllTabIds[i] ] == null )
+            siteViewAllTabWidgets[ siteViewAllTabIds[i] ] = dojo.widget.byId( siteViewAllTabIds[i] );
+
+        var removeTab = siteViewAllTabWidgets[ siteViewAllTabIds[i] ];
+        if ( removeTab && ! removeTab.js_removed )
+        {
+            removeTab.js_removed = true;
+            tabContainer.removeChild( removeTab );
+        }
+    }
+    if ( tabIdList != null && tabIdList.length > 0 )
+    {
+        for ( var i = 0 ; i < tabIdList.length; i++ )
+        {
+            var displayTab = siteViewAllTabWidgets[ tabIdList[i] ];
+            if ( displayTab )
+            {
+                delete displayTab.js_removed;
+                tabContainer.addChild( displayTab );
+            }
+        }
+        tabContainer.selectChild( siteViewAllTabWidgets[ tabIdList[0] ] );
+    }
+}
+//javascript: displayTabs( [ "infoTab", "menusTab" ] )
+//javascript: alert( jetspeed.printobj( siteViewAllTabWidgets ) )
+
+function retrieveElementValue(elementName, xml) 
+{
+    var path = xml.getElementsByTagName(elementName);
+    if (path != null)
+    {    
+        if (path.length > 0 && path[0].firstChild != null)
+        {
+            var value = path[0].firstChild.nodeValue;
+            return value;
+        }
+    }
+    return "";
+}
+function retrieveAttributeValue(elementName, attributeName, xml) 
+{
+    var path = xml.getElementsByTagName(elementName);
+    if (path != null && path.length > 0)
+    { 
+        var namedItem = path[0].attributes.getNamedItem(attributeName);
+        if (namedItem != null)
+        {            
+            return namedItem.value;
+        }
+    }
+    return "";
+}
+function attributeToCheckbox(prefix, elementName, attributeName, xml)
+{
+    var widget = dojo.byId(prefix + "." + attributeName);
+    if (widget != null)
+    {
+        var isChecked = retrieveAttributeValue(elementName, attributeName, xml);
+        widget.checked = (isChecked == "true");
+    }    
+    return (isChecked == "true");
+}
+function elementToInput(prefix, elementName, xml) 
+{    
+    var widget = document.getElementById(prefix + "." + elementName);    
+    if (widget != null)
+    {
+        widget.value = retrieveElementValue(elementName, xml);
+    }
+}
+function titlesToInput(prefix, titleName, shortName, xml)
+{
+    var title = retrieveElementValue(titleName, xml);
+    var shortTitle = retrieveElementValue(shortName, xml);
+    if (title == shortTitle)
+        shortTitle = "";
+    var titleWidget = document.getElementById(prefix + "." + titleName);    
+    var shortWidget = document.getElementById(prefix + "." + shortName);    
+    titleWidget.value = title;
+    shortWidget.value = shortTitle;
+}
+function elementToSelect(prefix, elementName, xml) 
+{    
+    var el = document.getElementById(prefix + "." + elementName);
+    if (el != null)
+    {
+        var value = retrieveElementValue(elementName, xml);
+        for (var ix=0; ix<el.options.length; ix++)
+        {
+           if (el.options[ix].value == value)
+           {
+              el.options[ix].selected = true;
+              break;
+           }
+        }
+    }
+}
+function attributeToSelect(prefix, elementName, attributeName, xml) 
+{    
+    var el = document.getElementById(prefix + "." + attributeName);    
+    if (el != null)
+    {
+        var value = retrieveAttributeValue(elementName, attributeName, xml);
+        for (var ix=0; ix<el.options.length; ix++)
+        {
+           if (el.options[ix].value == value)
+           {
+             el.options[ix].selected = true;
+             break;
+           }
+        }
+    }
+}
+function ajaxInvoke(action, names, values, handler)
+{
+    var contextPath = document.location.protocol + "/" + "/" + document.location.host + "$req.ContextPath";
+    var requestUrl = contextPath + "/ajaxapi?action=" + action;
+    if (names != null)
+    {
+        for (var ix=0;  ix<names.length; ix++)
+        {
+            requestUrl = requestUrl + "&" + names[ix] + "=" + dojo.string.escape('ascii',values[ix]);
+        }    
+    }
+    var mimeType = "text/xml";
+    dojo.io.bind({
+      url: requestUrl,
+      mimetype: mimeType,
+      load: function( type, data, evt )
+      {
+        var success = false;
+        var statusElmt = data.getElementsByTagName( "status" );
+        if ( statusElmt != null )
+        {
+            var successVal = statusElmt[0].firstChild.nodeValue;
+            if ( successVal == "success" )
+            {            
+                handler.populate(data);
+                success = true;                
+            }                   
+        }
+        if ( ! success )
+        {
+            var textContent = dojo.dom.innerXML( data );
+            if ( ! textContent )
+                textContent = ( data != null ? "!= null (IE no XMLSerializer)" : "null" );
+            // dojo.raise( "saveEntrySubmit failure url=" + requestUrl + "  xml-content=" + textContent );
+            if (data instanceof XMLDocument)
+            {
+                var reason = retrieveElementValue("reason", data);
+                alert("Portal Communication Failure: " + reason);               
+                handler.failure(reason);
+            }
+            else
+                alert("Unknown Portal Communication Failure");                               
+        }
+    },    
+    error: function( type, error )
+    {
+        var msg = "Portal Communication Error: " + requestUrl + " type: " + type + jetspeed.formatError( error );
+        // dojo.raise(msg);
+        alert(msg);
+        handler.failure(msg);
+    }
+    });     
+}
+dojo.addOnLoad(function() 
+{   
+   var metaTable = dojo.widget.byId("metaTable");
+   dojo.event.connect( "around", metaTable, "onUISelect", "okToChangeSelectionOrExit" );
+   dojo.event.connect(metaTable, "onSelect", function(e) {
+        processTableRowEvent(e, "metaTable");
+   });
+   dojo.event.connect(metaTable, "updateEditor", updateEditor );
+   dojo.event.connect(metaTable, "saveEntrySubmit", saveMetaEntrySubmit );
+   dojo.event.connect(metaTable, "clearAndDisableEditor", clearAndDisableEditor );
+
+   var securityTable = dojo.widget.byId("securityTable");
+   dojo.event.connect( "around", securityTable, "onUISelect", "okToChangeSelectionOrExit" );
+   dojo.event.connect(securityTable, "onSelect", function(e) {
+        processTableRowEvent(e, "securityTable");
+   });
+   dojo.event.connect(securityTable, "updateEditor", updateEditor );
+   dojo.event.connect(securityTable, "saveEntrySubmit", saveSecurityEntrySubmit );
+   dojo.event.connect(securityTable, "clearAndDisableEditor", clearAndDisableEditor );
+   var tree = dojo.widget.byId("siteTree");
+   if (tree.children[0])
+       tree.children[0].expand();
+}); 
+// General Table Functions
+function processTableRowEvent(e, tableName)
+{
+    var tableWidget = dojo.widget.byId( tableName );
+    tableWidget.processTableRowEvent(e);
+    if (tableName == "metaTable")
+    {
+        dojo.byId("meta.name").disabled = false;
+        dojo.byId("meta.language").disabled = false;
+        dojo.byId("meta.value").disabled = false;
+        changeButtonState("meta", false, false, true, true);
+    }
+    else if (tableName == "securityTable")
+    {
+        var row = tableWidget.getSelectedRow() ;
+        if (row.kind == "Owner")
+        {                
+            dojo.byId("security.list").disabled = true;
+            dojo.widget.byId("security.owner").disabled = false;
+        }
+        else if (row.kind == "Security Reference")
+        {
+            dojo.byId("security.list").disabled = false;
+            dojo.widget.byId("security.owner").disabled = true;
+        }
+        else
+        {
+            dojo.byId("security.list").disabled = true;
+            dojo.widget.byId("security.owner").disabled = true;
+        }
+        changeButtonState("security", false, false, true, true);
+    }
+}
+function clearAndDisableEditor()
+{
+    var currentTabName = dojo.widget.byId( "mainTabContainer" ).selectedChildWidget.widgetId;
+    if (currentTabName == "metaTab")
+    {
+        resetMeta();
+    }
+    else if (currentTabName == "securityTab")
+    {
+        resetSecurity();
+    }
+}
+// Info Functions
+function updateInfoFields()
+{
+    window.information.modified = true; 
+    var currentTabName = dojo.widget.byId( "mainTabContainer" ).selectedChildWidget.widgetId;
+    if (currentTabName == "infoTabFolder")
+    {
+        btnSetDisabled( dojo.widget.byId( "saveFInfoButton" ), false );
+        btnSetDisabled( dojo.widget.byId( "revertFInfoButton" ), false );
+    }
+    else if (currentTabName == "infoTabPage")
+    {
+        btnSetDisabled( dojo.widget.byId( "savePInfoButton" ), false );
+        btnSetDisabled( dojo.widget.byId( "revertPInfoButton" ), false );
+    }
+    else
+    {
+        btnSetDisabled( dojo.widget.byId( "saveLInfoButton" ), false );
+        btnSetDisabled( dojo.widget.byId( "revertLInfoButton" ), false );
+    }
+}
+function newEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.newEntry();
+    if (tTableWidget.js_type == "metadata")
+    {
+        dojo.byId("meta.name").value = "";
+        dojo.byId("meta.language").value = "";
+        dojo.byId("meta.value").value = "";
+        dojo.byId("meta.name").disabled = false;
+        dojo.byId("meta.language").disabled = false;
+        dojo.byId("meta.value").disabled = false;
+        changeButtonState("meta", true, true, true, false);
+    }
+    else if (tTableWidget.js_type == "security")
+    {
+        dojo.byId("security.list").options[0].selected = true;
+        dojo.byId("security.list").disabled = false;
+        btnSetDisabled( dojo.widget.byId("security.owner"), false );
+        changeButtonState("security", true, true, true, false);
+    }
+}
+function deleteEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.deleteEntry();
+    if (tTableWidget.js_type == "metadata")
+    {
+        resetMeta();
+    }   
+    else if (tTableWidget.js_type == "security")
+    {
+        resetSecurity();
+    }    
+}
+function saveEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.saveEntry();
+}
+function revertEntry()
+{
+    var tTableWidget = getTableWidget();
+    tTableWidget.revertEntry();
+    if (tTableWidget.js_type == "metadata")
+    {
+        resetMeta();
+    } 
+    else if (tTableWidget.js_type == "security")
+    {
+        resetSecurity();
+    }   
+}
+function okToChangeSelectionOrExit(invocation)
+{
+    var tTableWidget = getTableWidget();
+    return tTableWidget.okToChangeSelectionOrExit(invocation);
+}
+// Meta Functions
+function resetMeta()
+{
+    var metaName = dojo.byId("meta.name");
+    metaName.value = "";
+    metaName.disabled = true;
+    var metaLanguage = dojo.byId("meta.language");
+    metaLanguage.value = "";
+    metaLanguage.disabled = true;
+    var metaValue = dojo.byId("meta.value");
+    metaValue.value = "";
+    metaValue.disabled = true;    
+    changeButtonState("meta", false, true, true, true);
+}
+function populateMetadata(xmlName, xml, kind)
+{
+   dojo.byId("site.kind").value = kind;
+   elementToInput("site", "path", xml);
+   var metaTable = dojo.widget.byId("metaTable");
+   metaTable.getNewEntryPrototype = getNewMetaPrototype;
+   var data = [] ;
+   var path = xml.getElementsByTagName(xmlName);
+   if (path != null && path.length > 0)
+   {    
+       for (ix=0; ix < path.length; ix++)
+       {
+          var name = path[ix].attributes.getNamedItem("name").value;
+          var lang = path[ix].attributes.getNamedItem("xml:lang").value;
+          var value = path[ix].firstChild.nodeValue;
+          data.push( { name: name, language: lang, value: value, Id: ix + 1} );
+       }
+   }
+   metaTable.js_masterdata = data;
+   metaTable.js_type = "metadata";
+   // metaTable.saveWarningDialogWidgetId = "SaveWarningDialog";
+   metaTable.parseData( metaTable.js_masterdata );
+   metaTable.render( true );
+   resetMeta();
+}
+function updateMetaRow(field)
+{
+    var tTableWidget = getTableWidget();
+    var selectedRowData = tTableWidget.getSelectedRow() ;
+    if ( selectedRowData != null )
+    {
+        if (field == "meta.name")
+          selectedRowData.name = dojo.byId(field).value;
+        else if (field == "meta.language")
+          selectedRowData.language = dojo.byId(field).value;
+        else
+          selectedRowData.value = dojo.byId(field).value;
+        tTableWidget.setModified(selectedRowData);
+        tTableWidget.updateClonedData( selectedRowData, tTableWidget.selected[0] );
+        tTableWidget.render(true);
+        tTableWidget.showSelections();
+        changeButtonState("meta", true, true, false, false);
+    }
+}
+// Security Functions
+function resetSecurity()
+{
+    var securityList = dojo.byId("security.list");
+    securityList.value = "";
+    securityList.disabled = true;
+    btnSetDisabled( dojo.widget.byId("security.owner"), true );
+    changeButtonState("security", false, true, true, true);
+}
+function populateSecurity(xmlName, xml, kind)
+{
+   dojo.byId("site.kind").value = kind;
+   elementToInput("site", "path", xml);
+   var securityTable = dojo.widget.byId("securityTable");
+   securityTable.getNewEntryPrototype = getNewSecurityPrototype;
+   var data = [] ;
+   var count = 0;
+   var path = xml.getElementsByTagName("security-ref");
+   if (path != null && path.length > 0)
+   {    
+       for (ix=0; ix < path.length; ix++)
+       {
+          var refName = path[ix].firstChild.nodeValue;
+          count = ix + 1;
+          data.push( { name: refName, kind: "Security Reference", Id: count } );
+       }
+   }
+   path = xml.getElementsByTagName("security-owner");
+   if (path != null && path.length > 0)
+   {    
+       var owner = path[0].firstChild.nodeValue;
+       count = count + 1;
+       data.push( { name: owner, kind: "Owner", Id: count } );
+   }
+   btnSetDisabled( dojo.widget.byId("security.owner"), true );       
+   path = xml.getElementsByTagName("security-def");
+   if (path != null && path.length > 0)
+   {    
+       for (ix = 0; ix < path.length; ix++)
+       {
+          count = count + 1;
+          var secid = path[ix].attributes.getNamedItem("id").value;
+          data.push( { name: "Definition editing not yet supported.", kind: "Security Definition", Id: "r" + secid } );
+       }
+   }
+   securityTable.js_masterdata = data;
+   securityTable.js_type = "security";
+   securityTable.parseData( securityTable.js_masterdata );
+   securityTable.render( true );
+   resetSecurity();
+   //dojo.debug("dump sec: "+ securityTable.debugTableData());
+}
+
+function updateSecurityRow(field)
+{
+    var tTableWidget = getTableWidget();
+    var selectedRowData = tTableWidget.getSelectedRow() ;
+    if ( selectedRowData != null )
+    {
+        if (field == "security.list")
+        {
+          selectedRowData.name = dojo.byId(field).value;
+          selectedRowData.kind = "Security Reference";
+        }
+        else if (field == "owner.name")
+        {
+          selectedRowData.name = dojo.byId(field).value;
+          selectedRowData.kind = "Owner";
+        }
+        tTableWidget.setModified(selectedRowData);
+        tTableWidget.updateClonedData( selectedRowData, tTableWidget.selected[0] );
+        tTableWidget.render(true);
+        tTableWidget.showSelections();
+        changeButtonState("security", true, true, false, false);
+    }
+}
+function createOwner()
+{
+    updateSecurityRow("owner.name");
+}
+function changeButtonState(prefix, newState, deleteState, saveState, revertState)
+{
+    btnSetDisabled( dojo.widget.byId(prefix + "NewButton"), newState );
+    btnSetDisabled( dojo.widget.byId(prefix + "DeleteButton"), deleteState );
+    btnSetDisabled( dojo.widget.byId(prefix + "SaveButton"), saveState );
+    btnSetDisabled( dojo.widget.byId(prefix + "RevertButton"), revertState );
+}
+function getTableWidget( containedInTab )
+{
+    if ( ! containedInTab )
+        containedInTab = dojo.widget.byId( "mainTabContainer" ).selectedChildWidget;
+    if ( ! containedInTab )
+        alert( "no selected mainTabContainer child widget" );
+    var tableWidgetId = containedInTab.widgetId + "le";
+    var tableWidget = dojo.widget.byId( tableWidgetId );
+    if ( ! tableWidget )
+        alert( "no table widget " + tableWidgetId + " could be found" );
+    return tableWidget;
+}
+function updateEditor( rowData, tTableWidget )
+{
+    if ( ! tTableWidget )
+        tTableWidget = getTableWidget();
+    if (tTableWidget.js_type == "metadata")
+    {
+        dojo.byId("meta.name").value = rowData.name;
+        dojo.byId("meta.language").value = rowData.language;
+        dojo.byId("meta.value").value = rowData.value;
+    }
+    else if (tTableWidget.js_type == "security")
+    {
+        if (rowData.kind == "Security Reference")
+        {
+            btnSetDisabled( dojo.widget.byId("security.owner"), true );       
+            var el = dojo.byId("security.list");
+            for (var ix=0; ix < el.options.length; ix++)
+            {
+               if (el.options[ix].value == rowData.name)
+               {
+                  el.options[ix].selected = true;
+                  break;
+               }
+            }
+        }
+    }
+}
+function checkForChanges()
+{
+    var tTableWidget = getTableWidget();
+    return tTableWidget.checkForChanges();
+}
+function saveMetaEntrySubmit(selectedRowData, removeEntry)
+{
+    var tTableWidget = getTableWidget();
+    if (tTableWidget.js_type == "metadata")
+    {
+        changeButtonState("meta", false, false, true, true);
+        var table = getTableWidget();
+        var rowData = table.getSelectedRow();
+        var names = new Array();
+        var values = new Array();
+        names[0] = "method"; 
+        if (removeEntry)
+           values[0] = "remove-meta";
+        else
+            values[0] = (rowData.__isNew)? "add-meta" : "update-meta";
+        names[1] = "path"; 
+        values[1] = dojo.byId("site.path").value;
+        names[2] = "name";
+        values[2] = rowData.name;
+        names[3] = "lang";
+        values[3] = rowData.language;
+        names[4] = "value";
+        values[4] = rowData.value;
+        if (rowData.__isNew == null)
+        {
+            var tId = rowData.Id;
+            var masterData = table.getData( table.js_masterdata, tId );
+            names[5] = "oldname";
+            values[5] = masterData.name;
+            names[6] = "oldlang";
+            values[6] = masterData.language;
+        }
+        var kind = dojo.byId("site.kind").value;
+        var action = "update" + kind;
+        ajaxInvoke(action, names, values, new EmptyHandler() );     
+    }            
+}
+function saveSecurityEntrySubmit(selectedRowData, removeEntry)
+{
+    var tTableWidget = getTableWidget();
+    if (tTableWidget.js_type == "security")
+    {
+        changeButtonState("security", false, false, true, true);
+        var table = getTableWidget();
+        var rowData =  selectedRowData; // table.getSelectedRow(); 
+        var names = new Array();
+        var values = new Array();
+        if (rowData.kind == "Security Definition")
+        {
+            // only support delete thus far
+            names[0] = "method";
+            values[0] = "remove-secdef";
+            names[1] = "path"; 
+            values[1] = dojo.byId("site.path").value;
+            names[2] = "id";
+            values[2] = rowData.Id;
+        }
+        else
+        {
+            names[0] = "method"; 
+            if (removeEntry)
+               values[0] = "remove-secref";
+            else
+                values[0] = (rowData.__isNew)? "add-secref" : "update-secref";
+            names[1] = "path"; 
+            values[1] = dojo.byId("site.path").value;
+            names[2] = "name";
+            values[2] = rowData.name;
+            if (rowData.__isNew == null)
+            {
+                var tId = rowData.Id;
+                var masterData = table.getData( table.js_masterdata, tId );
+                names[3] = "oldname";
+                values[3] = masterData.name;
+            }
+            names[4] = "kind";
+            values[4] = rowData.kind;
+        }
+        var kind = dojo.byId("site.kind").value;
+        var action = "update" + kind;
+        ajaxInvoke(action, names, values, new EmptyHandler() );     
+    }            
+}
+function saveInfo()
+{
+    var currentTabName = dojo.widget.byId( "mainTabContainer" ).selectedChildWidget.widgetId;
+    var names = new Array();
+    var values = new Array();
+    names[0] = "method"; 
+    values[0] = "info";    
+    if (currentTabName == "infoTabFolder")
+    {
+        names[1] = "path"; 
+        values[1] = dojo.byId("finfo.path").value;
+        names[2] = "name";
+        values[2] = dojo.byId("finfo.name").value;
+        names[3] = "title";
+        values[3] = dojo.byId("finfo.title").value;
+        names[4] = "short-title";
+        values[4] = dojo.byId("finfo.short-title").value;
+        names[5] = "layout-decorator";
+        values[5] = dojo.byId("finfo.layout-decorator").value;
+        names[6] = "portlet-decorator";
+        values[6] = dojo.byId("finfo.portlet-decorator").value;
+        names[7] = "default-page";
+        values[7] = dojo.byId("finfo.default-page").value;
+        if (dojo.byId("finfo.hidden").checked)
+        {
+            names[8] = "hidden";
+            values[8] = "true";
+        }
+        ajaxInvoke("updatefolder", names, values, new UpdateInfoHandler() );     
+    }
+    else if (currentTabName == "infoTabPage")
+    {        
+        names[1] = "path"; 
+        values[1] = dojo.byId("pinfo.path").value;
+        names[2] = "name";
+        values[2] = dojo.byId("pinfo.name").value;
+        names[3] = "title";
+        values[3] = dojo.byId("pinfo.title").value;
+        names[4] = "short-title";
+        values[4] = dojo.byId("pinfo.short-title").value;
+        names[5] = "layout-decorator";
+        values[5] = dojo.byId("pinfo.layout-decorator").value;
+        names[6] = "portlet-decorator";
+        values[6] = dojo.byId("pinfo.portlet-decorator").value;
+        names[7] = "theme";
+        values[7] = dojo.byId("pinfo.theme").value;
+        if (dojo.byId("pinfo.hidden").checked)
+        {
+            names[8] = "hidden";
+            values[8] = "true";
+        }
+        ajaxInvoke("updatepage", names, values, new UpdateInfoHandler() );     
+    }
+    else if (currentTabName == "infoTabLinks")
+    {
+        names[1] = "path"; 
+        values[1] = dojo.byId("linfo.path").value;
+        names[2] = "name";
+        values[2] = dojo.byId("linfo.name").value;
+        names[3] = "title";
+        values[3] = dojo.byId("linfo.title").value;
+        names[4] = "short-title";
+        values[4] = dojo.byId("linfo.short-title").value;
+        names[5] = "url";
+        values[5] = dojo.byId("linfo.url").value;
+        names[6] = "target";
+        values[6] = dojo.byId("linfo.target").value;
+        if (dojo.byId("linfo.hidden").checked)
+        {
+            names[7] = "hidden";
+            values[7] = "true";
+        }
+        ajaxInvoke("updatelink", names, values, new UpdateInfoHandler() );     
+    }    
+}
+
+function revertInfo()
+{
+   editResource(dojo.widget.manager.getWidgetById('treeSelector').selectedNode);
+}
+var EmptyHandler = function()
+{
+  this.populate = function(data) 
+  { 
+  }
+  this.failure = function(data)
+  {
+  }
+}
+var UpdateInfoHandler = function()
+{
+  this.populate = function(data) 
+  {
+     window.information.modified = false;
+     var node = dojo.widget.manager.getWidgetById('treeSelector').selectedNode;
+     if ( node.object == "Folder" )
+     {   
+        btnSetDisabled( dojo.widget.byId( "saveFInfoButton" ), true );
+        btnSetDisabled( dojo.widget.byId( "revertFInfoButton" ), true );
+     }
+     else if ( node.object == "Page" )
+     {   
+        btnSetDisabled( dojo.widget.byId( "savePInfoButton" ), true );
+        btnSetDisabled( dojo.widget.byId( "revertPInfoButton" ), true );
+     }
+     else if ( node.object == "Link" )
+     {   
+        btnSetDisabled( dojo.widget.byId( "saveLInfoButton" ), true );
+        btnSetDisabled( dojo.widget.byId( "revertLInfoButton" ), true );
+     }
+  }     
+  this.failure = function(data)
+  {
+     window.information.modified = false;
+  }
+}
+function determineSave(invocation)
+{
+    var tab = dojo.widget.byId( "mainTabContainer").selectedChildWidget;
+    if (tab == null)
+    {
+       if (invocation) 
+           invocation.proceed();
+       return;
+    }
+    var currentTabName = dojo.widget.byId("mainTabContainer").selectedChildWidget.widgetId;
+    if (currentTabName.substr(0,4) == "info")
+    {
+        if (window.information && window.information.modified)
+        {
+            saveInfo();
+        }
+    }
+    else if (currentTabName.substr(0,4) == "meta" || currentTabName.substr(0,4) == "secu")
+    {
+       if (checkForChanges())
+       {
+           saveEntry();
+       }
+    }
+    if (invocation) 
+        invocation.proceed();
+}
+function enterOwner()
+{
+    var tableWidget = getTableWidget();
+    var row = tableWidget.getSelectedRow() ;
+    var path = "";
+    if (row.__isNew == null)
+    {
+        path = row.name;        
+    }
+    else
+    {
+        path = dojo.byId("site.path").value;
+        if (path.substr(0,7) == "/_user/")
+        {
+            path = path.substr(7);
+            var end = path.indexOf("/");
+            if (end != -1)
+            {
+               path = path.substr(0,end);
+            }
+        }
+        else
+        { 
+            path = "";
+        }
+    }
+    document.getElementById("owner.name").value = path;
+    btnSetDisabled( dojo.widget.byId("owner.save"), path == "" );
+    jetspeed.widget.openDialog( dojo.widget.byId( "NewOwnerDialog" ) );
+}
+function validateOwnerName()
+{
+    var name = dojo.byId("owner.name").value;   
+    var disabled = false;    
+    if (name == null || dojo.string.trim(name) == "")
+        disabled = true;
+    btnSetDisabled( dojo.widget.byId("owner.save"), disabled );
+}
+function disableCopySave()
+{
+	btnSetDisabled( dojo.widget.byId("copy.save"), true );
+}
+
+var ExportHandler = function()
+{
+  this.populate = function(xml) 
+  {
+	var path = xml.getElementsByTagName("link");
+	if (path != null && path.length > 0)
+	{    
+	   for (ix=0; ix < path.length; ix++)
+	   {
+		  var refName = path[ix].firstChild.nodeValue;
+	   }
+	}
+	var pgCol = document.getElementById("exportAns");
+	var	a = document.createElement("a");
+	a.innerHTML ='Download';
+	a.href = refName;
+	a.setAttribute("target","_blank");
+	a.setAttribute("onClick","javascript:downloadObject()");
+	pgCol.appendChild(a);              
+
+  }     
+  this.failure = function(data)
+  {
+  }
+}
+function downloadObject(){
+	document.getElementById("exportAns").innerHTML = '';
+}
+function submtimport()
+{
+	document.importObject.submit();
+}
+
+function submtexport()
+{
+	var objName;
+	var objType;
+	var objPath;
+	var exptRecusive='';
+	document.getElementById("exportAns").innerHTML = '';
+	objName = document.getElementById("objName").value;
+	objType = document.getElementById("objType").value;
+	objType = objType.toLowerCase();
+	objPath = document.getElementById("objPath").value;
+	if(document.getElementById("exportRecursively").checked)
+	{
+		exptRecusive = document.getElementById("exportRecursively").value;
+	}
+	
+	var names = new Array("objName","objType","objPath","exptRecusive");
+    var values = new Array(objName,objType,objPath,exptRecusive);
+    ajaxInvoke("export", names, values, new ExportHandler() );     
+	//document.export.submit();
+}
+
+function addListeners()
+{
+  var tabContainer = dojo.widget.byId("mainTabContainer");
+  dojo.event.connect("around", tabContainer, "selectChild", function(invocation) 
+  {
+    determineSave(invocation);
+  });
+  var siteTree = dojo.widget.byId("siteTree");
+  dojo.event.connect("around", siteTree, "nodeSelected", function(invocation) 
+  {
+    determineSave(invocation);
+  });
+}
+dojo.addOnLoad( window.addListeners );
+</script>

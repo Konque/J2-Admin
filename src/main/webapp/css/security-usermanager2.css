@@ -1,0 +1,212 @@
+/*
+* Licensed to the Apache Software Foundation (ASF) under one or more
+* contributor license agreements.  See the NOTICE file distributed with
+* this work for additional information regarding copyright ownership.
+* The ASF licenses this file to You under the Apache License, Version 2.0
+* (the "License"); you may not use this file except in compliance with
+* the License.  You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
+.yui-skin-sam .yui-dt table { 
+	margin:0;padding:0; 
+	font-family:verdana; 
+	border-collapse:separate;*border-collapse:collapse;border-spacing:0; /* since ie6 and ie7 behave differently */ 
+	border:1px solid #CFCFCF;
+}
+
+.yui-skin-sam .yui-dt th, .yui-skin-sam .yui-dt th a {
+	background:#F2F2F2;
+	border-color:#FFFFFF;
+	text-align:left;
+	font-weight:bold;
+}
+
+.yui-skin-sam .yui-dt tr.yui-dt-first td {
+	border-top:1px solid #FFFFFF;
+}
+
+.yui-skin-sam tr.yui-dt-odd {
+	background-color:#F7F7F7;
+}
+
+.yui-skin-sam tr.yui-dt-odd td.yui-dt-asc, .yui-skin-sam tr.yui-dt-odd td.yui-dt-desc {
+	background-color:#E5ECF2;
+}
+
+.yui-skin-sam tr.yui-dt-even td.yui-dt-asc, .yui-skin-sam tr.yui-dt-even td.yui-dt-desc {
+	background-color:#ECF3F9;
+}
+
+.yui-skin-sam th.yui-dt-highlighted, .yui-skin-sam th.yui-dt-highlighted a {
+	background-color:#E5ECF2;
+}
+
+.yui-skin-sam tr.yui-dt-highlighted, .yui-skin-sam tr.yui-dt-highlighted td.yui-dt-asc, .yui-skin-sam tr.yui-dt-highlighted td.yui-dt-desc, .yui-skin-sam tr.yui-dt-even td.yui-dt-highlighted, .yui-skin-sam tr.yui-dt-odd td.yui-dt-highlighted {
+	background-color:#E5ECF2;
+}
+
+
+.yui-skin-sam th.yui-dt-selected, .yui-skin-sam th.yui-dt-selected a {
+	background-color:#9BBEDE;
+	color:#000000;
+}
+
+.yui-skin-sam tr.yui-dt-selected td, .yui-skin-sam tr.yui-dt-selected td.yui-dt-asc, .yui-skin-sam tr.yui-dt-selected td.yui-dt-desc {
+	background-color:#9BBEDE;
+	color:#000000;
+}
+
+.yui-skin-sam tr.yui-dt-even td.yui-dt-selected, .yui-skin-sam tr.yui-dt-odd td.yui-dt-selected {
+	background-color:#9BBEDE;
+	color:#000000;
+}
+
+
+
+.yui-skin-sam .yui-dt td {
+	border-right:1px solid #FFFFFF;
+}
+
+
+/* scrolling */ 
+.yui-skin-sam .yui-dt-scrollable table {border:none;} 
+.yui-skin-sam .yui-dt-scrollable .yui-dt-hd {border-left:1px solid #CFCFCF;border-top:1px solid #CFCFCF;border-right:1px solid #CFCFCF;} 
+.yui-skin-sam .yui-dt-scrollable .yui-dt-bd {border-left:1px solid #CFCFCF;border-bottom:1px solid #CFCFCF;border-right:1px solid #CFCFCF;background-color:#FFF;} 
+.yui-skin-sam .yui-dt-scrollable .yui-dt-data tr.yui-dt-last td {border-bottom:0px solid #CFCFCF;}	
+	
+#paginated {
+    text-align: center;
+}
+#paginated table {
+    margin-left:auto; margin-right:auto;
+}
+#paginated, #paginated .yui-dt-loading {
+    text-align: center; background-color: transparent;
+}
+
+.yui-skin-sam .yui-pg-page {
+	background-color:#FFFFFF;
+	border:1px solid #FFFFFF;
+	padding:2px 3px;
+	text-decoration:none;
+}
+
+.yui-skin-sam .yui-pg-first, .yui-skin-sam .yui-pg-previous, .yui-skin-sam .yui-pg-next, .yui-skin-sam .yui-pg-last, .yui-skin-sam .yui-pg-current, .yui-skin-sam .yui-pg-pages, .yui-skin-sam .yui-pg-page {
+	display:inline-block;
+	font-family:verdana, arial,helvetica,clean,sans-serif;
+	padding:0px 3px;
+}
+
+.yui-skin-sam .yui-pg-container {
+	display:block;
+	margin:6px 0;
+	white-space:nowrap;
+}	
+
+.yui-skin-sam .yui-dt-paginator {
+	text-align:right;
+}	
+
+#yui-dt0-paginator1 {
+	display:none;
+}
+	
+/* tab view */	
+
+
+.yui-skin-sam .yui-navset .yui-nav, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav {
+	border-color:#ACACAC;
+	border-style:solid;
+	border-width:0 0 1px;
+}
+
+.yui-navset li em {
+	font-family:verdana;
+	font-style:normal;
+}
+
+.yui-skin-sam .yui-navset .yui-nav a, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a {
+	background:#E5E5E5 repeat-x scroll 0 0;
+	border-color:#ACACAC;
+	border-style:solid;
+	border-width:0 1px;
+	color:#000000;
+	position:relative;
+	text-decoration:none;
+}
+
+.yui-skin-sam .yui-navset .yui-nav a em, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav a em {
+	border-color:#ACACAC;
+	border-style:solid;
+	border-width:1px 0 0;
+	bottom:0;
+	left:0;
+	padding:0.25em 0.75em;
+	position:relative;
+	right:0;
+	top:0;
+}
+
+.yui-skin-sam .yui-navset .yui-nav .selected a, .yui-skin-sam .yui-navset .yui-nav .selected a:focus, .yui-skin-sam .yui-navset .yui-nav .selected a:hover {
+	background:#FFFFFF;
+	color:#000000;
+}
+
+.yui-skin-sam .yui-navset .yui-nav .selected, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav .selected {
+	margin:0 -1px -1px 0;
+}
+.yui-skin-sam .yui-navset .yui-nav .selected a, .yui-skin-sam .yui-navset .yui-nav .selected a em {
+	border-color:#ACACAC;
+}
+
+.yui-skin-sam .yui-navset .yui-nav li, .yui-skin-sam .yui-navset .yui-navset-top .yui-nav li {
+	margin:0 -1px 0 0;
+	padding:1px 0 0;
+}
+
+.yui-skin-sam .yui-navset .yui-content {
+	background:#FFFFFF none repeat scroll 0 0;
+}
+
+.yui-skin-sam .yui-navset .yui-content, .yui-skin-sam .yui-navset .yui-navset-top .yui-content {
+	border-color:#FFFFFF #ACACAC #ACACAC;
+	border-style:solid;
+	border-width: 0px 1px 1px 1px;
+	padding:2em 0.5em;
+}	
+	
+.form-select {
+    width:214px;
+	padding-top:2px;
+	padding-bottom:2px;
+	font-family:verdana,arial,helvetica,clean,sans-serif;
+}
+
+h1 {
+	margin-bottom: 25px;
+	font-family:verdana;font-size:1em;
+}
+
+hr.hr2 {
+	background-color:#E5E5E5;
+	color:#E5E5E5;
+	height:1px;
+}
+hr {
+	border:0 none;
+	margin-bottom:25px;
+	margin-top:6px;
+	text-align:left;
+	width:665px;
+}
+
+.hidden-node {display:none;}
+	

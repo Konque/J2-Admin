@@ -1,0 +1,31 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+こんにちは、$!{map.get("user.name.family")} $!{map.get("user.name.given")} さん
+
+ご利用のアカウントに関する新規パスワード作成依頼を受け付けました。
+アカウントユーザー名: $!{map.get("username")}
+新規パスワード: $!{map.get("password")}
+新規パスワードを有効にするためには、以下のリンクをクリックしてください。
+$!{map.get("returnURL")}
+もし、謝ってこのメールを受け取った場合や、パスワードを更新したくない場合は、
+上のリンクをクリックしないでください。クリックしなければ、ご利用のアカウントで
+現在のパスワードが保持されます。
+
+以上をよろしくお願いいたします。
+
+Jetspeed チーム
+

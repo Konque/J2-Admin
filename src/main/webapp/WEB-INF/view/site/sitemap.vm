@@ -1,0 +1,52 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+#set($site = $request.getAttribute("org.apache.jetspeed.portalsite.PortalSiteRequestContext"))
+#set ($PropertiesValue = $portletConfig.getResourceBundle($renderRequest.Locale))
+#set($rc = $renderRequest.getAttribute("org.apache.jetspeed.request.RequestContext"))
+#set($req = $rc.Request)
+#set($preferedLocale = "en")
+#set($navigationsStandardMenu = $site.getMenu("site-navigations"))
+
+<div id="contentsPageTitleContainer">
+<p class="contentsPageIntro"><b>$PropertiesValue.getString('IntroText')</b></p>
+
+<p style="margin-top: 25px"></p>
+</div><!-- Contents Main Container -->
+<div id="contentsMainContainer"> <!-- B: div id contentsMainContainer -->
+
+#set($myVar =2)
+#set($childVar =1)
+#if(!$navigationsStandardMenu.empty)
+      <p class="mapaSiteTitle">1.  <a href="${req.ContextPath}/">HomePage</a></p>
+      <p class="contentsPageSep" style="margin: 15px 0 10px 0"></p>
+    #foreach($element in $navigationsStandardMenu.elements.iterator())
+        <p class="mapaSiteTitle">$myVar.  <a href="${req.ContextPath}/portal$element.url">$element.Title</a></p>
+        <p class="contentsPageSep" style="margin: 15px 0 10px 0"></p>
+        #if($element.elementType == "menu")
+            <ul class="mapaSiteListLevel1">
+            #set($childVar =1)
+               #foreach($childElement in $element.elements.iterator())
+                    <li>$myVar.$childVar <a href="${req.ContextPath}/portal$childElement.url">$childElement.Title</a></li>
+                    #set($childVar = $childVar+1)    
+               #end
+            </ul>
+         #end
+        #set($myVar = $myVar+1)
+    #end
+#end
+
+</div> <!-- E: div id contentsMainContainer -->

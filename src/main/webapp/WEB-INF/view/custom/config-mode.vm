@@ -1,0 +1,169 @@
+#*
+  Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+*#
+
+#set ($MESSAGES = $portletConfig.getResourceBundle($renderRequest.Locale))
+#set($fragmentId = $renderRequest.getAttribute("fragmentId"))
+#set($securityConstraints = $renderRequest.getAttribute("securityConstraints"))
+#set($constraintList = $securityConstraints.securityConstraints)
+#set($constraintsRefList = $securityConstraints.securityConstraintsRefs)
+#set($securityContraintRefList = $renderRequest.getAttribute("securityContraintRefList"))
+#set($actionUrl = $renderResponse.createActionURL())     
+
+<br/>
+
+<div>
+  <table cellpadding="0" cellspacing="1" border="0">
+    <thead>
+      <tr>
+        <th align="center" class="portlet-section-header" nowrap>$MESSAGES.getString("customconfigmode.label.roles")</th>
+        <th align="center" class="portlet-section-header" nowrap>$MESSAGES.getString("customconfigmode.label.groups")</th>
+        <th align="center" class="portlet-section-header" nowrap>$MESSAGES.getString("customconfigmode.label.users")</th>
+        <th align="center" class="portlet-section-header" nowrap>$MESSAGES.getString("customconfigmode.label.permissions")</th>
+        <th align="center" class="portlet-section-header" nowrap>$MESSAGES.getString("customconfigmode.label.action")</th>
+      </tr>
+    </thead>
+    <tbody>
+    
+    #foreach ($constraint in $constraintList)
+      
+      #if ($velocityCount % 2 == 0)
+       #set($rowstyle = "portlet-section-body")
+      #else
+       #set($rowstyle = "portlet-section-alternate")
+      #end
+      
+      <tr>
+        <td class="$rowstyle">
+          $!{constraint.roles}
+        </td>
+        <td class="$rowstyle">
+          $!{constraint.groups}
+        </td>
+        <td class="$rowstyle">
+          $!{constraint.users}
+        </td>
+        <td class="$rowstyle">
+          $!{constraint.permissions}
+        </td>
+        <td class="$rowstyle">
+          <form method="POST" action="${actionUrl}">
+            <input type="hidden" name="action" value="removeConstraint">
+            <input type="hidden" name="fragment" value="${fragmentId}">
+            <input type="hidden" name="roles" value="$!{constraint.roles}">
+            <input type="hidden" name="groups" value="$!{constraint.groups}">
+            <input type="hidden" name="users" value="$!{constraint.users}">
+            <input type="hidden" name="permissions" value="$!{constraint.permissions}">
+            <input type="submit" value="$MESSAGES.getString("customconfigmode.label.remove")">
+          </form>
+        </td>
+      </tr>
+    #end
+      
+    </tbody>
+  </table>
+</div>
+
+<br/>
+
+<div>
+<form method="POST" action="${actionUrl}">
+  <table cellpadding="0" cellspacing="1" border="0">
+    <tbody>
+      <tr>
+        <td class="portlet-section-alternate" nowrap>$MESSAGES.getString("customconfigmode.label.constraintref")</td>
+        <td class="portlet-section-body" nowrap>
+          <input type="hidden" name="action" value="updateConstraintRefs">
+          <input type="hidden" name="fragment" value="${fragmentId}">
+          <select name="securityConstraintRef">
+            #if ($constraintsRefList)
+              <option value=""
+                #if ($constraintsRefList.isEmpty())
+                  selected
+                #end
+              >$MESSAGES.getString("customconfigmode.label.noconstraintref")</option>
+              #foreach ($securityContraintRef in $securityContraintRefList)
+                <option value="${securityContraintRef.name}"
+                  #if ($constraintsRefList.contains("${securityContraintRef.name}"))
+                    selected
+                  #end
+                >${securityContraintRef.name}</option>
+              #end
+            #else
+              <option value="" selected>$MESSAGES.getString("customconfigmode.label.noconstraintref")</option>
+              #foreach ($securityContraintRef in $securityContraintRefList)
+                <option value="${securityContraintRef.name}">${securityContraintRef.name}</option>
+              #end
+            #end
+          </select>
+          <input type="submit" value="$MESSAGES.getString("customconfigmode.label.save")">
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</form>
+</div>
+
+<br/>
+
+<div>
+  <form method="POST" action="${actionUrl}">
+  <table cellpadding="0" cellspacing="1" border="0">
+    <thead>
+      <tr>
+        <th align="center" class="portlet-section-header" nowrap colspan="2">$MESSAGES.getString("customconfigmode.label.newconstraint")</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="portlet-section-alternate" nowrap>$MESSAGES.getString("customconfigmode.label.roles")</td>
+        <td class="portlet-section-body" nowrap>
+          <input type="hidden" name="action" value="addConstraint">
+          <input type="hidden" name="fragment" value="${fragmentId}">
+          <input type="text" name="roles" value="" />
+        </td>
+      </tr>
+      <tr>
+        <td class="portlet-section-alternate" nowrap>$MESSAGES.getString("customconfigmode.label.groups")</td>
+        <td class="portlet-section-body" nowrap>
+          <input type="text" name="groups" value="" />
+        </td>
+      </tr>
+      <tr>
+        <td class="portlet-section-alternate" nowrap>$MESSAGES.getString("customconfigmode.label.users")</td>
+        <td class="portlet-section-body" nowrap>
+          <input type="text" name="users" value="" />
+        </td>
+      </tr>
+      <tr>
+        <td class="portlet-section-alternate" nowrap>$MESSAGES.getString("customconfigmode.label.permissions")</td>
+        <td class="portlet-section-body" nowrap>
+          <input type="checkbox" name="permissions" value="view" checked />$MESSAGES.getString("customconfigmode.label.view")
+        </td>
+      </tr>
+      <tr>
+        <td class="portlet-section-alternate" nowrap colspan="2">
+          <input type="submit" value="$MESSAGES.getString("customconfigmode.label.save")">
+          <input type="reset" value="$MESSAGES.getString("customconfigmode.label.cancel")">
+        </td>
+      </tr>
+      
+    </tbody>
+  </table>
+  </form>
+</div>
+
+<br/>
