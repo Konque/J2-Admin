@@ -18,44 +18,99 @@
 #set ($refreshLink = $renderResponse.createRenderURL())
 $refreshLink.setParameter("reset", "true")
 <div id="UserRegistration"  class="portlet-section-text"> 
-	#if($registeredUserMsg)
-		<table >
-			<tr><td colspan="2" ><p class="portlet-msg-success" >$registeredUserMsg</p></td></tr>
-			<tr><td colspan="2" ><p class="portlet-msg-success"><a href="$refreshLink">Click here to start registration...</a></p></td></tr>
-		</table>
-	#else
-	<form name="userRegistrationForm" action="$renderResponse.createActionURL()" method="post" >
-	<table>
-		<tr><td colspan="2" > 
+
+
+#if($registeredUserMsg)
+
+
+<div class="alert alert-success alert-dismissable">
+	<button class="close" aria-hidden="true" data-dismiss="alert" type="button">x</button>
+	<strong><p class="portlet-msg-success" >$registeredUserMsg</p></strong>
+</div> 
+
+
+<div class="alert alert-success alert-dismissable">
+	<button class="close" aria-hidden="true" data-dismiss="alert" type="button">x</button>
+	<strong><a href="$refreshLink">Click here to start registration...</a></strong>
+</div> 
+		
+#else
+
+<form name="userRegistrationForm" action="$renderResponse.createActionURL()" method="post" class="form-horizontal col-md-24" >
+	<fieldset>
+	
+		<div class="form-group">
 			$MESSAGES.getString('page.welcome')
 			#if($MSG )
-	 			<p style='color:red'>$!MSG</p>
+	 			<div class="alert alert-danger alert-dismissable">
+					<button class="close" aria-hidden="true" data-dismiss="alert" type="button">x</button>
+					<strong>$!MSG</strong>
+			 	</div>
 	 		#end	
-		</td></tr>
+		</div>
 		
 		#if($CTX_Option_Use_Email_As_Username)
 		#else
-		<tr><td>$MESSAGES.getString('page.username')</td><td><input type="text" name="user.name" value="$!{user.get("user.name")}" /></td></tr>
+		<div class="form-group">
+			<label class="col-lg-2" for='user.name'>$MESSAGES.getString('page.username')</label>
+			<div class="col-lg-5">
+			   <input type="text" name="user.name"  class="form-control" value="$!{user.get("user.name")}"/>
+			</div>
+		</div>
 		#end
-		<tr><td>$MESSAGES.getString('page.email.address')</td><td><input type="text" name="user.business-info.online.email" value="$!{user.get("user.business-info.online.email")}" /></td></tr>
+		<div class="form-group">
+			<label class="col-lg-2" for='user.business-info.online.email'>$MESSAGES.getString('page.email.address')</label>
+			<div class="col-lg-5">
+			   <input type="text" name="user.business-info.online.email"  class="form-control" value="$!{user.get("user.business-info.online.email")}" />
+			</div>
+		</div>
+		
 		
 		#if($CTX_Option_Generate_Passwords)
 		#else
-		<tr><td>$MESSAGES.getString('page.password')</td><td><input type="password" name="password" value="" /></td></tr>
-		<tr><td>$MESSAGES.getString('page.passwordVerify')</td><td><input type="password" name="verifyPassword" value="" /></td></tr>
+		<div class="form-group">
+			<label class="col-lg-2" for='password'>$MESSAGES.getString('page.password')</label>
+			<div class="col-lg-5">
+			   <input type="password" name="password"  class="form-control" />
+			</div>
+		</div>
+		
+		<div class="form-group">
+			<label class="col-lg-2" for='verifyPassword'>$MESSAGES.getString('page.passwordVerify')</label>
+			<div class="col-lg-5">
+			   <input type="password" name="verifyPassword"  class="form-control" />
+			</div>
+		</div>
 		#end
+		
 		
 		#foreach( $fieldName in $fieldsInOrder )
 			#set($pagestring = "page.${fieldName}") 
 			#if( $optionalMap.get($fieldName) )
-			<tr><td>${MESSAGES.getString($pagestring)} $MESSAGES.getString("page.optional")</td><td><input type="text" name="$fieldName" value="$!{user.get($fieldName)}" /></td></tr>
+			<div class="form-group">
+				<label class="col-lg-2" for='$fieldName'>${MESSAGES.getString($pagestring)} $MESSAGES.getString("page.optional")</label>
+				<div class="col-lg-5">
+				   <input type="text" name="$fieldName" value="$!{user.get($fieldName)}"   class="form-control" />
+				</div>
+			</div>
 			#else
-			<tr><td>${MESSAGES.getString($pagestring)}</td><td><input type="text" name="$fieldName" value="$!{user.get($fieldName)}" /></td></tr>
+			<div class="form-group">
+				<label class="col-lg-2" for='$fieldName'>${MESSAGES.getString($pagestring)}</label>
+				<div class="col-lg-5">
+				   <input type="text" name="$fieldName" value="$!{user.get($fieldName)}"   class="form-control" />
+				</div>
+			</div>
 			#end		
 		#end
 		
-		<tr><td colspan="2" > <input type="submit" value="$MESSAGES.getString('page.button')" name="Register Me" /> </td></tr>
-	</table>
-    </form>    
-    #end
+		
+		<div class="form-group">
+			<input type="submit" value="$MESSAGES.getString('page.button')" name="Register Me" class="btn btn-primary"/> 
+		</div>
+	</fieldset>
+
+</form>
+#end
+
+	
 </div>

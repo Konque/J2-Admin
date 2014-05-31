@@ -22,19 +22,27 @@
 			<tr><td colspan="2" ><p class="portlet-msg-success">$updatedPWMsg</p></td></tr>
 		</table>
 	#else	
-		<form name="forgottenPasswordForm" action="$renderResponse.createActionURL()" method="post" >
-		<table>
-			<tr><td colspan="2" >
-				$MESSAGES.getString('page.message') 
-				#if($MSG )
-		 			<br>
-		 			<p class="portlet-msg-error">$!MSG</p>
-		 		#end
-			</td></tr>
-			
-			<tr><td>$MESSAGES.getString('page.email')</td><td><input type="text" name="email" value="$!email" /></td></tr>
-			<tr><td colspan="2" > <input type="submit" value="$MESSAGES.getString('page.button')"  name="Request New Password" /> </td></tr>
-		</table>
+		<form name="forgottenPasswordForm" action="$renderResponse.createActionURL()" method="post" class="form-horizontal col-md-24">
+			<fieldset>
+				<div class="form-group">
+					$MESSAGES.getString('page.message') 
+					#if($MSG )
+						<br>
+						<div class="alert alert-danger alert-dismissable"><p class="portlet-msg-error">$!MSG</p></div>
+					#end
+				</div>
+				<div class="form-group">
+					<label class="col-lg-4" for="email">$MESSAGES.getString('page.email')</label>
+					<div class="col-lg-8">
+					   <input type="text" name="email" value="$!email" class="form-control"/>
+					</div>
+				</div>
+				<div class="form-group">
+					 <input type="submit" value="$MESSAGES.getString('page.button')"  name="Request New Password" class="login-action btn btn-primary"/>
+				</div>
+			</fieldset>
+
+
 	    </form>
     #end
 </div>

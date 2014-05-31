@@ -44,59 +44,85 @@ limitations under the License.
       <i><c:out value="${why}"/></i>
       <br/>
     </c:if>
-    <c:if test="${errorMessages != null}">
-    <ul>
-      <c:forEach items="${errorMessages}" var="error">
-        <li style="color:red"><c:out value="${error}"/></li>
-      </c:forEach>
-    </ul>
-    </c:if>
 
+	<!--custom error msg start-->
+	<c:if test="${errorMessages != null}">
+		<c:forEach items="${errorMessages}" var="error">
+			 <div class="alert alert-danger alert-dismissable">
+				<button class="close" aria-hidden="true" data-dismiss="alert" type="button">x</button>
+				<strong><c:out value="${error}"/></strong>
+			 </div>
+		 </c:forEach>
+	 </c:if>
+	<!-- end -->
+
+
+	<!--custom success msg .start-->
     <c_rt:set var="passwordChangedKey" value="<%=ChangePasswordPortlet.PASSWORD_CHANGED%>"/>
     <c:set var="p" value="${requestScope[passwordChangedKey]}"/>
     <c:if test="${requestScope[passwordChangedKey] != null}">
-      <br>
-      <i><fmt:message key="chgpwd.message.passwordChanged"/></i>
-      <br><br>
+		<div class="alert alert-success alert-dismissable">
+			<button class="close" aria-hidden="true" data-dismiss="alert" type="button">x</button>
+			<strong><fmt:message key="chgpwd.message.passwordChanged"/></strong>
+		</div>      
     </c:if>
+    <!-- end -->
 
-    <form method="POST" action='<portlet:actionURL/>'>
-      <table border="0">
-      <tr>
-        <td><fmt:message key="chgpwd.label.currentPassword"/></td>
-        <td><input type="password" size="30" name="<%=ChangePasswordPortlet.CURRENT_PASSWORD%>"></td>
-      </tr>
-      <tr>
-        <td><fmt:message key="chgpwd.label.newPassword"/></td>
-        <td><input type="password" size="30" name="<%=ChangePasswordPortlet.NEW_PASSWORD%>"></td>
-      </tr>
-      <tr>
-        <td><fmt:message key="chgpwd.label.newPasswordAgain"/></td>
-        <td><input type="password" size="30" name="<%=ChangePasswordPortlet.NEW_PASSWORD_AGAIN%>"></td>
-      </tr>
-      <tr>
-        <td colspan="2">
-          <input type="submit" value="<fmt:message key="chgpwd.label.save"/>">
-          <c:if test="${why != null}">
-            <c:choose>
-              <c:when test="${required == null}">
-                &nbsp;&nbsp;
-                <c_rt:set var="cancelItem" value="<%=ChangePasswordPortlet.CANCELLED%>"/>
-                <input type="checkbox" style="display:none" name="<c:out value="${cancelItem}"/>">
-                <input type="submit" 
-                       value="<fmt:message key="chgpwd.label.cancel"/>"
-                       onClick="this.form.<c:out value="${cancelItem}"/>.checked=true">
-              </c:when>
-              <c:otherwise>
-                <br/><br/>
-                <a href='<c:url context="${portalContextPathInUrlTag}" value="/login/logout"/>'><fmt:message key="chgpwd.label.Logout"/></a>
-              </c:otherwise>
-            </c:choose>
-          </c:if>
-        </td>
-      </tr>
-      </table>
-    </form>
+
+	<!-- custome start-->
+
+	<form method="POST"  action="<portlet:actionURL/>" class="form-horizontal col-md-24">
+		<fieldset>
+
+			<div class="form-group">
+					<label class="col-lg-4" for='<%=ChangePasswordPortlet.CURRENT_PASSWORD%>'><fmt:message key="chgpwd.label.currentPassword"/></label>
+					<div class="col-lg-8">
+					   <input type="password" name='<%=ChangePasswordPortlet.CURRENT_PASSWORD%>'  class="form-control"/>
+					</div>
+			</div>
+
+			<div class="form-group">
+					<label class="col-lg-4" for='<%=ChangePasswordPortlet.NEW_PASSWORD%>'><fmt:message key="chgpwd.label.newPassword"/></label>
+					<div class="col-lg-8">
+					   <input type="password" name='<%=ChangePasswordPortlet.NEW_PASSWORD%>'  class="form-control"/>
+					</div>
+			</div>
+
+			<div class="form-group">
+					<label class="col-lg-4" for='<%=ChangePasswordPortlet.NEW_PASSWORD_AGAIN%>'><fmt:message key="chgpwd.label.newPasswordAgain"/></label>
+					<div class="col-lg-8">
+					   <input type="password" name='<%=ChangePasswordPortlet.NEW_PASSWORD_AGAIN%>'  class="form-control"/>
+					</div>
+			</div>
+
+			<div class="form-group">
+					<input type="submit" value='<fmt:message key="chgpwd.label.save"/>'  class="btn btn-primary"/>
+
+					 <c:if test="${why != null}">
+						<c:choose>
+						  <c:when test="${required == null}">
+							&nbsp;&nbsp;
+							<c_rt:set var="cancelItem" value="<%=ChangePasswordPortlet.CANCELLED%>"/>
+							<input type="checkbox" style="display:none" name="<c:out value="${cancelItem}"/>">
+							<input type="submit"  class="login-action btn btn-primary"
+								   value="<fmt:message key="chgpwd.label.cancel"/>"
+								   onClick="this.form.<c:out value="${cancelItem}"/>.checked=true">
+						  </c:when>
+						  <c:otherwise>
+							<br/><br/>
+							<a href='<c:url context="${portalContextPathInUrlTag}" value="/login/logout"/>'><fmt:message key="chgpwd.label.Logout"/></a>
+						  </c:otherwise>
+						</c:choose>
+					 </c:if>
+			</div>
+
+
+
+		</fieldset>
+	</form>
+
+	<!-- end -->
+
   </c:when>
   <c:otherwise>
     <fmt:message key="chgpwd.error.notLoggedOn"/><br>
