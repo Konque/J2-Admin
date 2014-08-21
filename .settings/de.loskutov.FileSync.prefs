@@ -1,0 +1,9 @@
+WARNING=DO NOT MODIFY THIS FILE IF YOU DON'T UNDERSTAND
+defaultDestination=D\:/apache-tomcat-6.0.37/webapps/j2-admin
+defaultVariables=
+eclipse.preferences.version=1
+includeTeamPrivateFiles=false
+map|0=src/main/webapp/WEB-INF/_content|,|,|,|,
+map|1=src/main/webapp/WEB-INF/security|,|,|,|,
+map|2=src/main/webapp/WEB-INF/view|,|,|,|,
+useCurrentDateForDestinationFiles=false
