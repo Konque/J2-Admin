@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<project basedir="." default="build">
+
+	<property name="server.home" value="D:\apache-tomcat-6.0.37" />
+	<property name="maven project" value="J2-Admin" />
+
+	<property name="src-java" value="${basedir}\target\classes" />
+	<property name="src-webapp" value="${basedir}\src\main\webapp" />
+	<property name="src-resource" value="${basedir}\src\main\resources" />
+
+
+	<property name="Server App" value="${server.home}\webapps\j2-admin" />
+
+	<target name="build" description="build" depends="deploy java,deploy resource,deploy webapp">
+
+	</target>
+
+
+	<target name="deploy java">
+		<copy todir="${Server App}/WEB-INF/classes">
+			<fileset dir="${src-java}">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy resource">
+		<copy todir="${Server App}/WEB-INF/classes">
+			<fileset dir="${src-resource}">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
+	<target name="deploy webapp">
+		<copy todir="${Server App}">
+			<fileset dir="${src-webapp}">
+				<include name="**" />
+			</fileset>
+		</copy>
+	</target>
+
+</project>
